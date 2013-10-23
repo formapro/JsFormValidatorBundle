@@ -1,0 +1,34 @@
+Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\TestEntity:
+    type: entity
+    table: null
+    repositoryClass: Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\TestEntityRepository
+    fields:
+        id:
+            type: integer
+            id: true
+            generator:
+                strategy: AUTO
+        name:
+            type: string
+            length: '20'
+        email:
+            type: string
+            length: '50'
+        password:
+            type: string
+            length: 255
+        isActive:
+            type: boolean
+            column: is_active
+        extraOpts:
+            type: array
+            column: extra_opts
+        created:
+            type: datetime
+        age:
+            type: integer
+        bio:
+            type: text
+        rate:
+            type: decimal
+    lifecycleCallbacks: {  }

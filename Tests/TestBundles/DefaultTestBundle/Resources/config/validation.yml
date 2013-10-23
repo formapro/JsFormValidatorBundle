@@ -1,0 +1,44 @@
+Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\TestEntity:
+  properties:
+    name:
+      - NotBlank:
+          groups: ["group_1", "group_3"]
+      - Length:
+          groups: ["group_2"]
+          min: 5
+          max: 20
+          minMessage: "error_min"
+          maxMessage: "error_max"
+    email:
+      - Email:
+          message: "error_email"
+          checkMX: true
+    password:
+      - Length:
+          min: 8
+          max: 50
+          minMessage: "error_min"
+          maxMessage: "error_max"
+    isActive:
+      - "True":
+          groups: ["group_4"]
+          message: "error_is_active"
+    extraOpts:
+      - NotBlank:
+          groups: ["group_4"]
+    created:
+      - NotBlank:
+          groups: ["group_4"]
+    age:
+      - NotBlank:
+          groups: ["group_5"]
+    bio:
+      - NotBlank:
+          groups: ["group_5"]
+    rate:
+      - NotBlank:
+          groups: ["group_6"]
+  getters:
+    passwordLegal:
+      - "True":
+          message: "error_password_legal"

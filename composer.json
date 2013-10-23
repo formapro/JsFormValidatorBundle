@@ -1,0 +1,39 @@
+{
+    "name": "fp/jsformvalidator-bundle",
+    "type": "symfony-bundle",
+    "description": "Javascript validation for sf2 forms.",
+    "keywords": ["Symfony", "Form", "Javascript", "Validation"],
+    "homepage": "https://github.com/yury-maltsev/FpJsFormValidatorBundle",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Yury Maltsev",
+            "email": "dev.yury.maltsev@gmail.com"
+        },
+        {
+            "name": "Ton",
+            "email": "forma@66ton99.org.ua"
+        }
+    ],
+
+    "require": {
+        "php": ">=5.3.2",
+        "symfony/symfony": ">=2.0"
+    },
+
+    "require-dev": {
+        "phpunit/phpunit": "3.7.*"
+    },
+
+    "autoload": {
+        "psr-0": { "Fp\\JsFormValidatorBundle": "" }
+    },
+
+    "target-dir": "Fp/JsFormValidatorBundle",
+
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    }
+}
