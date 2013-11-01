@@ -22,7 +22,14 @@ class FpJsFormValidatorExtension extends Extension
         $configuration = new Configuration();
         $config = $this->processConfiguration($configuration, $configs);
 
+        $container->setParameter($this->getAlias() . '.translation_domain',   $config['translation_domain']);
+
         $loader = new Loader\XmlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.xml');
+    }
+
+    public function getAlias()
+    {
+        return 'fp_js_form_validator';
     }
 }
