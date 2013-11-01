@@ -31,6 +31,10 @@ FpJsFormValidator.prototype.config = {
 FpJsFormValidator.prototype.constructor = function(id, getters, options) {
     this.id = id;
 
+    // ID list of tracked fields
+    this.fields = options.fields;
+    delete options.fields;
+
     // Merge default config with the received options
     for (var name in options) {
         this.config[name] = options[name];
@@ -91,13 +95,10 @@ FpJsFormValidator.prototype.validate = function() {
     if (false === this.config['isEnabled']) return true;
 
     var result = true;
-    // Validate all the fields
-    // This list was received with the "options" object from the server side
-    // This is necessary to not go through all the elements in the form, but only those who are initially has constraints
-    var fields = this.getConfig('trackingFields', []);
-    for (var i = 0; i < fields.length; i++) {
-        var element = document.getElementById(fields[i]);
-        if (false === element[this.getName()].validate()) {
+    // Validate all the tracked fields
+    for (var i = 0; i < this.fields.length; i++) {
+        var element = document.getElementById(this.fields[i]);
+        if (false === element['fpValidator'].validate()) {
             result = false;
         }
     }

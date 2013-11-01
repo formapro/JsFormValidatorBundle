@@ -177,7 +177,7 @@ class JsFormValidatorFactory {
     public function createJsFormValidator()
     {
         $config = [
-            'trackingFields' => array_keys($this->fields)
+            'fields' => array_keys($this->fields)
         ];
         if (isset($this->config[$this->id])) {
             $config = array_merge($config, $this->config[$this->id]);
