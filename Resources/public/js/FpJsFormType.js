@@ -13,6 +13,8 @@ function FpJsFormType(options){
  * @param options
  */
 FpJsFormType.prototype.constructor = function(options) {
+    this.elementsCache = {};
+
     // Process options
     for (var optionName in options) {
         switch (optionName) {
@@ -27,7 +29,6 @@ FpJsFormType.prototype.constructor = function(options) {
                 break;
         }
     }
-
     // Attach events
     this.bindEvents();
 };
@@ -39,9 +40,9 @@ FpJsFormType.prototype.bindEvents = function() {
     var self = this;
 
     for (var elementId in this['events']) {
-        var len = this['events'][elementId];
+        var len = this['events'][elementId].length;
         for (var i = 0; i < len; i++) {
-            document.getElementById(elementId).addEventListener(this['events'][elementId][i], function(event){
+            this.getFormElement(elementId).addEventListener(this['events'][elementId][i], function(event){
                 if (false === self.validate()) {
                     event.preventDefault();
                 }
@@ -51,23 +52,51 @@ FpJsFormType.prototype.bindEvents = function() {
 };
 
 /**
+ * Find (or get from cache) the form element by id
+ * @param elementId
+ */
+FpJsFormType.prototype.getFormElement = function(elementId) {
+    if (!this.elementsCache[elementId]) {
+        this.elementsCache[elementId] = document.getElementById(elementId);
+
+        // If this is the parent form - looking for real form tag for this id
+        if (elementId === this['parentFormId']){
+
+            // Create a function that gets the real form tag element
+            var getParentFormElement = function(element) {
+                if (element && 'form' === element.tagName.toLowerCase()) {
+                    return element;
+                } else if (element.parentNode instanceof HTMLElement) {
+                    return getParentFormElement(element.parentNode);
+                } else {
+                    return undefined;
+                }
+            };
+            // Get the real form tag
+            this.elementsCache[elementId] = getParentFormElement(this.elementsCache[elementId]);
+        }
+    }
+
+    return this.elementsCache[elementId];
+};
+
+/**
  * Get general value from the element and parse with transformers if they are exist
  * @returns {undefined}
  */
 FpJsFormType.prototype.getElementValue = function()
 {
     var value = undefined;
-    var element = document.getElementById(this.id);
-    var len = this['transformers'].length;
-    if (0 === len) {
-        value = element.value;
-    } else {
-        for (var i = 0; i < len; i++) {
-            if (typeof this['transformers'][i]['reverseTransform'] === 'function') {
-                value = this['transformers'][i]['reverseTransform'](value);
-            }
-
+    var len   = this['transformers'].length;
+    for (var i = 0; i < len; i++) {
+        if (typeof this['transformers'][i]['reverseTransform'] === 'function') {
+            value = this['transformers'][i]['reverseTransform'](value);
         }
+    }
+
+    var element = this.getFormElement(this.id);
+    if (0 === len && element && undefined !== element.value) {
+        value = element.value;
     }
 
     return value;
@@ -83,6 +112,7 @@ FpJsFormType.prototype.validate = function() {
     var constr; // Constraint object
     var errors = []; // errors' container
     var i, len; // loop variables
+    console.log('value = ',value);
 
     len = this['constraints'].length;
     for (i = 0; i < len; i++) {
@@ -101,7 +131,7 @@ FpJsFormType.prototype.validate = function() {
  *
  * @param {Array} errors
  */
-FpJsFieldValidator.prototype.showErrors = function(errors) {
+FpJsFormType.prototype.showErrors = function(errors) {
     console.log(errors);
 };
 

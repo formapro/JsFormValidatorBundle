@@ -95,7 +95,7 @@ class JsFormValidatorFactory {
      * @return string
      */
     public function processElementRecursively(FormView $view, Form $form = null, $metadata = null, $groups = []) {
-        $model = new JsFormTypeModel();
+        $model = new JsFormTypeModel($this->parentFormId);
         $opts  = new ArrayCollection($view->vars);
 
         // If empty metadata and this is parent form:
@@ -112,10 +112,9 @@ class JsFormValidatorFactory {
             $model->getters = $this->parseGetters($metadata->getters, $groups);
         }
 
-        $model->id       = $opts->get('id');
-        $model->name     = $opts->get('name');
-        $model->fullName = $opts->get('full_name');
-        $model->events   = [$this->parentFormId => ['submit']];
+        $model->id           = $opts->get('id');
+        $model->name         = $opts->get('name');
+        $model->fullName     = $opts->get('full_name');
         // Looking for data-transformers in the form if the form element exists
         if (null !== $form) {
             $model->transformers = $this->getTransformersList($form->getConfig()->getViewTransformers());

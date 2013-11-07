@@ -27,6 +27,11 @@ class JsFormTypeModel {
     public $fullName;
 
     /**
+     * @var string
+     */
+    public $parentFormId;
+
+    /**
      * @var array
      */
     public $transformers = [];
@@ -53,8 +58,30 @@ class JsFormTypeModel {
 
     private $jsClassName = 'FpJsFormType';
 
+    /**
+     * @param $parentFormId
+     */
+    function __construct($parentFormId) {
+        $this->parentFormId                = $parentFormId;
+        $this->events[$this->parentFormId] = ['submit'];
+    }
+
+    /**
+     * @return string
+     */
     public function createJsObject()
     {
         return sprintf('new %1$s(JSON.parse(\'%2$s\')); ', $this->jsClassName, json_encode($this));
+    }
+
+    /**
+     * @param $elementId
+     * @param array $events
+     */
+    public function addEvents($elementId, array $events)
+    {
+        foreach ($events as $event) {
+            $this->events[$elementId][] = $event;
+        }
     }
 } 

@@ -7,7 +7,7 @@ function FpJsConstraintModel() {
     this.message = '';
 
     this.isEmtyValue = function(value) {
-        return -1 === [undefined, null, ''].indexOf(value);
+        return -1 !== [undefined, null, ''].indexOf(value);
     };
 
     this.addError = function(value, message) {

@@ -16,6 +16,10 @@ function SymfonyComponentValidatorConstraintsChoice() {
     this.strict          = false;
 
     this.validate = function(value) {
+        if (this.isEmtyValue(value)) {
+            return;
+        }
+
         if (!value instanceof Array) {
             value = [value];
         }
