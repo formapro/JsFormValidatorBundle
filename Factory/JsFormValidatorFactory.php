@@ -10,151 +10,67 @@
 namespace Fp\JsFormValidatorBundle\Factory;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Fp\JsFormValidatorBundle\Validator\Constraints\Repeated;
-use Symfony\Component\Form\Exception\UnexpectedTypeException;
-use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Fp\JsFormValidatorBundle\Model\JsFormTypeModel;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Mapping\ClassMetadata;
 use Symfony\Component\Validator\Mapping\GetterMetadata;
 use Symfony\Component\Validator\Mapping\PropertyMetadata;
+use Symfony\Component\Validator\Validator;
 
 class JsFormValidatorFactory {
     /**
+     * @var array
+     */
+    protected $defaultGroups = ['Default'];
+
+    /**
+     * @var JsFormTypeModel[]
+     */
+    protected $elements = [];
+
+    /**
      * @var string
      */
-    public $id;
+    protected $parentFormId;
 
     /**
-     * @var array
+     * @var Validator
      */
-    public $groups = ['Default'];
-
-    /**
-     * @var array
-     */
-    public $fields = [];
-
-    /**
-     * @var array
-     */
-    public $getters = [];
+    protected $validator;
 
     /**
      * @var Translator
      */
-    private $translator;
-
-    /**
-     * @var string
-     */
-    private $domain;
+    protected $translator;
 
     /**
      * @var array
      */
-    private $config;
+    protected $config;
 
     /**
-     * @param string $id
-     * @param array $groups
-     * @param array $config
+     * @param Validator $validator
      * @param null|Translator $translator
-     * @param string $domain
+     * @param array $config
+     *
      */
-    public function __construct($id, array $groups, $config = [], $translator = null, $domain = 'validators')
+    public function __construct(Validator $validator, Translator $translator, $config)
     {
-        $this->id         = $id;
-        $this->groups     = array_merge($groups, $this->groups);
-        $this->config     = $config;
+        $this->validator  = $validator;
         $this->translator = $translator;
-        $this->domain     = $domain;
+        $this->config     = $config;
     }
 
-    public function getJsonMethods()
+    public function processForm(Form $form)
     {
-        return json_encode($this->getters);
-    }
+        $this->elements     = [];
+        $formView           = $form->createView();
+        $this->parentFormId = $formView->vars['id'];
 
-    /**
-     * Add constraints for the specified field
-     *
-     * @param FormView|PropertyMetadata $field
-     *
-     * @throws \Symfony\Component\Form\Exception\UnexpectedTypeException
-     *
-     * @return $this
-     */
-    public function addField($field)
-    {
-        $type = null;
-
-        // If this field is a child of Entity
-        if ($field instanceof PropertyMetadata) {
-            $id = $this->id . '_' . $field->getName();
-            $constraints = (array) $field->getConstraints();
-
-        // If this field is a child of Form
-        } elseif ($field instanceof FormView) {
-            $opts = new ArrayCollection($field->vars);
-            $id = $opts->get('id');
-            $constraints = (array) $opts->get('constraints');
-            $type = $opts->get('type');
-
-        // Do not allow other instances
-        } else {
-            throw new UnexpectedTypeException($field, 'Symfony\Component\Form\FormView, Symfony\Component\Validator\Mapping\PropertyMetadata');
-        }
-
-        // Actually, comparing of two fields (e.g. 'password' and 'confirm password') is not a constraint in Symfony -
-        // it is implemented as RepeatedType that has its own validator (without using of any constraints).
-        // To unify the functionality on our side, we will create a fake constraint Repeated for this field type,
-        // that will be attached to the first element and has links to other related elements and necessary messages.
-        $repeatedType = new RepeatedType();
-        if ($type == $repeatedType->getName()) {
-            $constr = new Repeated();
-            $constr->populate($field);
-            $constraints[] = $constr;
-            $id = $constr->getId();
-        }
-
-        // Process the constraints and save to own property
-        /** @var $constr Constraint */
-        foreach ($constraints as $constr) {
-            // Check if constraint is in the allowed groups
-            $mutual = array_intersect($this->groups, $constr->groups);
-            if (!empty($mutual)) {
-                // Simplify a full class name to a string without slashes
-                $constrName = str_replace('\\', '', get_class($constr));
-                // Translate messages if need and add to storage
-                $this->fields[$id][$constrName][] = $this->translateMessages($constr);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * Add constraints for the specified method
-     *
-     * @param GetterMetadata $getter
-     *
-     * @return $this
-     */
-    public function addGetter(GetterMetadata $getter)
-    {
-        $constraints = (array) $getter->getConstraints();
-        /** @var $constr Constraint */
-        foreach ($constraints as $constr) {
-            // Check if constraint is in the allowed groups
-            $mutual = array_intersect($this->groups, $constr->groups);
-            if (!empty($mutual)) {
-                // Save constraints to the 'getters' bag by schema: ClassName => MethodName => constraints
-                $entityName = str_replace('\\', '', $getter->getClassName());
-                $constrName = str_replace('\\', '', get_class($constr));
-                $this->getters[$entityName][$getter->getName()][$constrName][] = $this->translateMessages($constr);
-            }
-        }
+        $this->processElementRecursively($formView, $form);
     }
 
     /**
@@ -162,47 +78,159 @@ class JsFormValidatorFactory {
      */
     public function generateJavascript()
     {
-        $resultJs = $this->createJsFormValidator() . "\n\n";
-        // For fields
-        foreach ($this->fields as $id => $value) {
-            $resultJs .= $this->createJsFieldValidator($id) . "\n";
+        $resultJs = '';
+        foreach ($this->elements as $model) {
+            $resultJs .= $model->createJsObject() . "\n";
         }
 
         return "<script type='text/javascript'>".$resultJs."</script>";
     }
 
     /**
-     * @return string
-     */
-    public function createJsFormValidator()
-    {
-        $config = [
-            'fields' => array_keys($this->fields)
-        ];
-        if (isset($this->config[$this->id])) {
-            $config = array_merge($config, $this->config[$this->id]);
-        }
-        $config = json_encode($config);
-        $getters = json_encode($this->getters);
-
-        return 'new FpJsFormValidator("' . $this->id . '", JSON.parse(\'' . $getters . '\'), JSON.parse(\'' . $config . '\'));';
-    }
-
-    /**
-     * @param $name
+     * @param FormView $view
+     * @param Form $form
+     * @param null|PropertyMetadata $metadata
+     * @param array $groups
      *
      * @return string
      */
-    public function createJsFieldValidator($name)
-    {
-        $config = [];
-        if (isset($this->config[$name])) {
-            $config = array_merge($config, $this->config[$name]);
-        }
-        $config = json_encode($config);
-        $constr = json_encode($this->fields[$name]);
+    public function processElementRecursively(FormView $view, Form $form = null, $metadata = null, $groups = []) {
+        $model = new JsFormTypeModel();
+        $opts  = new ArrayCollection($view->vars);
 
-        return 'new FpJsFieldValidator("' . $name . '", JSON.parse(\'' . $constr . '\'), JSON.parse(\'' . $config . '\'));';
+        // If empty metadata and this is parent form:
+        $dataClass    = $opts->get('data_class');
+        $isParentForm = false;
+        if (null === $metadata && null !== $dataClass) {
+            $isParentForm = true;
+            // Get the new metadata
+            /** @var ClassMetadata $metadata */
+            $metadata = $this->validator->getMetadataFactory()->getMetadataFor($dataClass);
+            // Redefine groups
+            $groups = array_merge((array)$opts->get('validation_groups'), $this->defaultGroups);
+            // Looking for getters in the parent metadata and set them to the model
+            $model->getters = $this->parseGetters($metadata->getters, $groups);
+        }
+
+        $model->id       = $opts->get('id');
+        $model->name     = $opts->get('name');
+        $model->fullName = $opts->get('full_name');
+        $model->events   = [$this->parentFormId => ['submit']];
+        // Looking for data-transformers in the form if the form element exists
+        if (null !== $form) {
+            $model->transformers = $this->getTransformersList($form->getConfig()->getViewTransformers());
+        }
+        // Get constraints from view
+        $constraints = (array) $opts->get('constraints');
+        // And get constraints form metadata
+        if (null !== $metadata) {
+            $constraints = array_merge($constraints, $metadata->getConstraints());
+        }
+        // Set the constraints to the model
+        $model->constraints = $this->parseConstraints($constraints, $groups);
+        // If this field has children - process them
+        if (!empty($view->children)) {
+            foreach ($view->children as $name => $child) {
+                $childView = $child;
+                $childForm = $form->has($name) ? $form->get($name) : null;
+                if ($childForm instanceof Form && 'hidden' !== $childForm->getConfig()->getType()->getName()) {
+                    $childMetadata = null;
+                    if ($metadata instanceof ClassMetadata && $metadata->hasMemberMetadatas($name)) {
+                        $childMetadata = $metadata->getMemberMetadatas($name);
+                        /** @var PropertyMetadata $childMetadata */
+                        $childMetadata = is_array($childMetadata) ? $childMetadata[0] : $childMetadata;
+                    }
+                    $model->children[] = $this->processElementRecursively($childView, $childForm, $childMetadata, $groups);
+                }
+            }
+        }
+        // If this emelemt has some validations or it is parent element - add it to the container
+        if ($isParentForm || !empty($model->constraints) || !empty($model->getters)) {
+            $this->elements[] = $model;
+        }
+        // Return self id to save it in the parent's "children" container
+        return $model->id;
+    }
+
+    /**
+     * @param array $transformers
+     *
+     * @return array
+     */
+    protected function getTransformersList($transformers)
+    {
+        $result = [];
+
+        foreach ($transformers as $trans) {
+            $name = get_class($trans);
+            $chainClass = 'Symfony\Component\Form\Extension\Core\DataTransformer\DataTransformerChain';
+
+            if ($chainClass == $name) {
+                $reflection = new \ReflectionProperty($chainClass, 'transformers');
+                $reflection->setAccessible(true);
+                $result[] = [
+                    'name' => str_replace('\\', '', $chainClass),
+                    'transformers' => $this->getTransformersList($reflection->getValue($trans))
+                ];
+            } else {
+                $result[] = [
+                    'name' => str_replace('\\', '', $name)
+                ];
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param GetterMetadata[] $getters
+     * @param array $groups
+     *
+     * @return array
+     */
+    protected function parseGetters(array $getters, array $groups)
+    {
+        $result = [];
+        foreach ($getters as $getter) {
+            $constraints = (array) $getter->getConstraints();
+            /** @var $constr Constraint */
+            foreach ($constraints as $constr) {
+                // Check if constraint is in the allowed groups
+                $mutual = array_intersect($groups, $constr->groups);
+                if (!empty($mutual)) {
+                    // Save constraints to the 'getters' bag by schema: ClassName => MethodName => constraints
+                    $entityName = str_replace('\\', '', $getter->getClassName());
+                    $constrName = str_replace('\\', '', get_class($constr));
+                    $result[$entityName][$getter->getName()][$constrName][] = $this->translateMessages($constr);
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param array $constraints
+     * @param array $groups
+     *
+     * @return array
+     */
+    protected function parseConstraints(array $constraints, array $groups)
+    {
+        $result = [];
+        foreach ($constraints as $constr) {
+            // Check if constraint is in the allowed groups
+            $mutual = array_intersect($groups, $constr->groups);
+            if (!empty($mutual)) {
+                // Simplify a full class name to a string without slashes
+                $constrName = str_replace('\\', '', get_class($constr));
+
+                // Translate messages if need and add to storage
+                $result[$constrName][] = $this->translateMessages($constr);
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -212,12 +240,12 @@ class JsFormValidatorFactory {
      *
      * @return Constraint
      */
-    private function translateMessages(Constraint $constraint) {
+    protected function translateMessages(Constraint $constraint) {
         if (null !== $this->translator) {
             // Translate each string that contains the substring 'message'
             foreach ($constraint as $propName => $propValue) {
                 if (false !== strpos(strtolower($propName), 'message')) {
-                    $constraint->{$propName} = $this->translator->trans($propValue, [], $this->domain);
+                    $constraint->{$propName} = $this->translator->trans($propValue, [], $this->config['translation_domain']);
                 }
             }
         }

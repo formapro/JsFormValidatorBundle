@@ -1,5 +1,5 @@
 /**
- * Check if value is (bool) false
+ * Checks if value is (bool) false
  * @constructor
  * @author dev.ymalcev@gmail.com
  */

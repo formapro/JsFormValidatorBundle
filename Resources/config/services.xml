@@ -5,15 +5,20 @@
     xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <parameters>
-        <parameter key="fp_js_form_validator.twig_extension.class">Fp\JsFormValidatorBundle\Twig\Extension\JsFormValidatorExtension</parameter>
+        <parameter key="fp_js_form_validator.twig_extension.class">Fp\JsFormValidatorBundle\Twig\Extension\JsFormValidatorTwigExtension</parameter>
+        <parameter key="fp_js_form_validator.factory.class">Fp\JsFormValidatorBundle\Factory\JsFormValidatorFactory</parameter>
     </parameters>
 
     <services>
         <service id="fp_js_form_validator.twig_extension" class="%fp_js_form_validator.twig_extension.class%">
+            <argument type="service" id="fp_js_form_validator.factory" />
+            <tag name="twig.extension" />
+        </service>
+
+        <service id="fp_js_form_validator.factory" class="%fp_js_form_validator.factory.class%">
             <argument type="service" id="validator" />
             <argument type="service" id="translator" />
-            <argument>%fp_js_form_validator.translation_domain%</argument>
-            <tag name="twig.extension" />
+            <argument>%fp_js_form_validator.config%</argument>
         </service>
     </services>
 </container>

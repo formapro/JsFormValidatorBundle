@@ -1,9 +1,9 @@
 /**
- * Checks minimum and maximum length
+ * Checks count of an array or object
  * @constructor
  * @author dev.ymalcev@gmail.com
  */
-function SymfonyComponentValidatorConstraintsLength() {
+function SymfonyComponentValidatorConstraintsCount() {
     this.maxMessage = '';
     this.minMessage = '';
     this.exactMessage = '';
@@ -15,16 +15,16 @@ function SymfonyComponentValidatorConstraintsLength() {
             return;
         }
 
-        var length = value.length;
-        if (this.max === this.min && length !== this.min) {
+        var count = value.length;
+        if (this.max === this.min && count !== this.min) {
             this.addError(value, this.exactMessage);
             return;
         }
-        if (!isNaN(this.max) && length > this.max) {
+        if (!isNaN(this.max) && count > this.max) {
             this.addError(value, this.maxMessage);
             return;
         }
-        if (!isNaN(this.min) && length < this.min) {
+        if (!isNaN(this.min) && count < this.min) {
             this.addError(value, this.minMessage);
         }
     };
@@ -44,4 +44,4 @@ function SymfonyComponentValidatorConstraintsLength() {
         });
     }
 }
-SymfonyComponentValidatorConstraintsLength.prototype = new FpJsConstraintModel();
+SymfonyComponentValidatorConstraintsCount.prototype = new FpJsConstraintModel();

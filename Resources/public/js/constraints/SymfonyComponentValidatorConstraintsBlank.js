@@ -1,5 +1,5 @@
 /**
- * Check if value is blank
+ * Checks if value is blank
  * @constructor
  * @author dev.ymalcev@gmail.com
  */
