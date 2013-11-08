@@ -34,27 +34,27 @@ class JsFormTypeModel {
     /**
      * @var array
      */
-    public $transformers = [];
+    public $transformers = array();
 
     /**
      * @var array
      */
-    public $events = [];
+    public $events = array();
 
     /**
      * @var array
      */
-    public $getters = [];
+    public $getters = array();
 
     /**
      * @var array
      */
-    public $constraints = [];
+    public $constraints = array();
 
     /**
      * @var array
      */
-    public $children = [];
+    public $children = array();
 
     private $jsClassName = 'FpJsFormType';
 
@@ -63,7 +63,7 @@ class JsFormTypeModel {
      */
     function __construct($parentFormId) {
         $this->parentFormId                = $parentFormId;
-        $this->events[$this->parentFormId] = ['submit'];
+        $this->events[$this->parentFormId] = array('submit');
     }
 
     /**

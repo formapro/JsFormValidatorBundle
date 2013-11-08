@@ -24,12 +24,12 @@ class JsFormValidatorFactory {
     /**
      * @var array
      */
-    protected $defaultGroups = ['Default'];
+    protected $defaultGroups = array('Default');
 
     /**
      * @var JsFormTypeModel[]
      */
-    protected $elements = [];
+    protected $elements = array();
 
     /**
      * @var string
@@ -66,7 +66,7 @@ class JsFormValidatorFactory {
 
     public function processForm(Form $form)
     {
-        $this->elements     = [];
+        $this->elements     = array();
         $formView           = $form->createView();
         $this->parentFormId = $formView->vars['id'];
 
@@ -94,7 +94,7 @@ class JsFormValidatorFactory {
      *
      * @return string
      */
-    public function processElementRecursively(FormView $view, Form $form = null, $metadata = null, $groups = []) {
+    public function processElementRecursively(FormView $view, Form $form = null, $metadata = null, $groups = array()) {
         $model = new JsFormTypeModel($this->parentFormId);
         $opts  = new ArrayCollection($view->vars);
 
@@ -158,7 +158,7 @@ class JsFormValidatorFactory {
      */
     protected function getTransformersList($transformers)
     {
-        $result = [];
+        $result = array();
 
         foreach ($transformers as $trans) {
             $name = get_class($trans);
@@ -167,14 +167,14 @@ class JsFormValidatorFactory {
             if ($chainClass == $name) {
                 $reflection = new \ReflectionProperty($chainClass, 'transformers');
                 $reflection->setAccessible(true);
-                $result[] = [
+                $result[] = array(
                     'name' => str_replace('\\', '', $chainClass),
                     'transformers' => $this->getTransformersList($reflection->getValue($trans))
-                ];
+                );
             } else {
-                $result[] = [
+                $result[] = array(
                     'name' => str_replace('\\', '', $name)
-                ];
+                );
             }
         }
 
@@ -189,7 +189,7 @@ class JsFormValidatorFactory {
      */
     protected function parseGetters(array $getters, array $groups)
     {
-        $result = [];
+        $result = array();
         foreach ($getters as $getter) {
             $constraints = (array) $getter->getConstraints();
             /** @var $constr Constraint */
@@ -216,7 +216,7 @@ class JsFormValidatorFactory {
      */
     protected function parseConstraints(array $constraints, array $groups)
     {
-        $result = [];
+        $result = array();
         foreach ($constraints as $constr) {
             // Check if constraint is in the allowed groups
             $mutual = array_intersect($groups, $constr->groups);
@@ -244,7 +244,7 @@ class JsFormValidatorFactory {
             // Translate each string that contains the substring 'message'
             foreach ($constraint as $propName => $propValue) {
                 if (false !== strpos(strtolower($propName), 'message')) {
-                    $constraint->{$propName} = $this->translator->trans($propValue, [], $this->config['translation_domain']);
+                    $constraint->{$propName} = $this->translator->trans($propValue, array(), $this->config['translation_domain']);
                 }
             }
         }

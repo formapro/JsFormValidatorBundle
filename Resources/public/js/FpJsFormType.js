@@ -112,7 +112,6 @@ FpJsFormType.prototype.validate = function() {
     var constr; // Constraint object
     var errors = []; // errors' container
     var i, len; // loop variables
-    console.log('value = ',value);
 
     len = this['constraints'].length;
     for (i = 0; i < len; i++) {

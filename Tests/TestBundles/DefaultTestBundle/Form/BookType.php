@@ -5,9 +5,8 @@ namespace Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\Validator\Constraints\Date;
 
-class TestEntityType extends AbstractType
+class BookType extends AbstractType
 {
         /**
      * @param FormBuilderInterface $builder
@@ -16,16 +15,8 @@ class TestEntityType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name')
-            ->add('email')
-            ->add('password')
-            ->add('isActive')
-            ->add('extraOpts')
-            ->add('created', 'text', [
-                'constraints' => [
-                    new Date()
-                ]
-            ])
+            ->add('author', 'text')
+            ->add('name', 'text')
         ;
     }
     
@@ -35,8 +26,7 @@ class TestEntityType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'csrf_protection' => false,
-            'data_class' => 'Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\TestEntity'
+            'data_class' => 'Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\Book'
         ));
     }
 
@@ -45,6 +35,6 @@ class TestEntityType extends AbstractType
      */
     public function getName()
     {
-        return 'fp_formmanagerbundle_tests_testbundles_defaulttestbundle_testentity';
+        return 'fp_jsformvalidatorbundle_tests_testbundles_defaulttestbundle_book';
     }
 }

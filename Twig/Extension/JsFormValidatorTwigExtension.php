@@ -39,7 +39,7 @@ class JsFormValidatorTwigExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            'fp_jsfv' => new \Twig_Function_Method($this, 'getJsValidator', ['is_safe' => ['html']]),
+            'fp_jsfv' => new \Twig_Function_Method($this, 'getJsValidator', array('is_safe' => array('html'))),
         );
     }
 

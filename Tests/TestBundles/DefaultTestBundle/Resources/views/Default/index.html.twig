@@ -1,1 +1,80 @@
-Hello {{ name }}!
+{% form_theme form.createView() 'DefaultTestBundle:Form:test_theme.html.twig' %}
+
+<style type="text/css">
+    form {
+        width: 600px;
+        margin: 0 auto;
+    }
+    form > div > div {
+        overflow: hidden;
+    }
+    form > div > div > * {
+        float: left;
+    }
+    form label {
+        width: 150px;
+    }
+    form > div > div {
+        padding: 5px 10px;
+    }
+    form > div > div:nth-child(even) {
+        background: #eee;
+    }
+    form > div > div > input[type="text"],
+    form > div > div > input[type="email"],
+    form > div > div > input[type="password"],
+    form > div > div > input[type="url"],
+    form > div > div > input[type="number"],
+    form > div > div > select,
+    form > div > div > textarea {
+        width: 200px;
+    }
+
+    .ip-input input {
+        text-align: center;
+        width: 40px;
+    }
+    .ip-input > div {
+        float: left;
+    }
+
+    .ip-input > div {
+        margin-right: 5px;
+        width: 50px;
+    }
+    .ip-input > div:after {
+        content: " -";
+    }
+    .ip-input > div:last-child:after {
+        content: "";
+    }
+
+    .radio-list *,
+    .checkbox-list *{
+        float: left;
+    }
+    .radio-list input,
+    .checkbox-list input{
+        clear: left;
+    }
+
+    .sub-form-list label {
+        width: 100px;
+    }
+    .sub-form-list > div > div > div {
+        overflow: hidden;
+    }
+    .sub-form-list > div > div > div * {
+        float: left;
+    }
+    .sub-form-list > div > div > div input,
+    .sub-form-list > div > div > div select {
+        width: 150px;
+    }
+
+    .add-to-collection {
+        margin: 0 0 0 150px;
+    }
+</style>
+
+{{ form(form.createView(), { 'attr': {'novalidate': 'novalidate' }}) }}

@@ -1,0 +1,26 @@
+{% extends 'form_div_layout.html.twig' %}
+
+{% block collection_widget %}
+    {{ parent() }}
+    <div style="clear: both;"></div>
+    <button class="add-to-collection" onclick="addNewSubFormToCollection(this, event)">Add new</button>
+    <script type="text/javascript">
+        if (typeof window['addNewSubFormToCollection'] !== 'function') {
+            function addNewSubFormToCollection(element, event) {
+                event.preventDefault();
+                var list = element.parentNode.getElementsByClassName('sub-form-list')[0];
+                var count = list.children.length;
+                var parser = new DOMParser();
+                var prototype = parser.parseFromString(
+                        String(list.getAttribute('data-prototype'))
+                            .replace('__name__label__', 'Item ' + count)
+                            .replace('__name__', String(count)),
+                        "text/xml"
+                );
+
+                console.log({0: prototype});
+                list.appendChild(prototype.children[0]);
+            }
+        }
+    </script>
+{% endblock collection_widget %}

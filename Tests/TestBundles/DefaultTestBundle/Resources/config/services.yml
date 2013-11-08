@@ -1,7 +1,0 @@
-parameters:
-#    default_test.example.class: Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Example
-
-services:
-#    default_test.example:
-#        class: %default_test.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]

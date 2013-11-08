@@ -27,11 +27,11 @@ class JsFormValidatorTest extends WebTestCase
         // - all constraints from form class
         // --------------------------------------------------------//
         $form = $factory->create(new TestEntityType(), $entity);
-        $this->checkAssertCollection($fm->getAllConstraints($form), [
+        $this->checkAssertCollection($fm->getAllConstraints($form), array(
             'email'    => 1,
             'password' => 1,
             'created'  => 1
-        ]);
+        ));
 
         // --------------------------------------------------------//
         // Get form for group_1 & group_2
@@ -40,21 +40,21 @@ class JsFormValidatorTest extends WebTestCase
         // - all constraints from form class
         // - one more added constraint below
         // --------------------------------------------------------//
-        $form = $factory->create(new TestEntityType(), $entity, [
-            'validation_groups' => ['group_1', 'group_2']
-        ]);
-        $form->add('age', 'text', [
-            'constraints' => [
-                new GreaterThan(['value' => 18])
-            ]
-        ]);
-        $this->checkAssertCollection($fm->getAllConstraints($form), [
+        $form = $factory->create(new TestEntityType(), $entity, array(
+            'validation_groups' => array('group_1', 'group_2')
+        ));
+        $form->add('age', 'text', array(
+            'constraints' => array(
+                new GreaterThan(array('value' => 18))
+            )
+        ));
+        $this->checkAssertCollection($fm->getAllConstraints($form), array(
             'name'     => 2,
             'email'    => 1,
             'password' => 1,
             'created'  => 1,
             'age'      => 1
-        ]);
+        ));
 
         // --------------------------------------------------------//
         // Get form for group_6 and try to remove some elements
@@ -62,16 +62,16 @@ class JsFormValidatorTest extends WebTestCase
         // - constraints for dynamically added "rate" field
         // - all constraints from form class
         // --------------------------------------------------------//
-        $form = $factory->create(new TestEntityType(), $entity, [
-            'validation_groups' => ['group_6']
-        ]);
+        $form = $factory->create(new TestEntityType(), $entity, array(
+            'validation_groups' => array('group_6')
+        ));
         $form->add('rate');
         $form->remove('email');
         $form->remove('password');
-        $this->checkAssertCollection($fm->getAllConstraints($form), [
+        $this->checkAssertCollection($fm->getAllConstraints($form), array(
             'created'  => 1,
             'rate'     => 1
-        ]);
+        ));
     }
 
     /**
