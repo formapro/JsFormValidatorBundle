@@ -26,6 +26,16 @@ class JsFormValidatorTwigExtension extends \Twig_Extension
     protected $factory;
 
     /**
+     * @codeCoverageIgnore
+     * @return JsFormValidatorFactory
+     */
+    protected function getFactory()
+    {
+        return $this->factory;
+    }
+
+    /**
+     * @codeCoverageIgnore
      * @param JsFormValidatorFactory $factory
      */
     public function __construct(JsFormValidatorFactory $factory)
@@ -43,11 +53,16 @@ class JsFormValidatorTwigExtension extends \Twig_Extension
         );
     }
 
+    /**
+     * @param Form $form
+     *
+     * @return string
+     */
     public function getJsValidator(Form $form)
     {
-        $this->factory->processForm($form);
+        $model = $this->getFactory()->createJsModel($form);
 
-        return $this->factory->generateJavascript();
+        return $this->getFactory()->generateInlineJs($model);
     }
 
     /**
@@ -57,6 +72,6 @@ class JsFormValidatorTwigExtension extends \Twig_Extension
      */
     public function getName()
     {
-        return 'FpJsFormValidator';
+        return 'fp_js_form_validator';
     }
 }

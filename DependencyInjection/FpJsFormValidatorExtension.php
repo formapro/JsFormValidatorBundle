@@ -15,6 +15,7 @@ use Symfony\Component\DependencyInjection\Loader;
 class FpJsFormValidatorExtension extends Extension
 {
     /**
+     * @codeCoverageIgnore
      * {@inheritDoc}
      */
     public function load(array $configs, ContainerBuilder $container)
@@ -28,6 +29,10 @@ class FpJsFormValidatorExtension extends Extension
         $loader->load('services.xml');
     }
 
+    /**
+     * @codeCoverageIgnore
+     * @return string
+     */
     public function getAlias()
     {
         return 'fp_js_form_validator';

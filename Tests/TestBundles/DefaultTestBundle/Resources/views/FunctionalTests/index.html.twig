@@ -1,0 +1,179 @@
+{% javascripts
+'@FpJsFormValidatorBundle/Resources/public/js/FpJsFormValidatorFactory.js'
+'@FpJsFormValidatorBundle/Resources/public/js/FpJsFormElement.js'
+'@FpJsFormValidatorBundle/Resources/public/js/FpJsValidationData.js'
+'@FpJsFormValidatorBundle/Resources/public/js/constraints/*'
+'@FpJsFormValidatorBundle/Resources/public/js/transformers/*'
+output="js/fp_js_validator.js" %}
+<script src="{{ asset_url }}"></script>
+{% endjavascripts %}
+{% set view = form.createView() %}
+
+<script type="text/javascript">
+    function FpJsFormValidatorBundleTestsTestBundlesDefaultTestBundleEntityTestEntity() {
+        this.isNameValid = function() {
+            return false;
+        }
+    }
+
+    function FpJsFormValidatorBundleTestsTestBundlesDefaultTestBundleEntityBasicConstraintsEntity() {
+        this.getValidVariable = function(trueVal, falseVal) {
+            return {{ isValid|default(1) }} === 1 ? trueVal : falseVal;
+        };
+
+        this.isTrue = function() {
+            return this.getValidVariable(true, false);
+        };
+        this.isFalse = function() {
+            return this.getValidVariable(false, true)
+        };
+        this.isNull = function() {
+            return this.getValidVariable(null, 1);
+        };
+        this.isNotNull = function() {
+            return this.getValidVariable(1, null);
+        };
+
+        this.isEqualTo = function() {
+            return this.getValidVariable("1", "0");
+        };
+
+        this.isNotEqualTo = function() {
+            return this.getValidVariable("0", "1");
+        };
+
+        this.isIdenticalTo = function() {
+            return this.getValidVariable(1, "1");
+        };
+
+        this.isNotIdenticalTo = function() {
+            return this.getValidVariable("1", 1);
+        };
+
+        this.isLessThan = function() {
+            return this.getValidVariable(0, 1);
+        };
+
+        this.isLessThanOrEqual = function() {
+            return this.getValidVariable(1, 2);
+        };
+
+        this.isGreaterThan = function() {
+            return this.getValidVariable(2, 1);
+        };
+
+        this.isGreaterThanOrEqual = function() {
+            return this.getValidVariable(1, 0);
+        };
+
+        this.isLengthMin = function() {
+            return this.getValidVariable('a', '');
+        };
+
+        this.isLengthMax = function() {
+            return this.getValidVariable('a', 'aa');
+        };
+
+        this.isLengthExact = function() {
+            return this.getValidVariable('a', 'aa');
+        };
+
+        this.isCountMin = function() {
+            return this.getValidVariable(['a'], []);
+        };
+
+        this.isCountMax = function() {
+            return this.getValidVariable(['a'], ['a', 'b']);
+        };
+
+        this.isCountExact = function() {
+            return this.getValidVariable(['a'], ['a', 'a']);
+        };
+
+        this.isRangeMin = function() {
+            return this.getValidVariable(2, 0);
+        };
+
+        this.isRangeMax = function() {
+            return this.getValidVariable(1, 2);
+        };
+
+        this.isRangeValueValid = function() {
+            return this.getValidVariable(1, 'a');
+        };
+
+        this.isTypeArray = function() {
+            return this.getValidVariable(['a'], 'a');
+        };
+        this.isTypeBool = function() {
+            return this.getValidVariable(true, 'a');
+        };
+        this.isTypeCallable = function() {
+            return this.getValidVariable(function(){}, 'a');
+        };
+        this.isTypeFloat = function() {
+            return this.getValidVariable(1.0, 1);
+        };
+        this.isTypeInteger = function() {
+            return this.getValidVariable(1, 1.0);
+        };
+        this.isTypeNull = function() {
+            return this.getValidVariable(null, 'a');
+        };
+        this.isTypeNumeric = function() {
+            return this.getValidVariable("1", 'a');
+        };
+        this.isTypeObject = function() {
+            return this.getValidVariable({}, 'a');
+        };
+        this.isTypeScalar = function() {
+            return this.getValidVariable(1, [1,2,3]);
+        };
+        this.isTypeString = function() {
+            return this.getValidVariable('1', 1);
+        };
+
+
+        this.getChoicesList = function() {
+            return ['June', 'July', 'August'];
+        };
+        this.isValidSingleChoice = function() {
+            return this.getValidVariable('male', 'wrong_choice');
+        };
+        this.isValidMultipleChoice = function() {
+            return this.getValidVariable(['June', 'July'], ['June', 'May']);
+        };
+        this.isMinMultipleChoice = function() {
+            return this.getValidVariable(['June', 'July'], ['June']);
+        };
+        this.isMaxMultipleChoice = function() {
+            return this.getValidVariable(['June'], ['June', 'July']);
+        };
+    }
+
+    var aaa = {b: null, c: 1};
+    var bbb = {a: aaa, d: 2};
+    aaa.b = bbb;
+
+    function __a(val) {
+        if (typeof val === 'object') {
+            var result = {};
+            for (var name in val) {
+                if (undefined !== val[name] && typeof val[name] !== "function") {
+                    result[name] = __a(val[name]);
+                }
+            }
+            return result;
+        } else {
+            return val;
+        }
+    }
+</script>
+
+<div id="transformer_result"></div>
+{{ form_start(view, { 'attr': {'novalidate': 'novalidate' }}) }}
+    <input type="submit" name="form_submit" id="form_submit"/>
+    {{ form_rest(view) }}
+{{ form_end(view) }}
+
+{{ fp_jsfv(form) }}
