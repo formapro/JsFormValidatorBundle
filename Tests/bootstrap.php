@@ -1,6 +1,8 @@
 <?php
 
-require_once __DIR__ . '/../vendor/autoload.php';
+if (!is_dir($vendor = __DIR__.'/../vendor')) {
+    die('Install dependencies first');
+}
+umask(0000);
 
-\Doctrine\Common\Annotations\AnnotationRegistry::registerLoader('class_exists');
-\Doctrine\ODM\MongoDB\Mapping\Driver\AnnotationDriver::registerAnnotationClasses();
+require($vendor.'/autoload.php');
