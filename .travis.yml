@@ -1,7 +1,30 @@
 language: php
 
-php: [5.3, 5.4, 5.5]
+php: [5.3]
+
+env:
+  - SF_VERSION='2.3.*'
 
 before_script:
-    - curl -s http://getcomposer.org/installer | php
-    - php composer.phar install
+  - export WEB_FIXTURES_HOST=http://localhost/index.php
+
+  - sh -e /etc/init.d/xvfb start
+  - export DISPLAY=:99.0
+  - sleep 4
+
+  - curl http://selenium.googlecode.com/files/selenium-server-standalone-2.33.0.jar > selenium.jar
+  - java -jar selenium.jar > selenium.log &
+  - sleep 4
+
+  - curl http://getcomposer.org/installer | php
+  - php composer.phar require --no-update symfony/framework-bundle=$SF_VERSION
+  - php composer.phar install --dev
+
+  - sudo apt-get update > /dev/null
+  - sudo apt-get install -y --force-yes apache2 libapache2-mod-php5 > /dev/null
+  - sudo sed -i -e "s,/var/www,$(pwd)/Tests/Resources/public,g" /etc/apache2/sites-available/default
+  - sudo /etc/init.d/apache2 restart
+
+script: phpunit -v
+after_failure:
+  - cat selenium.log

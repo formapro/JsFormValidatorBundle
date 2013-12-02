@@ -11,11 +11,7 @@ $container->loadFromExtension(
 $container->loadFromExtension(
     'mink',
     array(
-        'goutte' => array(),
         'base_url' => 'http://localhost',
-        'sahi' => array(),
-        'zombie' => array(),
-        'selenium' => array(),
         'selenium2' => array(),
     )
 );
