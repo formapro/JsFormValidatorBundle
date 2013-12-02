@@ -133,7 +133,6 @@ class FunctionalTestsController extends Controller
         $date->setTime(21, 15);
 
         $blank = new Blank(array('message' => '{{ value }}'));
-        //$notBank = new NotBlank(array('message' => '{{ value }}'));
         $choices = array('m' => 'male', 'f' => 'female');
 
         $form = $this
