@@ -9,7 +9,7 @@
          processIsolation="false"
          stopOnFailure="false"
          syntaxCheck="false"
-         bootstrap="Tests/bootstrap.php"
+         bootstrap="phpunit_bootstrap.php"
         >
     <testsuites>
         <testsuite name="Driver test suite">
@@ -18,8 +18,7 @@
     </testsuites>
 
     <php>
-        <!--server name="WEB_FIXTURES_HOST" value="http://test.mink.dev" /-->
-        <server name="KERNEL_DIR" value="Tests/" />
+        <server name="KERNEL_DIR" value="Tests/app" />
     </php>
 
     <filter>
