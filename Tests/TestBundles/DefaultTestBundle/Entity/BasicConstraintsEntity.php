@@ -10,7 +10,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * Book
  *
  * @ORM\Table()
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\BasicConstraintsRepository")
  *
  * @UniqueEntity(
  *     fields={"email"},

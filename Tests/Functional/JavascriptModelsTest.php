@@ -23,22 +23,6 @@ class JavascriptModelsTest extends BaseTestCase {
             ->getParameter('mink.base_url');
     }
 
-    protected function updateBasicConstraintsTable()
-    {
-        $this->clearDbTables('BasicConstraintsEntity');
-        $this->writeEntityToDb('BasicConstraintsEntity', array(
-            'blank'    => 'a',
-            'notBlank' => null,
-            'email'    => 'wrong_email',
-            'url'      => 'wrong_url',
-            'regex'    => 'bbb',
-            'ip'       => '125.125.125',
-            'time'     => '12/15/32',
-            'date'     => '04/04/2013',
-            'datetime' => '04/04/2013_12:15:32',
-        ));
-    }
-
     /**
      * @param $name
      *
@@ -116,8 +100,6 @@ class JavascriptModelsTest extends BaseTestCase {
 
     public function testBasicConstraintsForValidForm()
     {
-        $this->updateBasicConstraintsTable();
-
         $form = $this->getSubmittedForm('basic_constraints/1');
         // Check that form does not has errors
         $errors = $this->getElementErrors($form, true);
@@ -128,8 +110,6 @@ class JavascriptModelsTest extends BaseTestCase {
 
     public function testBasicConstraintsForInvalidForm()
     {
-        $this->updateBasicConstraintsTable();
-
         $form = $this->getSubmittedForm('basic_constraints/0');
         $errors = $this->getElementErrors($form);
         $expected = array(
