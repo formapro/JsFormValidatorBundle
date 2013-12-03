@@ -61,6 +61,6 @@ $collection->add(
         )
     )
 );
-
+$collection->addCollection($loader->import("@FpJsFormValidatorBundle/Resources/config/routing.xml"));
 
 return $collection;

@@ -1,17 +1,31 @@
 <?php
-$container->loadFromExtension(
-    'framework',
-    array(
-        'router' => array('resource' => 'routing.php'),
-        'templating' => array('engines' => array('php')),
-        'secret' => 'some value',
-        'test' => true,
-    )
-);
-$container->loadFromExtension(
-    'mink',
-    array(
-        'base_url' => 'http://localhost',
-        'selenium2' => array(),
-    )
-);
+$container->loadFromExtension('framework', array(
+    'translator' => array('fallback' => 'en'),
+    'secret' => 'some value',
+    'router' => array('resource' => __DIR__.'/routing.php'),
+    'form' => array(),
+    'csrf_protection' => array(),
+    'validation' => array('enable_annotations' => true),
+    'templating' => array('engines' => array('twig', 'php')),
+    'default_locale' => 'en',
+    'trusted_proxies' => array(),
+    'session' => array(),
+    'fragments' => array(),
+    'http_method_override' => true,
+    'test' => true,
+));
+$container->loadFromExtension('twig', array(
+    'debug' => true,
+    'strict_variables' => true,
+));
+$container->loadFromExtension('doctrine', array(
+    'orm' => array(
+        //'paths' => __DIR__ . '/';
+        'auto_mapping' => true
+    ),
+    'dbal' => array()
+));
+$container->loadFromExtension('doctrine', array(
+    'orm' => array(),
+    'dbal' => array()
+));

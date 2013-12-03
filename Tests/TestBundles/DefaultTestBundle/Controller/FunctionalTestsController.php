@@ -18,8 +18,7 @@ use Symfony\Component\Validator\Constraints\True;
 class FunctionalTestsController extends Controller
 {
     /**
-     * @Route("/fp_js_form_validator/javascript_unit_test/levels")
-     * @Template("DefaultTestBundle:FunctionalTests:index.html.twig")
+     *
      */
     public function levelsAction()
     {
@@ -31,14 +30,14 @@ class FunctionalTestsController extends Controller
                 )
             ));
 
-        return array(
-            'form' => $form,
+        return $this->render(
+            'DefaultTestBundle:FunctionalTests:index.html.twig',
+            array('form' => $form)
         );
     }
 
     /**
-     * @Route("/fp_js_form_validator/javascript_unit_test/translations")
-     * @Template("DefaultTestBundle:FunctionalTests:index.html.twig")
+     *
      */
     public function translationAction()
     {
@@ -52,14 +51,14 @@ class FunctionalTestsController extends Controller
                 )
             ));
 
-        return array(
-            'form' => $builder->getForm(),
+        return $this->render(
+            'DefaultTestBundle:FunctionalTests:index.html.twig',
+            array('form' => $builder->getForm())
         );
     }
 
     /**
-     * @Route("/fp_js_form_validator/javascript_unit_test/groups_getters")
-     * @Template("DefaultTestBundle:FunctionalTests:index.html.twig")
+     *
      */
     public function groupsAndGettersAction()
     {
@@ -74,14 +73,14 @@ class FunctionalTestsController extends Controller
                 'validation_groups' => array('child')
             ));
 
-        return array(
-            'form' => $parent,
+        return $this->render(
+            'DefaultTestBundle:FunctionalTests:index.html.twig',
+            array('form' => $parent)
         );
     }
 
     /**
-     * @Route("/fp_js_form_validator/javascript_unit_test/basic_constraints/{isValid}")
-     * @Template("DefaultTestBundle:FunctionalTests:index.html.twig")
+     *
      */
     public function basicConstraintsAction($isValid)
     {
@@ -116,15 +115,14 @@ class FunctionalTestsController extends Controller
         $form = $this->createForm(new BasicConstraintsEntityType(), $entity);
         $form->handleRequest($this->getRequest());
 
-        return array(
-            'form' => $form,
-            'isValid' => $isValid
+        return $this->render(
+            'DefaultTestBundle:FunctionalTests:index.html.twig',
+            array('form' => $form, 'isValid' => $isValid)
         );
     }
 
     /**
-         * @Route("/fp_js_form_validator/javascript_unit_test/transformers")
-     * @Template("DefaultTestBundle:FunctionalTests:index.html.twig")
+     *
      */
     public function transformersAction()
     {
@@ -177,8 +175,9 @@ class FunctionalTestsController extends Controller
 
         $form->handleRequest($this->getRequest());
 
-        return array(
-            'form' => $form,
+        return $this->render(
+            'DefaultTestBundle:FunctionalTests:index.html.twig',
+            array('form' => $form)
         );
     }
 }
