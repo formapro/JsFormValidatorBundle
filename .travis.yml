@@ -19,10 +19,10 @@ before_script:
   - curl http://getcomposer.org/installer | php
   - php composer.phar require --no-update symfony/framework-bundle=$SF_VERSION
   - php composer.phar install --dev
-  - sudo mkdir Tests/Resources/cache
-  - sudo chmod 0777 Tests/Resources/cache
-  - sudo mkdir Tests/Resources/logs
-  - sudo chmod 0777 Tests/Resources/logs
+  - sudo mkdir Tests/app/cache
+  - sudo chmod 0777 Tests/app/cache
+  - sudo mkdir Tests/app/logs
+  - sudo chmod 0777 Tests/app/logs
 
   - sudo apt-get update > /dev/null
   - sudo apt-get install -y --force-yes apache2 libapache2-mod-php5 > /dev/null
