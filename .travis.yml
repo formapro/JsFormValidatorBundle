@@ -12,33 +12,33 @@ before_script:
   - export DISPLAY=:99.0
   - sleep 4
 
-  #- curl http://getcomposer.org/installer | php
-  #- php composer.phar require --no-update symfony/framework-bundle=$SF_VERSION
-  #- php composer.phar install --dev
+  - curl http://getcomposer.org/installer | php
+  - php composer.phar require --no-update symfony/framework-bundle=$SF_VERSION
+  - php composer.phar install --dev
 
-  #- sudo chmod 0777 Tests/app/cache
-  #- sudo chmod 0777 Tests/app/logs
+  - sudo chmod 0777 Tests/app/cache
+  - sudo chmod 0777 Tests/app/logs
 
   - sudo apt-get update > /dev/null
   - sudo apt-get install -y --force-yes apache2 libapache2-mod-php5 > /dev/null
 
-  - curl http://localhost
-  - sudo cat /etc/apache2/sites-available/default
-  - ls -la /var/www
+  #- curl http://localhost
+  #- sudo cat /etc/apache2/sites-available/default
+  #- ls -la /var/www
 
 
   - sudo sed -i -e "s,/var/www,$(pwd)/Tests/app,g" /etc/apache2/sites-available/default
   - sudo /etc/init.d/apache2 restart
 
-  - curl http://localhost
-  - curl http://localhost/fp_js_form_validator/javascript_unit_test/levels
-  - curl http://localhost/index.php/fp_js_form_validator/javascript_unit_test/levels
-  - sudo cat /etc/apache2/sites-available/default
-  - sudo cat /home/travis/build/yury-maltsev/FpJsFormValidatorBundle/Tests/app/index.php
+  #- curl http://localhost
+  #- curl http://localhost/fp_js_form_validator/javascript_unit_test/levels
+  #- curl http://localhost/index.php/fp_js_form_validator/javascript_unit_test/levels
+  #- sudo cat /etc/apache2/sites-available/default
+  #- sudo cat /home/travis/build/yury-maltsev/FpJsFormValidatorBundle/Tests/app/index.php
 
-  #- curl http://selenium.googlecode.com/files/selenium-server-standalone-2.33.0.jar > selenium.jar
-  #- java -jar selenium.jar > selenium.log &
-  #- sleep 4
+  - curl http://selenium.googlecode.com/files/selenium-server-standalone-2.33.0.jar > selenium.jar
+  - java -jar selenium.jar > selenium.log &
+  - sleep 4
 
 script: phpunit -v
 after_failure:

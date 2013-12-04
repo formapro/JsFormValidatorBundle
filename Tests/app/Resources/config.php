@@ -27,7 +27,7 @@ $container->loadFromExtension('doctrine', array(
 $container->loadFromExtension(
     'mink',
     array(
-        'base_url' => 'http://localhost',
+        'base_url' => 'http://localhost/index.php',
         'selenium2' => array(),
     )
 );
