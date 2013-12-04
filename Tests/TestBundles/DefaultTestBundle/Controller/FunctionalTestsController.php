@@ -18,7 +18,7 @@ use Symfony\Component\Validator\Constraints\True;
 class FunctionalTestsController extends Controller
 {
     /**
-     *
+     * Check forms and subforms
      */
     public function levelsAction()
     {
@@ -37,7 +37,7 @@ class FunctionalTestsController extends Controller
     }
 
     /**
-     *
+     * Check translation service
      */
     public function translationAction()
     {
@@ -58,7 +58,8 @@ class FunctionalTestsController extends Controller
     }
 
     /**
-     *
+     * Check groups as array and as callback.
+     * Also check initializing of getters
      */
     public function groupsAndGettersAction()
     {
@@ -80,7 +81,7 @@ class FunctionalTestsController extends Controller
     }
 
     /**
-     *
+     * Check native constraints functionality independs of type of fields
      */
     public function basicConstraintsAction($isValid)
     {
@@ -122,7 +123,7 @@ class FunctionalTestsController extends Controller
     }
 
     /**
-     *
+     * Check different data-transformers
      */
     public function transformersAction()
     {

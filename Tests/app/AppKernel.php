@@ -18,6 +18,7 @@ class AppKernel extends Kernel
     {
         $bundles = array(
             new FpJsFormValidatorBundle(),
+            new DefaultTestBundle(),
             new FrameworkBundle(),
             new SecurityBundle(),
             new TwigBundle(),
