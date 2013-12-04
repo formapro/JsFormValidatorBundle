@@ -27,7 +27,7 @@ $container->loadFromExtension('doctrine', array(
 $container->loadFromExtension(
     'mink',
     array(
-        'base_url' => 'http://fpjsvb.int',
+        'base_url' => 'http://localhost',
         'selenium2' => array(),
     )
 );
