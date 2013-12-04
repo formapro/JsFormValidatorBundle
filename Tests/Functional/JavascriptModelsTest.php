@@ -32,8 +32,6 @@ class JavascriptModelsTest extends BaseTestCase {
     {
         $session = $this->getMink()->getSession('selenium2');
         $session->visit($this->base.'/fp_js_form_validator/javascript_unit_test/' . $name);
-        var_dump($this->base.'/fp_js_form_validator/javascript_unit_test/' . $name);
-        var_dump($session->getPage()->getHtml());
         $session->getPage()->findButton('form_submit')->click();
         $session->wait(5000,
             "FpJsFormValidatorFactory.forms.form.countProcessedRequests() == 0"
