@@ -20,7 +20,10 @@ before_script:
   #- sudo chmod 0777 Tests/app/logs
   - sudo apt-get update > /dev/null
   - sudo apt-get install -y --force-yes apache2 libapache2-mod-php5 > /dev/null
+
+  - sudo cat /etc/apache2/sites-available/default
   - curl http://localhost
+
   - sudo sed -i -e "s,/var/www,$(pwd)/Tests/app,g" /etc/apache2/sites-available/default
   - sudo /etc/init.d/apache2 restart
 
