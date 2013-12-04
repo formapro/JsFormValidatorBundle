@@ -2,5 +2,3 @@
 vendor
 composer.lock
 composer.phar
-Tests/app/cache
-Tests/app/logs
