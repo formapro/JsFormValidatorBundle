@@ -1,6 +1,4 @@
 <?php
-namespace Fp\JsFormValidatorBundle\Tests;
-
 use Fp\JsFormValidatorBundle\FpJsFormValidatorBundle;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\DefaultTestBundle;
 use Symfony\Bundle\AsseticBundle\AsseticBundle;

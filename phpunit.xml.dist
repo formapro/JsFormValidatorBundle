@@ -9,7 +9,7 @@
          processIsolation="false"
          stopOnFailure="false"
          syntaxCheck="false"
-         bootstrap="phpunit_bootstrap.php"
+         bootstrap="Tests/app/bootstrap.php"
         >
     <testsuites>
         <testsuite name="Driver test suite">
@@ -18,7 +18,7 @@
     </testsuites>
 
     <php>
-        <server name="KERNEL_DIR" value="Tests/app" />
+        <server name="KERNEL_DIR" value="/home/ymaltsev/Projects/JsFormValidatorBundle/Tests/app" />
     </php>
 
     <filter>

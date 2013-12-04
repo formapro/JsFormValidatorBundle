@@ -20,12 +20,14 @@ $container->loadFromExtension('twig', array(
 ));
 $container->loadFromExtension('doctrine', array(
     'orm' => array(
-        //'paths' => __DIR__ . '/';
         'auto_mapping' => true
     ),
     'dbal' => array()
 ));
-$container->loadFromExtension('doctrine', array(
-    'orm' => array(),
-    'dbal' => array()
-));
+$container->loadFromExtension(
+    'mink',
+    array(
+        'base_url' => 'http://fpjsvb.int',
+        'selenium2' => array(),
+    )
+);

@@ -8,23 +8,25 @@ $collection = new RouteCollection();
 $controllerClass = 'Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Controller\FunctionalTestsController';
 
 $collection->add(
-    'fp_js_form_validator_test_translations',
+    'fp_js_form_validator_test_levels',
     new Route(
-        '/fp_js_form_validator/javascript_unit_test/translations',
+        '/fp_js_form_validator/javascript_unit_test/levels',
         array(
             '_controller' => $controllerClass . '::levelsAction',
         )
     )
 );
+
 $collection->add(
-    'fp_js_form_validator_test_levels',
+    'fp_js_form_validator_test_translations',
     new Route(
-        '/fp_js_form_validator/javascript_unit_test/levels',
+        '/fp_js_form_validator/javascript_unit_test/translations',
         array(
             '_controller' => $controllerClass . '::translationAction',
         )
     )
 );
+
 $collection->add(
     'fp_js_form_validator_test_groups_getters',
     new Route(
@@ -34,15 +36,7 @@ $collection->add(
         )
     )
 );
-$collection->add(
-    'fp_js_form_validator_test_groups_getters',
-    new Route(
-        '/fp_js_form_validator/javascript_unit_test/groups_getters',
-        array(
-            '_controller' => $controllerClass . '::groupsAndGettersAction',
-        )
-    )
-);
+
 $collection->add(
     'fp_js_form_validator_test_basic_constraints',
     new Route(
@@ -53,7 +47,7 @@ $collection->add(
     )
 );
 $collection->add(
-    'fp_js_form_validator_test_groups_getters',
+    'fp_js_form_validator_test_transformers',
     new Route(
         '/fp_js_form_validator/javascript_unit_test/transformers',
         array(
