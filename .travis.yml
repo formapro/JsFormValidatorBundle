@@ -32,6 +32,7 @@ before_script:
 
   - curl http://localhost
   - curl http://localhost/fp_js_form_validator/javascript_unit_test/levels
+  - curl http://localhost/index.php/fp_js_form_validator/javascript_unit_test/levels
   - sudo cat /etc/apache2/sites-available/default
   - sudo cat /home/travis/build/yury-maltsev/FpJsFormValidatorBundle/Tests/app/index.php
 
