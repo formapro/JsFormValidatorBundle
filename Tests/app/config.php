@@ -2,7 +2,7 @@
 $container->loadFromExtension('framework', array(
     'translator' => array('fallback' => 'en'),
     'secret' => 'some value',
-    'router' => array('resource' => __DIR__.'/routing.php'),
+    'router' => array('resource' => 'routing.php'),
     'form' => array(),
     'csrf_protection' => array(),
     'validation' => array('enable_annotations' => true),
