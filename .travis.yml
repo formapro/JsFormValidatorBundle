@@ -21,7 +21,7 @@ before_script:
   - sudo apt-get update > /dev/null
   - sudo apt-get install -y --force-yes apache2 libapache2-mod-php5 > /dev/null
 
-- curl http://localhost
+  - curl http://localhost
   - sudo cat /etc/apache2/sites-available/default
   - ls -la /var/www
 
