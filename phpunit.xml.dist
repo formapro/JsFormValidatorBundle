@@ -18,7 +18,7 @@
     </testsuites>
 
     <php>
-        <server name="KERNEL_DIR" value="/home/ymaltsev/Projects/JsFormValidatorBundle/Tests/app" />
+        <server name="KERNEL_DIR" value="Tests/app" />
     </php>
 
     <filter>
