@@ -422,7 +422,7 @@ class JsFormValidatorFactoryTest extends BaseTestCase
         /** @var JsFormValidatorFactory $factory */
 
         $model = new JsFormElement('id', 'form_id');
-        $string = "<script type=\"text/javascript\">FpJsFormValidatorFactory.initNewModel(new FpJsFormElement({'id':'id','name':'form_id','dataClass':null,'type':null,'validationData':[],'transformers':[],'cascadeValidation':true,'events':[],'children':[],'config':[]}))</script>";
+        $string = "<script type=\"text/javascript\">FpJsFormValidatorFactory.initNewModel(new FpJsFormElement({'id':'id','name':'form_id','dataClass':null,'type':null,'invalidMessage':null,'validationData':[],'transformers':[],'cascadeValidation':true,'events':[],'children':[],'config':[]}))</script>";
         $this->assertEquals($string, $factory->generateInlineJs($model));
     }
 

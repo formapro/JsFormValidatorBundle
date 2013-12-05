@@ -6,6 +6,7 @@ function FpJsFormElement(options) {
     this.name              = null;
     this.form              = null;
     this.dataClass         = null;
+    this.invalidMessage    = null;
     this.type              = null;
     this.element           = null;
     this.parent            = null;
@@ -32,6 +33,7 @@ function FpJsFormElement(options) {
      */
     this.initialize = function(form, parent) {
         parent = parent ? parent : null;
+        this.parent = parent;
 
         // Init the form element
         this.form = form;
@@ -99,6 +101,14 @@ function FpJsFormElement(options) {
         } else {
             return null;
         }
+    };
+
+    /**
+     * Returns an invalid message
+     * @returns {String}
+     */
+    this.getInvalidMessage = function() {
+        return this.invalidMessage;
     };
 
     /**
@@ -230,7 +240,7 @@ function FpJsFormElement(options) {
      */
     this.getValue = function() {
         var i = this.transformers.length;
-        var value = this.getElement().value;
+        var value = this.getInputValue();
 
         if (i && undefined === value) {
             value = this.getMappedValue();
@@ -241,9 +251,12 @@ function FpJsFormElement(options) {
         while (i--) {
             value = this.transformers[i].reverseTransform(value, this);
         }
-        //console.log(value);
 
         return value;
+    };
+
+    this.getInputValue = function() {
+        return this.getElement()? this.getElement().value : undefined;
     };
 
     this.getMappedValue = function() {
@@ -261,6 +274,10 @@ function FpJsFormElement(options) {
     };
 
     this.getSpecifiedElementTypeValue = function() {
+        if (!this.getElement()) {
+            return undefined;
+        }
+
         var value;
         if ('checkbox' == this.getType() || 'radio' == this.getType()) {
             value = this.getElement().checked;
@@ -274,7 +291,7 @@ function FpJsFormElement(options) {
                 }
             }
         } else {
-            value = this.getElement().value;
+            value = this.getInputValue();
         }
 
         return value;
@@ -344,9 +361,6 @@ function FpJsFormElement(options) {
      * @returns {boolean}
      */
     this.isValid = function() {
-        this.errors = [];
-        this.requests = [];
-
         var value = this.getValue();
 
         var i = this.validationData.length;
@@ -368,7 +382,6 @@ function FpJsFormElement(options) {
         var i = list.length;
         while (i--) {
             var transformer = this.createTransformer(list[i]);
-            //console.log(list[i].name + '__', transformer);
             if (null !== transformer) {
                 if (undefined !== transformer.transformers) {
                     transformer.transformers = this.parseTransformers(transformer.transformers);

@@ -132,6 +132,7 @@ class JsFormValidatorFactory
         $model = new JsFormElement($this->getElementId($form), $form->getName());
         $model->setType($form->getConfig()->getType());
         $model->setConfig($this->getPreparedConfig());
+        $model->setInvalidMessage($form->getConfig()->getOption('invalid_message'));
         $model->setTransformers($this->getTransformersList($form));
         $model->setCascadeValidation($form->getConfig()->getOption('cascade_validation'));
         $model->addValidationData($this->getElementValidationData($form, $groups));

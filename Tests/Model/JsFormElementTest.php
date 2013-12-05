@@ -22,6 +22,7 @@ class JsFormElementTest extends BaseTestCase
             'id'                => 'id',
             'name'              => 'name',
             'dataClass'         => null,
+            'invalidMessage'    => null,
             'type'              => null,
             'validationData'    => array(),
             'transformers'      => array(),
@@ -36,7 +37,7 @@ class JsFormElementTest extends BaseTestCase
     public function testModelToStringConversion()
     {
         $model  = new JsFormElement('id', 'form_id');
-        $string = "new FpJsFormElement({'id':'id','name':'form_id','dataClass':null,'type':null,'validationData':[],'transformers':[],'cascadeValidation':true,'events':[],'children':[],'config':[]})";
+        $string = "new FpJsFormElement({'id':'id','name':'form_id','dataClass':null,'type':null,'invalidMessage':null,'validationData':[],'transformers':[],'cascadeValidation':true,'events':[],'children':[],'config':[]})";
         $this->assertEquals($string, $model->__toString());
     }
 

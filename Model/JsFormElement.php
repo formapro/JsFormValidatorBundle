@@ -34,6 +34,11 @@ class JsFormElement extends JsModelAbstract
     protected $type = null;
 
     /**
+     * @var string
+     */
+    protected $invalidMessage = null;
+
+    /**
      * @var array
      */
     protected $transformers = array();
@@ -91,6 +96,7 @@ class JsFormElement extends JsModelAbstract
             'name'              => $this->getName(),
             'dataClass'         => $this->getDataClass(),
             'type'              => $this->getType(),
+            'invalidMessage'   => $this->getInvalidMessage(),
             'validationData'    => array_values($this->getValidationData()),
             'transformers'      => $this->getTransformers(),
             'cascadeValidation' => $this->getCascadeValidation(),
@@ -328,5 +334,29 @@ class JsFormElement extends JsModelAbstract
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Get InvalidMessage
+     *
+     * @return string
+     */
+    public function getInvalidMessage()
+    {
+        return $this->invalidMessage;
+    }
+
+    /**
+     * Set invalidMessage
+     *
+     * @param string $invalidMessage
+     *
+     * @return JsFormElement
+     */
+    public function setInvalidMessage($invalidMessage)
+    {
+        $this->invalidMessage = $invalidMessage;
+
+        return $this;
     }
 } 

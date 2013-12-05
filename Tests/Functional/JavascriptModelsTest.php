@@ -162,6 +162,7 @@ class JavascriptModelsTest extends BaseTestCase {
         $this->assertEquals(array('f'), $this->getElementErrors($form->findById('form_ChoiceToValue')));
         $this->assertEquals(array('m,f'), $this->getElementErrors($form->findById('form_ChoicesToBooleanArray')));
         $this->assertEquals(array('f'), $this->getElementErrors($form->findById('form_ChoiceToBooleanArray')));
+        $this->assertEquals(array('not_equal'), $this->getElementErrors($form->findById('form_repeated_first')));
     }
 
 } 

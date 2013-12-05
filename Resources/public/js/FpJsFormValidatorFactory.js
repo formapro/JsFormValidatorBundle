@@ -59,7 +59,8 @@ var FpJsFormValidatorFactory = new function() {
     this.getEventCallback = function(model) {
         var self = this;
         return function(event){
-            self.clearErrors(model.getForm());
+            self.clearModel(model);
+            self.clearDomErrors(model.getForm());
 
             var isValid = self.validateRecursively(model);
             var hasRequests = self.sendModelRequests(model);
@@ -221,10 +222,12 @@ var FpJsFormValidatorFactory = new function() {
             }
             var errorList = this.createErrorList(errors[elementId].errors);
 
-            var parent = 'form' === errors[elementId].type
-                ? element
-                : element.parentNode
-            ;
+            var parent = element;
+            if (parent && 'form' !== errors[elementId].type) {
+                parent = element.parentNode;
+            } else if (!parent) {
+                parent = form;
+            }
 
             parent.insertBefore(errorList, parent.firstChild);
         }
@@ -254,8 +257,10 @@ var FpJsFormValidatorFactory = new function() {
      * Delete all the DOM elemets contains errors
      *
      * @param {HTMLFormElement} form
+     *
+     * @returns {FpJsFormValidatorFactory}
      */
-    this.clearErrors = function(form) {
+    this.clearDomErrors = function(form) {
         var errorClass = new RegExp('(^|\s)' + this.errorClass + '($|\s)');
         var elems = form.getElementsByTagName('*');
         for (var i in elems) {
@@ -266,4 +271,22 @@ var FpJsFormValidatorFactory = new function() {
 
         return this;
     };
+
+    /**
+     * Clear all the necessary data in a model (recursively)
+     *
+     * @param {FpJsFormElement} model
+     *
+     * @returns {FpJsFormValidatorFactory}
+     */
+    this.clearModel = function(model) {
+        model.errors = [];
+        model.requests = [];
+
+        for (var childName in model.getChildren()) {
+            this.clearModel(model.getChild(childName));
+        }
+
+        return this;
+    }
 }();

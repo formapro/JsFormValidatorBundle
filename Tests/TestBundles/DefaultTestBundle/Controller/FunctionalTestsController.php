@@ -144,33 +144,40 @@ class FunctionalTestsController extends Controller
                 'ChoiceToValue'         => 'f',
                 'ChoicesToBooleanArray' => array('m', 'f'),
                 'ChoiceToBooleanArray'  => 'f',
+                'repeated'              => 'asdf'
             ))
             ->add('date',     'date',     array('constraints' => array($blank)))
             ->add('time',     'time',     array('constraints' => array($blank)))
             ->add('datetime', 'datetime', array('constraints' => array($blank)))
             ->add('checkbox', 'checkbox', array('constraints' => array(new False(array('message' => '{{ value }}')))))
             ->add('radio',    'radio',    array('constraints' => array(new True(array('message' => '{{ value }}')))))
-            ->add('ChoicesToValues',  'choice',   array(
-                'multiple' => true,
-                'choices' => $choices,
+            ->add('ChoicesToValues', 'choice', array(
+                'multiple'    => true,
+                'choices'     => $choices,
                 'constraints' => array($blank)
             ))
-            ->add('ChoiceToValue',  'choice',   array(
-                'multiple' => false,
-                'choices' => $choices,
+            ->add('ChoiceToValue', 'choice', array(
+                'multiple'    => false,
+                'choices'     => $choices,
                 'constraints' => array($blank)
             ))
-            ->add('ChoicesToBooleanArray',  'choice',   array(
+            ->add('ChoicesToBooleanArray', 'choice', array(
                 'expanded'    => true,
                 'multiple'    => true,
                 'choices'     => $choices,
                 'constraints' => array($blank)
             ))
-            ->add('ChoiceToBooleanArray',  'choice',   array(
+            ->add('ChoiceToBooleanArray', 'choice', array(
                 'expanded'    => true,
                 'multiple'    => false,
                 'choices'     => $choices,
                 'constraints' => array($blank)
+            ))
+            ->add('repeated', 'repeated', array(
+                'type'            => 'text',
+                'invalid_message' => 'not_equal',
+                'first_options'   => array('label' => 'Field'),
+                'second_options'  => array('label' => 'Repeat Field', 'data' => 'zxcv'),
             ))
             ->getForm();
 
