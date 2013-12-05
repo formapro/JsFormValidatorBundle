@@ -131,7 +131,7 @@ class JsFormValidatorFactory
     {
         $model = new JsFormElement($this->getElementId($form), $form->getName());
         $model->setType($form->getConfig()->getType());
-        $model->setConfig($this->prepareConfig());
+        $model->setConfig($this->getPreparedConfig());
         $model->setTransformers($this->getTransformersList($form));
         $model->setCascadeValidation($form->getConfig()->getOption('cascade_validation'));
         $model->addValidationData($this->getElementValidationData($form, $groups));
@@ -414,11 +414,13 @@ class JsFormValidatorFactory
     /**
      * @return array
      */
-    protected function prepareConfig()
+    protected function getPreparedConfig()
     {
         $result = array();
-        foreach ($this->config['routing'] as $param => $value) {
-            $result['routing'][$param] = $this->generateUrl($value);
+        if (!empty($this->config['routing'])) {
+            foreach ($this->config['routing'] as $param => $value) {
+                $result['routing'][$param] = $this->generateUrl($value);
+            }
         }
 
         return $result;

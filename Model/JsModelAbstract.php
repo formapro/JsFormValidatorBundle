@@ -74,7 +74,7 @@ abstract class JsModelAbstract {
             return $value;
         }
         // For null
-        elseif (null === $value) {
+        elseif (is_null($value)) {
             return 'null';
         }
         // Otherwise

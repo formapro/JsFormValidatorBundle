@@ -17,28 +17,20 @@ class AjaxController extends Controller {
     public function checkUniqueEntityAction()
     {
         $data = $this->getRequest()->request->all();
-        $repo = $this->get('doctrine')->getRepository($data['entity']);
-
-        $criteria = array();
-        foreach ($data['data'] as $key => $value) {
-            $value = ('' !== $value) ? $value : null;
-            if ($data['ignoreNull'] && null === $repo->findBy(array($key => $value))) {
-                break;
-            } else {
-                $criteria[$key] = $value;
+        foreach ($data['data'] as $value) {
+            // If field(s) has an empty value and it should be ignored
+            if ((bool)$data['ignoreNull'] && ('' === $value || is_null($value))) {
+                // Just return a positive result
+                return new JsonResponse(true);
             }
         }
 
-        $result = true;
-        if (count($criteria) === count($data['data'])) {
-            $entity = $this
-                ->get('doctrine')
-                ->getRepository($data['entity'])
-                ->{$data['repositoryMethod']}($data['data']);
+        $entity = $this
+            ->get('doctrine')
+            ->getRepository($data['entity'])
+            ->{$data['repositoryMethod']}($data['data'])
+        ;
 
-            $result = empty($entity);
-        }
-
-        return new JsonResponse($result);
+        return new JsonResponse(empty($entity));
     }
 } 

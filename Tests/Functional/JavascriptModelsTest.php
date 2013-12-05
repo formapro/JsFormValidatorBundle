@@ -73,10 +73,10 @@ class JavascriptModelsTest extends BaseTestCase {
         $form = $this->getSubmittedForm('levels');
 
         $errors = $this->getElementErrors($form->findById('form_name'));
-        $this->assertCount(2, $errors);
+        $this->assertEquals(array('form_message', 'entity_message'), $errors);
 
         $errors = $this->getElementErrors($form->findById('form_email'));
-        $this->assertCount(1, $errors);
+        $this->assertEquals(array('controller_message'), $errors);
     }
 
     public function testTranslations()
@@ -92,10 +92,15 @@ class JavascriptModelsTest extends BaseTestCase {
         $form = $this->getSubmittedForm('groups_getters');
 
         $errors = $this->getElementErrors($form->findById('form_name'));
-        $this->assertCount(4, $errors);
+        $this->assertEquals(array(
+            'child_message',
+            'entity_message',
+            'entity_parent_message',
+            'getter_message'
+        ), $errors);
 
         $errors = $this->getElementErrors($form->findById('form_name_name'));
-        $this->assertCount(2, $errors);
+        $this->assertEquals(array('form_message', 'entity_message'), $errors);
     }
 
     public function testBasicConstraintsForValidForm()

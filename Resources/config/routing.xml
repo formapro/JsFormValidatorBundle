@@ -4,7 +4,7 @@
         xsi:schemaLocation="http://symfony.com/schema/routing
         http://symfony.com/schema/routing/routing-1.0.xsd">
 
-    <route id="fp_js_form_validator.check_unique_entity" path="/fp_js_form_validator/check_unique_entity">
+    <route id="fp_js_form_validator.check_unique_entity" path="/check_unique_entity">
         <default key="_controller">FpJsFormValidatorBundle:Ajax:checkUniqueEntity</default>
     </route>
 </routes>

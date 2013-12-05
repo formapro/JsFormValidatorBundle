@@ -18,7 +18,9 @@ use Fp\JsFormValidatorBundle\Tests\Fixtures\FormGroupsClosure;
 use Fp\JsFormValidatorBundle\Tests\Fixtures\TestConstraint;
 use Fp\JsFormValidatorBundle\Tests\Fixtures\TestForm;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceList;
 use Symfony\Component\Form\Extension\Core\DataTransformer\ArrayToPartsTransformer;
+use Symfony\Component\Form\Extension\Core\DataTransformer\ChoicesToValuesTransformer;
 use Symfony\Component\Form\Extension\Core\DataTransformer\DataTransformerChain;
 use Symfony\Component\Form\Extension\Core\DataTransformer\DateTimeToArrayTransformer;
 use Symfony\Component\Form\Form;
@@ -354,14 +356,14 @@ class JsFormValidatorFactoryTest extends BaseTestCase
     {
         $factory = $this->getMock(
             'Fp\JsFormValidatorBundle\Factory\JsFormValidatorFactory',
-            array('prepareConfig', 'processChildren', 'getEntityMetadata', 'getMappingValidationData', 'getElementValidationData', 'getTransformersList'),
+            array('getPreparedConfig', 'processChildren', 'getEntityMetadata', 'getMappingValidationData', 'getElementValidationData', 'getTransformersList'),
             array(),
             '',
             false
         );
 
         $factory->expects($this->exactly(3))
-            ->method('prepareConfig')
+            ->method('getPreparedConfig')
             ->will($this->returnValue(array()));
 
         $factory->expects($this->exactly(3))
@@ -422,6 +424,56 @@ class JsFormValidatorFactoryTest extends BaseTestCase
         $model = new JsFormElement('id', 'form_id');
         $string = "<script type=\"text/javascript\">FpJsFormValidatorFactory.initNewModel(new FpJsFormElement({'id':'id','name':'form_id','dataClass':null,'type':null,'validationData':[],'transformers':[],'cascadeValidation':true,'events':[],'children':[],'config':[]}))</script>";
         $this->assertEquals($string, $factory->generateInlineJs($model));
+    }
+
+    public function testGetTransformerParam()
+    {
+        $factory = $this->getMock(
+            'Fp\JsFormValidatorBundle\Factory\JsFormValidatorFactory',
+            null,
+            array(),
+            '',
+            false
+        );
+        $transformer = new ChoicesToValuesTransformer(new ChoiceList(array('a', 'b'), array('A', 'B')));
+        $result = $this->callNoPublicMethod($factory, 'getTransformerParam', array($transformer, 'choiceList'));
+        $this->assertEquals(array('a', 'b'), $result);
+    }
+
+    public function testPrepareConfig()
+    {
+        $factory = $this->getMock(
+            'Fp\JsFormValidatorBundle\Factory\JsFormValidatorFactory',
+            array('generateUrl'),
+            array(),
+            '',
+            false
+        );
+        $factory->expects($this->exactly(2))
+            ->method('generateUrl')
+            ->will($this->returnValue('generated_url'));
+
+        $config = array(
+            'routing' => array(
+                'param_one' => 'route_one',
+                'param_two' => 'route_two'
+            ),
+            'some_other_config' => true
+        );
+        $expected = array(
+            'routing' => array(
+                'param_one' => 'generated_url',
+                'param_two' => 'generated_url'
+            )
+        );
+
+        $refObject   = new \ReflectionObject($factory);
+        $refProperty = $refObject->getProperty('config');
+        $refProperty->setAccessible(true);
+        $refProperty->setValue($factory, $config);
+
+        // Check prepared config
+        $this->assertEquals($expected, $this->callNoPublicMethod($factory, 'getPreparedConfig', array()));
     }
 
     /**
