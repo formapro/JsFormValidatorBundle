@@ -1,4 +1,4 @@
-# FpJsFormValidatorBundle [![Build Status](https://travis-ci.org/yury-maltsev/FpJsFormValidatorBundle.png?branch=master)](https://travis-ci.org/yury-maltsev/FpJsFormValidatorBundle)
+# FpJsFormValidatorBundle [![Build Status](https://travis-ci.org/yury-maltsev/FpJsFormValidatorBundle.png?branch=master)](https://travis-ci.org/yury-maltsev/FpJsFormValidatorBundle) [![Coverage Status](https://coveralls.io/repos/yury-maltsev/FpJsFormValidatorBundle/badge.png?branch=master)](https://coveralls.io/r/yury-maltsev/FpJsFormValidatorBundle?branch=master)
 
 This module enables validation of the Symfony2 forms on the JavaScript side.
 
