@@ -1,3 +1,4 @@
+//noinspection JSUnusedGlobalSymbols
 /**
  * Checks if value is equal to the predefined value
  * @constructor

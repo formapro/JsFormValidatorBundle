@@ -1,3 +1,4 @@
+//noinspection JSUnusedGlobalSymbols
 /**
  * Checks if value is a number and is between min and max values
  * @constructor

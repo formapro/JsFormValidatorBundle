@@ -1,3 +1,4 @@
+//noinspection JSUnusedGlobalSymbols
 /**
  * Created by ymaltsev on 11/21/13.
  */
@@ -5,17 +6,33 @@ var FpJsFormValidatorFactory = new function() {
     this.forms = {};
     this.errorClass = 'form-error';
 
+    //noinspection JSUnusedGlobalSymbols
     /**
      * The general function to init validation for a form
      *
      * @param {FpJsFormElement} model
      */
     this.initNewModel = function(model) {
-        model.initialize(this.getFormDomElement(model));
-        this.forms[model.getId()] = model;
+        var self = this;
 
-        this.bindDefaultEvents(model);
-        this.bindEvents(model);
+        this.onDocumentReady(function(){
+            model.initialize(self.getFormDomElement(model));
+            self.forms[model.getId()] = model;
+
+            self.bindDefaultEvents(model);
+            self.bindEvents(model);
+        });
+    };
+
+    this.onDocumentReady = function(callback) {
+        var addListener    = document.addEventListener || document.attachEvent;
+        var removeListener = document.removeEventListener || document.detachEvent;
+        var eventName      = document.addEventListener ? "DOMContentLoaded" : "onreadystatechange";
+
+        addListener.call(document, eventName, function(){
+            removeListener( eventName, arguments.callee, false );
+            callback();
+        }, false )
     };
 
     /**
@@ -158,6 +175,7 @@ var FpJsFormValidatorFactory = new function() {
         var form = this.findClosestForm(document.getElementById(id));
         if (!form) {
             // Just get the first child name
+            //noinspection LoopStatementThatDoesntLoopJS
             for(var childName in model.getChildren()) break;
             var childId = model.getChild(childName).getId();
             form = this.findClosestForm(document.getElementById(childId));

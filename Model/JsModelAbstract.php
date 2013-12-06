@@ -1,24 +1,26 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Yury Maltsev
- * Email: dev.ymalcev@gmail.com
- * Date: 11/19/13
- * Time: 1:12 PM
- */
 
 namespace Fp\JsFormValidatorBundle\Model;
 
 /**
+ * All the models inherited from this class converted to a similar Javascript model by printing them as a string
+ *
  * Class PhpToJsModel
+ *
  * @package Fp\JsFormValidatorBundle\Model
  */
-abstract class JsModelAbstract {
+abstract class JsModelAbstract
+{
     const OUTPUT_FORMAT_JAVASCRIPT = 'js';
     const OUTPUT_FORMAT_JSON       = 'json';
 
     protected $outputFormat = self::OUTPUT_FORMAT_JAVASCRIPT;
 
+    /**
+     * This function converts the model to the related JavaScript model
+     *
+     * @return string
+     */
     public function __toString()
     {
         switch ($this->outputFormat) {
@@ -26,13 +28,15 @@ abstract class JsModelAbstract {
                 return $this->phpValueToJs($this->toArray());
                 break;
             default:
-                return @json_encode($this->toArray());
+                return json_encode($this->toArray());
                 break;
         }
     }
 
     /**
-     * @param $value
+     * Convert php value to the Javascript formatted string
+     *
+     * @param mixed $value
      *
      * @return string
      */
@@ -63,6 +67,7 @@ abstract class JsModelAbstract {
         // For string
         elseif (is_string($value)) {
             $value = addcslashes($value, '\'');
+
             return "'$value'";
         }
         // For boolean
@@ -104,7 +109,7 @@ abstract class JsModelAbstract {
      *
      * @param string $outputFormat
      *
-     * @return PhpToJsModel
+     * @return JsModelAbstract
      */
     public function setOutputFormat($outputFormat)
     {

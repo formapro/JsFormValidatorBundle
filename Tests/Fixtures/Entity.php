@@ -1,13 +1,7 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Yury Maltsev
- * Email: dev.ymalcev@gmail.com
- * Date: 11/12/13
- * Time: 4:17 PM
- */
 
 namespace Fp\JsFormValidatorBundle\Tests\Fixtures;
+
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -17,7 +11,8 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table()
  * @ORM\Entity()
  */
-class Entity {
+class Entity
+{
     /**
      * @var integer
      *
@@ -78,6 +73,7 @@ class Entity {
     }
 
     /**
+     * @return bool
      * @Assert\True(message = "wrong_name")
      */
     public function isNameLegal()
@@ -86,6 +82,7 @@ class Entity {
     }
 
     /**
+     * @return bool
      * @Assert\True(message = "wrong_name")
      */
     public function isFileLegal()
@@ -105,8 +102,7 @@ class Entity {
 
     /**
      * Set file
-     *
-     * @param $file
+     * @param string $file
      *
      * @return Entity
      */

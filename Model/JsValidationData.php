@@ -1,22 +1,24 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Yury Maltsev
- * Email: dev.ymalcev@gmail.com
- * Date: 11/6/13
- * Time: 5:50 PM
- */
 
 namespace Fp\JsFormValidatorBundle\Model;
 
-
-class JsValidationData extends JsModelAbstract {
-
+/**
+ * This is the container of validation data
+ * which establishes a relationship between constraints and validation groups
+ *
+ * Class JsValidationData
+ *
+ * @package Fp\JsFormValidatorBundle\Model
+ */
+class JsValidationData extends JsModelAbstract
+{
     const TYPE_FORM     = 'Symfony\Component\Form\Form';
     const TYPE_CLASS    = 'Symfony\Component\Validator\Mapping\ClassMetadata';
     const TYPE_PROPERTY = 'Symfony\Component\Validator\Mapping\PropertyMetadata';
 
     /**
+     * Determines a source of the validation data
+     *
      * @var string
      */
     protected $type;
@@ -42,9 +44,10 @@ class JsValidationData extends JsModelAbstract {
     protected $getters = array();
 
     /**
-     *
+     * @param array  $groups
+     * @param string $type
      */
-    function __construct($groups, $type)
+    public function __construct($groups, $type)
     {
         if (is_array($groups)) {
             $this->groups = array_merge($groups, $this->defaultGroups);

@@ -1,9 +1,11 @@
+//noinspection JSUnusedGlobalSymbols
 /**
  * Checks if value matches to the predefined regexp
  * @constructor
  * @author dev.ymalcev@gmail.com
  */
 function SymfonyComponentValidatorConstraintsRegex() {
+    this.message = '';
     this.pattern = '';
     this.match = true;
 

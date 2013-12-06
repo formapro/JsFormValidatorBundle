@@ -53,7 +53,7 @@ function FpJsValidationData(options) {
      *
      * @param {String} name
      * @param {Object} options
-     * @returns {FpJsConstraintModel}
+     * @returns {{}}
      */
     this.createConstraint = function(name, options) {
         var constraint = new window[name]();

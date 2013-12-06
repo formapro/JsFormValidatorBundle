@@ -1,20 +1,19 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Yury Maltsev
- * Email: dev.ymalcev@gmail.com
- * Date: 11/28/13
- * Time: 11:57 AM
- */
 
 namespace Fp\JsFormValidatorBundle\Controller;
 
-
 use Fp\JsFormValidatorBundle\Tests\BaseTestCase;
-use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\BasicConstraintsEntity;
-use Symfony\Component\HttpFoundation\JsonResponse;
 
-class AjaxControllerTest extends BaseTestCase {
+/**
+ * Class AjaxControllerTest
+ *
+ * @package Fp\JsFormValidatorBundle\Controller
+ */
+class AjaxControllerTest extends BaseTestCase
+{
+    /**
+     * Test action to check UniqueEntity constraint
+     */
     public function testCheckUniqueEntityAction()
     {
         $data = array(

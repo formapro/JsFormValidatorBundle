@@ -1,16 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Yury Maltsev
- * Email: dev.ymalcev@gmail.com
- * Date: 11/11/13
- * Time: 11:06 AM
- */
 
 namespace Fp\JsFormValidatorBundle\Tests\Factory;
 
 use Fp\JsFormValidatorBundle\Factory\JsFormValidatorFactory;
-use Fp\JsFormValidatorBundle\Model\JsFormElement;
 use Fp\JsFormValidatorBundle\Model\JsValidationData;
 use Fp\JsFormValidatorBundle\Tests\BaseTestCase;
 use Fp\JsFormValidatorBundle\Tests\Fixtures\FormGroupsArray;
@@ -28,10 +20,21 @@ use Symfony\Component\Form\Forms;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 
+/**
+ * Class JsFormValidatorFactoryTest
+ *
+ * @package Fp\JsFormValidatorBundle\Tests\Factory
+ */
 class JsFormValidatorFactoryTest extends BaseTestCase
 {
+    /**
+     * @var string
+     */
     protected $testTransMessage = 'translated_message';
 
+    /**
+     * Test the method JsFormValidatorFactory::translateConstraint()
+     */
     public function testTranslateConstraint()
     {
         $factory = $this->getMock(
@@ -54,6 +57,9 @@ class JsFormValidatorFactoryTest extends BaseTestCase
         $this->assertNotEquals($this->testTransMessage, $constraint->value);
     }
 
+    /**
+     * Test the method JsFormValidatorFactory::parseConstraints()
+     */
     public function testParseConstraints()
     {
         $factory = $this->getMock(
@@ -78,6 +84,9 @@ class JsFormValidatorFactoryTest extends BaseTestCase
         $this->assertInstanceOf($testName, $result[$testName][0]);
     }
 
+    /**
+     * Test the method JsFormValidatorFactory::parseGetters()
+     */
     public function testParseGetters()
     {
         $factory = $this->getMock(
@@ -102,6 +111,9 @@ class JsFormValidatorFactoryTest extends BaseTestCase
         $this->assertCount(1, $result['fileLegal']['constraints']);
     }
 
+    /**
+     * Test the method JsFormValidatorFactory::parseTransformers()
+     */
     public function testParseTransformers()
     {
         $factory = $this->getMock(
@@ -132,6 +144,9 @@ class JsFormValidatorFactoryTest extends BaseTestCase
         $this->assertArrayNotHasKey('transformers', $trans[1]);
     }
 
+    /**
+     * Test the method JsFormValidatorFactory::getTransformersList()
+     */
     public function testGetTransformersList()
     {
         $factory = $this->getMock(
@@ -152,6 +167,9 @@ class JsFormValidatorFactoryTest extends BaseTestCase
         $this->assertCount(1, $this->callNoPublicMethod($factory, 'getTransformersList', array($form)));
     }
 
+    /**
+     * Test the method JsFormValidatorFactory::isProcessableElement()
+     */
     public function testIsProcessableElement()
     {
         $factory     = $this->getMock(
@@ -173,6 +191,9 @@ class JsFormValidatorFactoryTest extends BaseTestCase
         $this->assertTrue($this->callNoPublicMethod($factory, 'isProcessableElement', array($element)));
     }
 
+    /**
+     * Test the method JsFormValidatorFactory::hasMetadata()
+     */
     public function testHasMetadata()
     {
         $factory     = $this->getMock(
@@ -192,6 +213,9 @@ class JsFormValidatorFactoryTest extends BaseTestCase
         $this->assertFalse($this->callNoPublicMethod($factory, 'hasMetadata', array($element)));
     }
 
+    /**
+     * Test the method JsFormValidatorFactory::getValidationGroups()
+     */
     public function testGetValidationGroups()
     {
         $factory     = $this->getMock(
@@ -215,6 +239,9 @@ class JsFormValidatorFactoryTest extends BaseTestCase
         $this->assertEquals($formName, $this->callNoPublicMethod($factory, 'getValidationGroups', array($form)));
     }
 
+    /**
+     * Test the method JsFormValidatorFactory::getEntityMetadata()
+     */
     public function testGetEntityMetadata()
     {
         $factory = $this->getMock(
@@ -237,6 +264,9 @@ class JsFormValidatorFactoryTest extends BaseTestCase
         $this->assertNull($this->callNoPublicMethod($factory, 'getEntityMetadata', array($element)));
     }
 
+    /**
+     * Test the method JsFormValidatorFactory::processChildren()
+     */
     public function testProcessChildren()
     {
         $factory = $this->getMock(
@@ -262,6 +292,9 @@ class JsFormValidatorFactoryTest extends BaseTestCase
         $this->assertFalse(isset($result['save']));
     }
 
+    /**
+     * Test the method JsFormValidatorFactory::getMappingValidationData()
+     */
     public function testGetMappingValidationData()
     {
         $factory = $this->getMock(
@@ -310,6 +343,9 @@ class JsFormValidatorFactoryTest extends BaseTestCase
         $this->assertCount(0, $this->callNoPublicMethod($factory, 'getMappingValidationData', array(null, array())));
     }
 
+    /**
+     * Test the method JsFormValidatorFactory::getElementValidationData()
+     */
     public function testGetElementValidationData()
     {
         $factory = $this->getMock(
@@ -352,6 +388,9 @@ class JsFormValidatorFactoryTest extends BaseTestCase
         $this->assertCount(1, $data->getGroups());
     }
 
+    /**
+     * Test the method JsFormValidatorFactory::createJsModel()
+     */
     public function testCreateJsModel()
     {
         $factory = $this->getMock(
@@ -410,22 +449,9 @@ class JsFormValidatorFactoryTest extends BaseTestCase
         $this->assertNull($model->getChildren());
     }
 
-    public function testGenerateInlineJs()
-    {
-        $factory = $this->getMock(
-            'Fp\JsFormValidatorBundle\Factory\JsFormValidatorFactory',
-            null,
-            array(),
-            '',
-            false
-        );
-        /** @var JsFormValidatorFactory $factory */
-
-        $model = new JsFormElement('id', 'form_id');
-        $string = "<script type=\"text/javascript\">FpJsFormValidatorFactory.initNewModel(new FpJsFormElement({'id':'id','name':'form_id','dataClass':null,'type':null,'invalidMessage':null,'validationData':[],'transformers':[],'cascadeValidation':true,'events':[],'children':[],'config':[]}))</script>";
-        $this->assertEquals($string, $factory->generateInlineJs($model));
-    }
-
+    /**
+     * Test the method JsFormValidatorFactory::getTransformerParam()
+     */
     public function testGetTransformerParam()
     {
         $factory = $this->getMock(
@@ -440,6 +466,9 @@ class JsFormValidatorFactoryTest extends BaseTestCase
         $this->assertEquals(array('a', 'b'), $result);
     }
 
+    /**
+     * Test the method JsFormValidatorFactory::prepareConfig()
+     */
     public function testPrepareConfig()
     {
         $factory = $this->getMock(

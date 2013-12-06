@@ -6,19 +6,22 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+/**
+ * Class FormGroupsArray
+ *
+ * @package Fp\JsFormValidatorBundle\Tests\Fixtures
+ */
 class FormGroupsArray extends AbstractType
 {
-        /**
+    /**
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder
-            ->add('name', 'text')
-        ;
+        $builder->add('name', 'text');
     }
-    
+
     /**
      * @param OptionsResolverInterface $resolver
      */

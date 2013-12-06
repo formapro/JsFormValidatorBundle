@@ -1,11 +1,5 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Yury Maltsev
- * Email: dev.ymalcev@gmail.com
- * Date: 10/24/13
- * Time: 5:06 PM
- */
+
 namespace Fp\JsFormValidatorBundle\Tests\Twig\Extension;
 
 use Fp\JsFormValidatorBundle\Model\JsFormElement;
@@ -14,8 +8,16 @@ use Fp\JsFormValidatorBundle\Twig\Extension\JsFormValidatorTwigExtension;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\Forms;
 
+/**
+ * Class JsFormValidatorTwigExtensionTest
+ *
+ * @package Fp\JsFormValidatorBundle\Tests\Twig\Extension
+ */
 class JsFormValidatorTwigExtensionTest extends BaseTestCase
 {
+    /**
+     * Test functions list
+     */
     public function testGetFunctions()
     {
         $extension = $this->getMock(
@@ -30,25 +32,14 @@ class JsFormValidatorTwigExtensionTest extends BaseTestCase
         $this->assertArrayHasKey('fp_jsfv', $extension->getFunctions());
     }
 
-    public function testGetName()
-    {
-        $extension = $this->getMock(
-            'Fp\JsFormValidatorBundle\Twig\Extension\JsFormValidatorTwigExtension',
-            null,
-            array(),
-            '',
-            false
-        );
-
-        /** @var JsFormValidatorTwigExtension $extension */
-        $this->assertEquals('fp_js_form_validator', $extension->getName());
-    }
-
+    /**
+     * Test the mail function
+     */
     public function testGetJsValidator()
     {
         $factory = $this->getMock(
             'Fp\JsFormValidatorBundle\Factory\JsFormValidatorFactory',
-            array('createJsModel', 'generateInlineJs'),
+            array('createJsModel'),
             array(),
             '',
             false
@@ -57,9 +48,6 @@ class JsFormValidatorTwigExtensionTest extends BaseTestCase
         $factory->expects($this->once())
             ->method('createJsModel')
             ->will($this->returnValue($model));
-        $factory->expects($this->once())
-            ->method('generateInlineJs')
-            ->will($this->returnArgument(0));
 
         $extension = $this->getMock(
             'Fp\JsFormValidatorBundle\Twig\Extension\JsFormValidatorTwigExtension',
@@ -68,7 +56,7 @@ class JsFormValidatorTwigExtensionTest extends BaseTestCase
             '',
             false
         );
-        $extension->expects($this->exactly(2))
+        $extension->expects($this->once())
             ->method('getFactory')
             ->will($this->returnValue($factory));
 
@@ -78,6 +66,7 @@ class JsFormValidatorTwigExtensionTest extends BaseTestCase
         $form = $formFactory->create('text');
         /** @var JsFormElement $result */
         $result = $extension->getJsValidator($form);
-        $this->assertEquals(spl_object_hash($model), spl_object_hash($result));
+        $model = "<script type=\"text/javascript\">FpJsFormValidatorFactory.initNewModel(" . $model . ")</script>";
+        $this->assertEquals($result, $model);
     }
 }

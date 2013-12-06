@@ -1,12 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Yury Maltsev
- * Email: dev.ymalcev@gmail.com
- * Date: 10/24/13
- * Time: 3:14 PM
- */
-
 namespace Fp\JsFormValidatorBundle\Factory;
 
 use Fp\JsFormValidatorBundle\Model\JsFormElement;
@@ -14,7 +6,6 @@ use Fp\JsFormValidatorBundle\Model\JsValidationData;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceListInterface;
-use Symfony\Component\Form\Extension\Core\DataTransformer\ArrayToPartsTransformer;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Translation\Translator;
 use Symfony\Component\Validator\Constraint;
@@ -23,10 +14,15 @@ use Symfony\Component\Validator\Mapping\GetterMetadata;
 use Symfony\Component\Validator\Mapping\PropertyMetadata;
 use Symfony\Component\Validator\Validator;
 
+/**
+ * This factory uses to parse a form to a tree of JsFormElement's
+ *
+ * Class JsFormValidatorFactory
+ *
+ * @package Fp\JsFormValidatorBundle\Factory
+ */
 class JsFormValidatorFactory
 {
-    const TRANSFORMER_CHAIN_CLASS = 'Symfony\Component\Form\Extension\Core\DataTransformer\DataTransformerChain';
-
     /**
      * @var Validator
      */
@@ -62,11 +58,11 @@ class JsFormValidatorFactory
     }
 
     /**
-     * @codeCoverageIgnore
-     *
+     * Gets matadata from system using the entity class name
      * @param string $className
      *
      * @return \Symfony\Component\Validator\MetadataInterface
+     * @codeCoverageIgnore
      */
     protected function getMetadataFor($className)
     {
@@ -75,11 +71,10 @@ class JsFormValidatorFactory
 
     /**
      * Translage a single message
-     * @codeCoverageIgnore
-     *
      * @param string $message
      *
      * @return string
+     * @codeCoverageIgnore
      */
     protected function translateMessage($message)
     {
@@ -90,11 +85,10 @@ class JsFormValidatorFactory
 
     /**
      * Generate an URL from the route
-     * @codeCoverageIgnore
-     *
      * @param string $route
      *
      * @return string
+     * @codeCoverageIgnore
      */
     protected function generateUrl($route)
     {
@@ -102,6 +96,7 @@ class JsFormValidatorFactory
     }
 
     /**
+     * Returns current config from config.yml (or default values)
      * @return mixed
      */
     public function getConfig()
@@ -109,18 +104,8 @@ class JsFormValidatorFactory
         return $this->config;
     }
 
-
     /**
-     * @param \Fp\JsFormValidatorBundle\Model\JsFormElement $model
-     *
-     * @return string
-     */
-    public function generateInlineJs(JsFormElement $model)
-    {
-        return "<script type=\"text/javascript\">FpJsFormValidatorFactory.initNewModel(" . $model . ')</script>';
-    }
-
-    /**
+     * The main function that creates nested model
      * @param Form         $form
      * @param mixed        $metadata
      * @param array|string $groups
@@ -153,6 +138,7 @@ class JsFormValidatorFactory
     }
 
     /**
+     * Trying to get entity metadata for the specified form (if exists)
      * @param Form $form
      *
      * @return null|ClassMetadata|PropertyMetadata
@@ -167,6 +153,8 @@ class JsFormValidatorFactory
     }
 
     /**
+     * Generate an Id for the element by concating the current element name
+     * with all the parents names
      * @param Form $form
      *
      * @return string
@@ -183,8 +171,9 @@ class JsFormValidatorFactory
     }
 
     /**
-     * @param Form $element
-     * @param      $groups
+     * Creates a JsValidationData object for the specified form element
+     * @param Form         $element
+     * @param array|string $groups
      *
      * @return JsValidationData
      */
@@ -193,7 +182,7 @@ class JsFormValidatorFactory
         $data = new JsValidationData($groups, get_class($element));
         $data->setConstraints(
             $this->parseConstraints(
-                (array)$element->getConfig()->getOption('constraints')
+                (array) $element->getConfig()->getOption('constraints')
             )
         );
 
@@ -201,8 +190,9 @@ class JsFormValidatorFactory
     }
 
     /**
+     * Creates a JsValidationData object for the specified entity metadata
      * @param null|array|ClassMetadata|PropertyMetadata $metadata
-     * @param                                           $groups
+     * @param array                                     $groups
      *
      * @return array|JsValidationData
      * @throws \Symfony\Component\Form\Exception\UnexpectedTypeException
@@ -237,6 +227,7 @@ class JsFormValidatorFactory
     }
 
     /**
+     * Create the JsFormElement for all the childrens of specified element
      * @param null|Form          $form
      * @param null|ClassMetadata $metadata
      * @param array              $groups
@@ -252,8 +243,8 @@ class JsFormValidatorFactory
                 $childMetadata = ($metadata instanceof ClassMetadata) && ($metadata->hasMemberMetadatas($name))
                     ? $metadata->getMemberMetadatas($name)
                     : null;
-                $childModel    = $this->createJsModel($child, $childMetadata, $groups, false);
 
+                $childModel = $this->createJsModel($child, $childMetadata, $groups, false);
                 $result[$name] = $childModel;
             }
         }
@@ -262,6 +253,7 @@ class JsFormValidatorFactory
     }
 
     /**
+     * Get validation groups for the specified form
      * @param Form $form
      *
      * @return array|string
@@ -282,6 +274,8 @@ class JsFormValidatorFactory
     }
 
     /**
+     * Check if an element has defined metadata
+     * That means that this is the parent form or subform
      * @param Form $form
      *
      * @return bool
@@ -292,6 +286,7 @@ class JsFormValidatorFactory
     }
 
     /**
+     * Not all elements should be processed by thy factory (e.g. buttons, hidden inputs etc)
      * @param mixed $element
      *
      * @return bool
@@ -303,16 +298,18 @@ class JsFormValidatorFactory
     }
 
     /**
-     * @param Form $data
+     * Get data transformers for the specified element if exist
+     * @param Form $form
      *
      * @return array
      */
-    protected function getTransformersList(Form $data)
+    protected function getTransformersList(Form $form)
     {
-        return $this->parseTransformers($data->getConfig()->getViewTransformers());
+        return $this->parseTransformers($form->getConfig()->getViewTransformers());
     }
 
     /**
+     * Convert trasformers objects to data arrays
      * @param array $transformers
      *
      * @return array
@@ -338,6 +335,7 @@ class JsFormValidatorFactory
     }
 
     /**
+     * Get the specified non-public transformer property
      * @param DataTransformerInterface $transformer
      * @param string                   $paramName
      *
@@ -362,6 +360,7 @@ class JsFormValidatorFactory
     }
 
     /**
+     * Converts list of the GetterMetadata objects to a data array
      * @param GetterMetadata[] $getters
      *
      * @return array
@@ -373,7 +372,7 @@ class JsFormValidatorFactory
             $result[$name] = array(
                 'class'       => $getter->getClassName(),
                 'name'        => $getter->getName(),
-                'constraints' => $this->parseConstraints((array)$getter->getConstraints()),
+                'constraints' => $this->parseConstraints((array) $getter->getConstraints()),
             );
         }
 
@@ -381,6 +380,7 @@ class JsFormValidatorFactory
     }
 
     /**
+     * Converts list of constraints objects to a data array
      * @param array $constraints
      *
      * @return array
@@ -397,6 +397,7 @@ class JsFormValidatorFactory
     }
 
     /**
+     * Makes translation for all the "%message%" properties in the specified constraint object
      * @param Constraint $constraint
      *
      * @return Constraint
@@ -413,6 +414,7 @@ class JsFormValidatorFactory
     }
 
     /**
+     * Makes some action to prepare config befor passing it to the model
      * @return array
      */
     protected function getPreparedConfig()

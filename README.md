@@ -1,6 +1,8 @@
 # FpJsFormValidatorBundle [![Build Status](https://api.travis-ci.org/Behat/MinkBundle.png)](https://travis-ci.org/yury-maltsev/FpJsFormValidatorBundle)
 
-This module enables the Symfony2 forms' validation on the Javascript side
+This module enables validation of the Symfony2 forms on the JavaScript side.
+
+It converts form type constraints into JavaScript validation rules.
 
 
 ## Installation
@@ -77,7 +79,7 @@ access_control:
 
 ## Usage
 
-First of all, you should pass to your view NOT the form view object (```$form->createView()```) but the native form object (```$form```):
+First of all pay attention that you should pass to your view NOT the form view object (```$form->createView()```) but the native form object (```$form```):
 
 ```php
 class ExampleController extends Controller
@@ -100,4 +102,21 @@ Now you can enable the javascript validation in your view after initializing the
 {{ form(form.createView()) }}
 
 {{ fp_jsfv(form) }}
+```
+
+## Customization
+
+### Configure translations
+
+By default, this bundle uses (just like Symfony2 forms) the "validation" domain for message translation.
+
+If you had changed this option for the server side, you should also make changes for our bundle.
+
+Just add this option to your config:
+
+```yaml
+//app/config/config.yml
+# ...
+fp_js_form_validator:
+    translation_domain: "custom_domain_name"
 ```

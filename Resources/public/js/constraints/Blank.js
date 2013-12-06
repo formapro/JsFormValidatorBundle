@@ -1,3 +1,4 @@
+//noinspection JSUnusedGlobalSymbols,JSUnusedGlobalSymbols
 /**
  * Checks if value is blank
  * @constructor

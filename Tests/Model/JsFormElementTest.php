@@ -1,11 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Yury Maltsev
- * Email: dev.ymalcev@gmail.com
- * Date: 11/11/13
- * Time: 11:06 AM
- */
 
 namespace Fp\JsFormValidatorBundle\Tests\Factory;
 
@@ -13,8 +6,16 @@ use Fp\JsFormValidatorBundle\Model\JsFormElement;
 use Fp\JsFormValidatorBundle\Model\JsValidationData;
 use Fp\JsFormValidatorBundle\Tests\BaseTestCase;
 
+/**
+ * Class JsFormElementTest
+ *
+ * @package Fp\JsFormValidatorBundle\Tests\Factory
+ */
 class JsFormElementTest extends BaseTestCase
 {
+    /**
+     * Test for converting model to an array
+     */
     public function testModelToArrayConversion()
     {
         $model = new JsFormElement('id', 'name');
@@ -34,6 +35,9 @@ class JsFormElementTest extends BaseTestCase
         $this->assertEquals($array, $model->toArray());
     }
 
+    /**
+     * Test for converting model to a string
+     */
     public function testModelToStringConversion()
     {
         $model  = new JsFormElement('id', 'form_id');
@@ -41,6 +45,9 @@ class JsFormElementTest extends BaseTestCase
         $this->assertEquals($string, $model->__toString());
     }
 
+    /**
+     * Test for actions with model children
+     */
     public function testChildrenActions()
     {
         $parent = new JsFormElement('parent', 'form_id');
@@ -51,6 +58,9 @@ class JsFormElementTest extends BaseTestCase
         $this->assertNull($parent->getChild('fakeName'));
     }
 
+    /**
+     * Test for setting extra-events for Javascript
+     */
     public function testJsEvents()
     {
         $model  = new JsFormElement('id', 'form_id');
@@ -61,6 +71,9 @@ class JsFormElementTest extends BaseTestCase
         $this->assertEquals($events, $model->getJsEvents());
     }
 
+    /**
+     * Test for actions with validation data
+     */
     public function testAddValidationData()
     {
         $model = new JsFormElement('id', 'form_id');

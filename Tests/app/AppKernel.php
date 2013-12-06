@@ -11,9 +11,12 @@ use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Doctrine\Bundle\DoctrineBundle\DoctrineBundle;
 use Behat\MinkBundle\MinkBundle;
 
-
+/** @noinspection PhpUndefinedClassInspection */
 class AppKernel extends Kernel
 {
+    /**
+     * @return array|\Symfony\Component\HttpKernel\Bundle\BundleInterface[]
+     */
     public function registerBundles()
     {
         $bundles = array(
@@ -31,15 +34,25 @@ class AppKernel extends Kernel
         return $bundles;
     }
 
+    /**
+     * @param LoaderInterface $loader
+     */
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
         $loader->load(__DIR__.'/Resources/config.php');
     }
 
+    /**
+     * An empty init function
+     */
     public function init()
     {
     }
 
+    /**
+     * @param string $name
+     * @param string $extension
+     */
     public function loadClassCache($name = 'classes', $extension = '.php')
     {
     }

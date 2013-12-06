@@ -3,124 +3,158 @@
 
 <script type="text/javascript">
     function FpJsFormValidatorBundleTestsTestBundlesDefaultTestBundleEntityTestEntity() {
+        //noinspection JSUnusedGlobalSymbols
         this.isNameValid = function() {
             return false;
         }
     }
 
     function FpJsFormValidatorBundleTestsTestBundlesDefaultTestBundleEntityBasicConstraintsEntity() {
+        this.isValid = '{{ isValid|default(1) }}';
+
         this.getValidVariable = function(trueVal, falseVal) {
-            return {{ isValid|default(1) }} === 1 ? trueVal : falseVal;
+            return this.isValid === '1' ? trueVal : falseVal;
         };
 
+        //noinspection JSUnusedGlobalSymbols
         this.isTrue = function() {
             return this.getValidVariable(true, false);
         };
+        //noinspection JSUnusedGlobalSymbols
         this.isFalse = function() {
             return this.getValidVariable(false, true)
         };
+        //noinspection JSUnusedGlobalSymbols
         this.isNull = function() {
             return this.getValidVariable(null, 1);
         };
+        //noinspection JSUnusedGlobalSymbols
         this.isNotNull = function() {
             return this.getValidVariable(1, null);
         };
 
+        //noinspection JSUnusedGlobalSymbols
         this.isEqualTo = function() {
             return this.getValidVariable("1", "0");
         };
 
+        //noinspection JSUnusedGlobalSymbols
         this.isNotEqualTo = function() {
             return this.getValidVariable("0", "1");
         };
 
+        //noinspection JSUnusedGlobalSymbols
         this.isIdenticalTo = function() {
             return this.getValidVariable(1, "1");
         };
 
+        //noinspection JSUnusedGlobalSymbols
         this.isNotIdenticalTo = function() {
             return this.getValidVariable("1", 1);
         };
 
+        //noinspection JSUnusedGlobalSymbols
         this.isLessThan = function() {
             return this.getValidVariable(0, 1);
         };
 
+        //noinspection JSUnusedGlobalSymbols
         this.isLessThanOrEqual = function() {
             return this.getValidVariable(1, 2);
         };
 
+        //noinspection JSUnusedGlobalSymbols
         this.isGreaterThan = function() {
             return this.getValidVariable(2, 1);
         };
 
+        //noinspection JSUnusedGlobalSymbols
         this.isGreaterThanOrEqual = function() {
             return this.getValidVariable(1, 0);
         };
 
+        //noinspection JSUnusedGlobalSymbols
         this.isLengthMin = function() {
             return this.getValidVariable('a', '');
         };
 
+        //noinspection JSUnusedGlobalSymbols
         this.isLengthMax = function() {
             return this.getValidVariable('a', 'aa');
         };
 
+        //noinspection JSUnusedGlobalSymbols
         this.isLengthExact = function() {
             return this.getValidVariable('a', 'aa');
         };
 
+        //noinspection JSUnusedGlobalSymbols
         this.isCountMin = function() {
             return this.getValidVariable(['a'], []);
         };
 
+        //noinspection JSUnusedGlobalSymbols
         this.isCountMax = function() {
             return this.getValidVariable(['a'], ['a', 'b']);
         };
 
+        //noinspection JSUnusedGlobalSymbols
         this.isCountExact = function() {
             return this.getValidVariable(['a'], ['a', 'a']);
         };
 
+        //noinspection JSUnusedGlobalSymbols
         this.isRangeMin = function() {
             return this.getValidVariable(2, 0);
         };
 
+        //noinspection JSUnusedGlobalSymbols
         this.isRangeMax = function() {
             return this.getValidVariable(1, 2);
         };
 
+        //noinspection JSUnusedGlobalSymbols
         this.isRangeValueValid = function() {
             return this.getValidVariable(1, 'a');
         };
 
+        //noinspection JSUnusedGlobalSymbols
         this.isTypeArray = function() {
             return this.getValidVariable(['a'], 'a');
         };
+        //noinspection JSUnusedGlobalSymbols
         this.isTypeBool = function() {
             return this.getValidVariable(true, 'a');
         };
+        //noinspection JSUnusedGlobalSymbols
         this.isTypeCallable = function() {
             return this.getValidVariable(function(){}, 'a');
         };
+        //noinspection JSUnusedGlobalSymbols
         this.isTypeFloat = function() {
             return this.getValidVariable(1.0, 1);
         };
+        //noinspection JSUnusedGlobalSymbols
         this.isTypeInteger = function() {
             return this.getValidVariable(1, 1.0);
         };
+        //noinspection JSUnusedGlobalSymbols
         this.isTypeNull = function() {
             return this.getValidVariable(null, 'a');
         };
+        //noinspection JSUnusedGlobalSymbols
         this.isTypeNumeric = function() {
             return this.getValidVariable("1", 'a');
         };
+        //noinspection JSUnusedGlobalSymbols
         this.isTypeObject = function() {
             return this.getValidVariable({}, 'a');
         };
+        //noinspection JSUnusedGlobalSymbols
         this.isTypeScalar = function() {
             return this.getValidVariable(1, [1,2,3]);
         };
+        //noinspection JSUnusedGlobalSymbols
         this.isTypeString = function() {
             return this.getValidVariable('1', 1);
         };
@@ -129,36 +163,22 @@
         this.getChoicesList = function() {
             return ['June', 'July', 'August'];
         };
+        //noinspection JSUnusedGlobalSymbols
         this.isValidSingleChoice = function() {
             return this.getValidVariable('male', 'wrong_choice');
         };
+        //noinspection JSUnusedGlobalSymbols
         this.isValidMultipleChoice = function() {
             return this.getValidVariable(['June', 'July'], ['June', 'May']);
         };
+        //noinspection JSUnusedGlobalSymbols
         this.isMinMultipleChoice = function() {
             return this.getValidVariable(['June', 'July'], ['June']);
         };
+        //noinspection JSUnusedGlobalSymbols
         this.isMaxMultipleChoice = function() {
             return this.getValidVariable(['June'], ['June', 'July']);
         };
-    }
-
-    var aaa = {b: null, c: 1};
-    var bbb = {a: aaa, d: 2};
-    aaa.b = bbb;
-
-    function __a(val) {
-        if (typeof val === 'object') {
-            var result = {};
-            for (var name in val) {
-                if (undefined !== val[name] && typeof val[name] !== "function") {
-                    result[name] = __a(val[name]);
-                }
-            }
-            return result;
-        } else {
-            return val;
-        }
     }
 </script>
 

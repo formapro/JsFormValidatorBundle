@@ -1,9 +1,11 @@
+//noinspection JSUnusedGlobalSymbols
 /**
  * Checks the value type
  * @constructor
  * @author dev.ymalcev@gmail.com
  */
 function SymfonyComponentValidatorConstraintsType() {
+    this.message = '';
     this.type = '';
 
     this.validate = function(value) {

@@ -1,16 +1,16 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Yury Maltsev
- * Email: dev.ymalcev@gmail.com
- * Date: 11/6/13
- * Time: 5:50 PM
- */
 
 namespace Fp\JsFormValidatorBundle\Model;
 
 use Symfony\Component\Form\ResolvedFormTypeInterface;
 
+/**
+ * This is the main model that describes each of the form elements
+ *
+ * Class JsFormElement
+ *
+ * @package Fp\JsFormValidatorBundle\Model
+ */
 class JsFormElement extends JsModelAbstract
 {
     /**
@@ -72,7 +72,7 @@ class JsFormElement extends JsModelAbstract
      * @param string $id
      * @param string $name
      */
-    function __construct($id, $name)
+    public function __construct($id, $name)
     {
         $this->id   = $id;
         $this->name = $name;
@@ -87,6 +87,8 @@ class JsFormElement extends JsModelAbstract
     }
 
     /**
+     * This function defines the data which will be passed to the related Javascript model
+     *
      * @return array
      */
     public function toArray()
@@ -96,7 +98,7 @@ class JsFormElement extends JsModelAbstract
             'name'              => $this->getName(),
             'dataClass'         => $this->getDataClass(),
             'type'              => $this->getType(),
-            'invalidMessage'   => $this->getInvalidMessage(),
+            'invalidMessage'    => $this->getInvalidMessage(),
             'validationData'    => array_values($this->getValidationData()),
             'transformers'      => $this->getTransformers(),
             'cascadeValidation' => $this->getCascadeValidation(),
@@ -217,7 +219,9 @@ class JsFormElement extends JsModelAbstract
     }
 
     /**
-     * @param $name
+     * Get child by name
+     *
+     * @param string $name
      *
      * @return JsFormElement|null
      */

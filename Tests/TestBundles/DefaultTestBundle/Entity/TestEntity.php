@@ -4,7 +4,8 @@ namespace Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use /** @noinspection PhpUnusedAliasInspection */
+    Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 
 /**
@@ -58,12 +59,13 @@ class TestEntity
      * Set name
      *
      * @param string $name
-     * @return Book
+     *
+     * @return TestEntity
      */
     public function setName($name)
     {
         $this->name = $name;
-    
+
         return $this;
     }
 

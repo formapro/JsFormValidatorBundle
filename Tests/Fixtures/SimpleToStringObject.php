@@ -1,17 +1,17 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Yury Maltsev
- * Email: dev.ymalcev@gmail.com
- * Date: 11/19/13
- * Time: 8:38 PM
- */
 
 namespace Fp\JsFormValidatorBundle\Tests\Fixtures;
 
-
+/**
+ * Class SimpleToStringObject
+ *
+ * @package Fp\JsFormValidatorBundle\Tests\Fixtures
+ */
 class SimpleToStringObject
 {
+    /**
+     * @return string
+     */
     public function __toString()
     {
         return "'toStringName'";

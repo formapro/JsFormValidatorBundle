@@ -4,15 +4,19 @@ namespace Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+/**
+ * Class TestSubFormType
+ *
+ * @package Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form
+ */
 class TestSubFormType extends AbstractType
 {
-        /**
+    /**
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -23,10 +27,9 @@ class TestSubFormType extends AbstractType
                         'message' => 'form_message'
                     ))
                 )
-            ))
-        ;
+            ));
     }
-    
+
     /**
      * @param OptionsResolverInterface $resolver
      */

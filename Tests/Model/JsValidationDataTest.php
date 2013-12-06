@@ -1,19 +1,20 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Yury Maltsev
- * Email: dev.ymalcev@gmail.com
- * Date: 11/11/13
- * Time: 11:06 AM
- */
 
 namespace Fp\JsFormValidatorBundle\Tests\Factory;
 
 use Fp\JsFormValidatorBundle\Model\JsValidationData;
 use Fp\JsFormValidatorBundle\Tests\BaseTestCase;
 
+/**
+ * Class JsValidationDataTest
+ *
+ * @package Fp\JsFormValidatorBundle\Tests\Factory
+ */
 class JsValidationDataTest extends BaseTestCase
 {
+    /**
+     * Test the cosntructor
+     */
     public function testConstructor()
     {
         // With groups as an array
@@ -24,6 +25,9 @@ class JsValidationDataTest extends BaseTestCase
         $this->assertEquals('test_group', $model->getGroups());
     }
 
+    /**
+     * Test for converting model to an array
+     */
     public function testModelToArrayConversion()
     {
         $model = new JsValidationData(array(), 'test');
@@ -36,6 +40,9 @@ class JsValidationDataTest extends BaseTestCase
         $this->assertEquals($array, $model->toArray());
     }
 
+    /**
+     * Test for converting model to a string
+     */
     public function testModelToStringConversion()
     {
         $model  = new JsValidationData(array(), 'test');

@@ -1,3 +1,4 @@
+//noinspection JSUnusedGlobalSymbols
 function SymfonyComponentFormExtensionCoreDataTransformerValueToDuplicatesTransformer() {
     this.keys = [];
 

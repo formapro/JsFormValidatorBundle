@@ -1,16 +1,17 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Yury Maltsev
- * Email: dev.ymalcev@gmail.com
- * Date: 12/3/13
- * Time: 12:00 PM
- */
 
 namespace Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity;
 
-
-class BasicConstraintsRepository {
+/**
+ * Class BasicConstraintsRepository
+ *
+ * @package Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity
+ */
+class BasicConstraintsRepository
+{
+    /**
+     * @var array
+     */
     protected $data = array(
         array(
             'email' => 'wrong_email',
@@ -27,7 +28,7 @@ class BasicConstraintsRepository {
     /**
      * This method just should renurn some not empty data
      *
-     * @param $id
+     * @param string $id
      *
      * @return array
      */
@@ -39,11 +40,12 @@ class BasicConstraintsRepository {
     /**
      * This method searches the data in the artificial storage of this repository
      *
-     * @param $criteria
+     * @param array $criteria
      *
      * @return array
      */
-    public function findBy($criteria) {
+    public function findBy(array $criteria)
+    {
         $entities = array();
         foreach ($this->data as $entity) {
             $result = array();

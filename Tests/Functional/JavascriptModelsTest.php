@@ -1,19 +1,17 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Yury Maltsev
- * Email: dev.ymalcev@gmail.com
- * Date: 11/21/13
- * Time: 4:00 PM
- */
 
 namespace Fp\JsFormValidatorBundle\Tests\Functional;
-
 
 use Behat\Mink\Element\NodeElement;
 use Fp\JsFormValidatorBundle\Tests\BaseTestCase;
 
-class JavascriptModelsTest extends BaseTestCase {
+/**
+ * Class JavascriptModelsTest
+ *
+ * @package Fp\JsFormValidatorBundle\Tests\Functional
+ */
+class JavascriptModelsTest extends BaseTestCase
+{
     protected $base;
 
     protected function setUp()
@@ -24,24 +22,25 @@ class JavascriptModelsTest extends BaseTestCase {
     }
 
     /**
-     * @param $name
+     * @param string $name
      *
      * @return \Behat\Mink\Element\NodeElement|null
      */
     protected function getSubmittedForm($name)
     {
         $session = $this->getMink()->getSession('selenium2');
-        $session->visit($this->base.'/fp_js_form_validator/javascript_unit_test/' . $name);
+        $session->visit($this->base . '/fp_js_form_validator/javascript_unit_test/' . $name);
         $session->getPage()->findButton('form_submit')->click();
         $session->wait(5000,
             "FpJsFormValidatorFactory.forms.form.countProcessedRequests() == 0"
         );
+
         return $session->getPage()->find('css', 'form');
     }
 
     /**
      * @param \Behat\Mink\Element\NodeElement $element
-     * @param bool $cascade
+     * @param bool                            $cascade
      *
      * @return \Behat\Mink\Element\NodeElement[]
      */
@@ -51,7 +50,7 @@ class JavascriptModelsTest extends BaseTestCase {
             $element = $element->getParent();
         }
         $result = array();
-        $list = array();
+        $list   = array();
         /** @var \Behat\Mink\Element\NodeElement[] $list */
         if ($cascade) {
             $list = $element->findAll('css', '.form-error li');
@@ -68,6 +67,9 @@ class JavascriptModelsTest extends BaseTestCase {
         return $result;
     }
 
+    /**
+     * Test nested forms
+     */
     public function testLevelsOfConstraintsAssignment()
     {
         $form = $this->getSubmittedForm('levels');
@@ -79,6 +81,9 @@ class JavascriptModelsTest extends BaseTestCase {
         $this->assertEquals(array('controller_message'), $errors);
     }
 
+    /**
+     * Test translation service
+     */
     public function testTranslations()
     {
         $form = $this->getSubmittedForm('translations');
@@ -87,6 +92,10 @@ class JavascriptModelsTest extends BaseTestCase {
         $this->assertEquals(array('translated'), $errors);
     }
 
+    /**
+     * Test groups for nested forms.
+     * Test getters.
+     */
     public function testGroupsAndGetters()
     {
         $form = $this->getSubmittedForm('groups_getters');
@@ -103,6 +112,9 @@ class JavascriptModelsTest extends BaseTestCase {
         $this->assertEquals(array('form_message', 'entity_message'), $errors);
     }
 
+    /**
+     * Test all the constraints with the valid data
+     */
     public function testBasicConstraintsForValidForm()
     {
         $form = $this->getSubmittedForm('basic_constraints/1');
@@ -113,22 +125,25 @@ class JavascriptModelsTest extends BaseTestCase {
         $this->assertCount(0, $form->findAll('css', '.form-error'));
     }
 
+    /**
+     * Test all the constraints without valid data
+     */
     public function testBasicConstraintsForInvalidForm()
     {
-        $form = $this->getSubmittedForm('basic_constraints/0');
-        $errors = $this->getElementErrors($form);
+        $form     = $this->getSubmittedForm('basic_constraints/0');
+        $errors   = $this->getElementErrors($form);
         $expected = array(
-            "true_false",              "false_true",         "null_1",
-            "not_null_null",           "0_equalTo_1",        "1_notEqualTo_1",
-            "1_identicalTo_1",         "1_notIdenticalTo_1", "1_lessThan_1",
-            "2_lessThanOrEqual_1",     "1_greaterThan_1",    "0_greaterThanOrEqual_1",
-            "_minLength_1",            "aa_maxLength_1",     "aa_exactLength_1",
-            "_minCount_1",             "a,b_maxCount_1",     "a,a_exactCount_1",
-            "0_minRange_1",            "2_maxRange_1",       "a_invalidRangeValue",
-            "a_is_not_array",          "a_is_not_boolean",   "a_is_not_callable",
-            "a_is_not_null",           "a_is_not_numeric",   "a_is_not_object",
-            "1,2,3_is_not_scalar",     "1_is_not_string",    "singleChoice_wrong_choice",
-            "multipleChoice_June,May", "minChoice_June",     "maxChoice_June,July"
+            "true_false", "false_true", "null_1",
+            "not_null_null", "0_equalTo_1", "1_notEqualTo_1",
+            "1_identicalTo_1", "1_notIdenticalTo_1", "1_lessThan_1",
+            "2_lessThanOrEqual_1", "1_greaterThan_1", "0_greaterThanOrEqual_1",
+            "_minLength_1", "aa_maxLength_1", "aa_exactLength_1",
+            "_minCount_1", "a,b_maxCount_1", "a,a_exactCount_1",
+            "0_minRange_1", "2_maxRange_1", "a_invalidRangeValue",
+            "a_is_not_array", "a_is_not_boolean", "a_is_not_callable",
+            "a_is_not_null", "a_is_not_numeric", "a_is_not_object",
+            "1,2,3_is_not_scalar", "1_is_not_string", "singleChoice_wrong_choice",
+            "multipleChoice_June,May", "minChoice_June", "maxChoice_June,July"
         );
 
         $this->assertCount(count($expected), $errors);
@@ -150,6 +165,9 @@ class JavascriptModelsTest extends BaseTestCase {
         $this->assertEquals(array('datetime_04/04/2013_12:15:32'), $this->getElementErrors($form->findById('form_datetime')));
     }
 
+    /**
+     * Test all the transformers
+     */
     public function testDataTransformers()
     {
         $form = $this->getSubmittedForm('transformers');
@@ -163,6 +181,8 @@ class JavascriptModelsTest extends BaseTestCase {
         $this->assertEquals(array('m,f'), $this->getElementErrors($form->findById('form_ChoicesToBooleanArray')));
         $this->assertEquals(array('f'), $this->getElementErrors($form->findById('form_ChoiceToBooleanArray')));
         $this->assertEquals(array('not_equal'), $this->getElementErrors($form->findById('form_repeated_first')));
+
+        // TODO: need to implement functionality and tests for all the %ToLocalized% data transformers
     }
 
 } 

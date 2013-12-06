@@ -1,3 +1,4 @@
+//noinspection JSUnusedGlobalSymbols
 /**
  * Created by ymaltsev on 11/26/13.
  */

@@ -1,23 +1,15 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Yury Maltsev
- * Email: dev.ymalcev@gmail.com
- * Date: 10/24/13
- * Time: 5:06 PM
- */
+
 namespace Fp\JsFormValidatorBundle\Twig\Extension;
 
-use Symfony\Bundle\FrameworkBundle\Translation\Translator;
 use Symfony\Component\Form\Form;
-use Symfony\Component\Form\FormView;
-use Symfony\Component\Validator\Validator;
-use Symfony\Component\Validator\Mapping\ClassMetadata;
-use Symfony\Component\Validator\Mapping\GetterMetadata;
-use Symfony\Component\Validator\Mapping\PropertyMetadata;
-use Doctrine\Common\Collections\ArrayCollection;
 use Fp\JsFormValidatorBundle\Factory\JsFormValidatorFactory;
 
+/**
+ * Class JsFormValidatorTwigExtension
+ *
+ * @package Fp\JsFormValidatorBundle\Twig\Extension
+ */
 class JsFormValidatorTwigExtension extends \Twig_Extension
 {
     /**
@@ -26,8 +18,8 @@ class JsFormValidatorTwigExtension extends \Twig_Extension
     protected $factory;
 
     /**
-     * @codeCoverageIgnore
      * @return JsFormValidatorFactory
+     * @codeCoverageIgnore
      */
     protected function getFactory()
     {
@@ -35,8 +27,9 @@ class JsFormValidatorTwigExtension extends \Twig_Extension
     }
 
     /**
-     * @codeCoverageIgnore
      * @param JsFormValidatorFactory $factory
+     *
+     * @codeCoverageIgnore
      */
     public function __construct(JsFormValidatorFactory $factory)
     {
@@ -62,13 +55,14 @@ class JsFormValidatorTwigExtension extends \Twig_Extension
     {
         $model = $this->getFactory()->createJsModel($form);
 
-        return $this->getFactory()->generateInlineJs($model);
+        return "<script type=\"text/javascript\">FpJsFormValidatorFactory.initNewModel(" . $model . ')</script>';
     }
 
     /**
      * Returns the name of the extension.
      *
      * @return string The extension name
+     * @codeCoverageIgnore
      */
     public function getName()
     {

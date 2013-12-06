@@ -8,17 +8,22 @@ use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\BasicConst
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\TestFormType;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\TestSubFormType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Routing\Annotation\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\Validator\Constraints\Blank;
 use Symfony\Component\Validator\Constraints\False;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\True;
 
+/**
+ * Class FunctionalTestsController
+ *
+ * @package Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Controller
+ */
 class FunctionalTestsController extends Controller
 {
     /**
      * Check forms and subforms
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function levelsAction()
     {
@@ -38,6 +43,8 @@ class FunctionalTestsController extends Controller
 
     /**
      * Check translation service
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function translationAction()
     {
@@ -60,6 +67,8 @@ class FunctionalTestsController extends Controller
     /**
      * Check groups as array and as callback.
      * Also check initializing of getters
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function groupsAndGettersAction()
     {
@@ -82,6 +91,10 @@ class FunctionalTestsController extends Controller
 
     /**
      * Check native constraints functionality independs of type of fields
+     *
+     * @param string $isValid
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function basicConstraintsAction($isValid)
     {
@@ -124,6 +137,8 @@ class FunctionalTestsController extends Controller
 
     /**
      * Check different data-transformers
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function transformersAction()
     {
@@ -146,11 +161,11 @@ class FunctionalTestsController extends Controller
                 'ChoiceToBooleanArray'  => 'f',
                 'repeated'              => 'asdf'
             ))
-            ->add('date',     'date',     array('constraints' => array($blank)))
-            ->add('time',     'time',     array('constraints' => array($blank)))
+            ->add('date', 'date', array('constraints' => array($blank)))
+            ->add('time', 'time', array('constraints' => array($blank)))
             ->add('datetime', 'datetime', array('constraints' => array($blank)))
             ->add('checkbox', 'checkbox', array('constraints' => array(new False(array('message' => '{{ value }}')))))
-            ->add('radio',    'radio',    array('constraints' => array(new True(array('message' => '{{ value }}')))))
+            ->add('radio', 'radio', array('constraints' => array(new True(array('message' => '{{ value }}')))))
             ->add('ChoicesToValues', 'choice', array(
                 'multiple'    => true,
                 'choices'     => $choices,

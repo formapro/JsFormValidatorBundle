@@ -4,7 +4,8 @@ namespace Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use /** @noinspection PhpUnusedAliasInspection */
+    Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * Book
@@ -95,11 +96,22 @@ class BasicConstraintsEntity
      */
     private $datetime;
 
-    public function populate($data)
+    /**
+     * @param array $data
+     */
+    public function populate(array $data)
     {
         foreach ($data as $key => $value) {
             $this->{$key} = $value;
         }
+    }
+
+    /**
+     * @return array
+     */
+    public static function getChoicesList()
+    {
+        return array('June', 'July', 'August');
     }
 
     /**
@@ -366,6 +378,7 @@ class BasicConstraintsEntity
     }
 
     /**
+     * @return int
      * @Assert\EqualTo(message="{{ value }}_equalTo_{{ compared_value }}", value=1)
      */
     public function isEqualTo()
@@ -374,6 +387,7 @@ class BasicConstraintsEntity
     }
 
     /**
+     * @return int
      * @Assert\NotEqualTo(message="{{ value }}_notEqualTo_{{ compared_value }}", value=1)
      */
     public function isNotEqualTo()
@@ -382,6 +396,7 @@ class BasicConstraintsEntity
     }
 
     /**
+     * @return int
      * @Assert\IdenticalTo(message="{{ value }}_identicalTo_{{ compared_value }}", value=1)
      */
     public function isIdenticalTo()
@@ -390,6 +405,7 @@ class BasicConstraintsEntity
     }
 
     /**
+     * @return int
      * @Assert\NotIdenticalTo(message="{{ value }}_notIdenticalTo_{{ compared_value }}", value=1)
      */
     public function isNotIdenticalTo()
@@ -398,6 +414,7 @@ class BasicConstraintsEntity
     }
 
     /**
+     * @return int
      * @Assert\LessThan(message="{{ value }}_lessThan_{{ compared_value }}", value=1)
      */
     public function isLessThan()
@@ -406,6 +423,7 @@ class BasicConstraintsEntity
     }
 
     /**
+     * @return int
      * @Assert\LessThanOrEqual(message="{{ value }}_lessThanOrEqual_{{ compared_value }}", value=1)
      */
     public function isLessThanOrEqual()
@@ -414,6 +432,7 @@ class BasicConstraintsEntity
     }
 
     /**
+     * @return int
      * @Assert\GreaterThan(message="{{ value }}_greaterThan_{{ compared_value }}", value=1)
      */
     public function isGreaterThan()
@@ -422,6 +441,7 @@ class BasicConstraintsEntity
     }
 
     /**
+     * @return int
      * @Assert\GreaterThanOrEqual(message="{{ value }}_greaterThanOrEqual_{{ compared_value }}", value=1)
      */
     public function isGreaterThanOrEqual()
@@ -430,6 +450,7 @@ class BasicConstraintsEntity
     }
 
     /**
+     * @return string
      * @Assert\Length(
      *     min=1,
      *     minMessage="{{ value }}_minLength_{{ limit }}"
@@ -441,6 +462,7 @@ class BasicConstraintsEntity
     }
 
     /**
+     * @return string
      * @Assert\Length(
      *     max=1,
      *     maxMessage="{{ value }}_maxLength_{{ limit }}"
@@ -452,6 +474,7 @@ class BasicConstraintsEntity
     }
 
     /**
+     * @return string
      * @Assert\Length(
      *     min=1,
      *     max=1,
@@ -464,6 +487,7 @@ class BasicConstraintsEntity
     }
 
     /**
+     * @return array
      * @Assert\Count(
      *     min=1,
      *     minMessage="{{ value }}_minCount_{{ limit }}"
@@ -475,6 +499,7 @@ class BasicConstraintsEntity
     }
 
     /**
+     * @return array
      * @Assert\Count(
      *     max=1,
      *     maxMessage="{{ value }}_maxCount_{{ limit }}"
@@ -486,6 +511,7 @@ class BasicConstraintsEntity
     }
 
     /**
+     * @return array
      * @Assert\Count(
      *     min=1,
      *     max=1,
@@ -498,6 +524,7 @@ class BasicConstraintsEntity
     }
 
     /**
+     * @return int
      * @Assert\Range(
      *     min=1,
      *     minMessage="{{ value }}_minRange_{{ limit }}"
@@ -509,6 +536,7 @@ class BasicConstraintsEntity
     }
 
     /**
+     * @return int
      * @Assert\Range(
      *     max=1,
      *     maxMessage="{{ value }}_maxRange_{{ limit }}"
@@ -520,6 +548,7 @@ class BasicConstraintsEntity
     }
 
     /**
+     * @return int
      * @Assert\Range(
      *     min=1,
      *     min=1,
@@ -532,6 +561,7 @@ class BasicConstraintsEntity
     }
 
     /**
+     * @return array
      * @Assert\Type(
      *     type="array",
      *     message="{{ value }}_is_not_{{ type }}"
@@ -543,6 +573,7 @@ class BasicConstraintsEntity
     }
 
     /**
+     * @return bool
      * @Assert\Type(
      *     type="boolean",
      *     message="{{ value }}_is_not_{{ type }}"
@@ -554,6 +585,7 @@ class BasicConstraintsEntity
     }
 
     /**
+     * @return \Closure
      * @Assert\Type(
      *     type="callable",
      *     message="{{ value }}_is_not_{{ type }}"
@@ -561,10 +593,13 @@ class BasicConstraintsEntity
      */
     public function isTypeCallable()
     {
-        return function(){};
+        return function(){
+
+        };
     }
 
     /**
+     * @return float
      * @Assert\Type(
      *     type="float",
      *     message="{{ value }}_is_not_{{ type }}"
@@ -576,6 +611,7 @@ class BasicConstraintsEntity
     }
 
     /**
+     * @return int
      * @Assert\Type(
      *     type="integer",
      *     message="{{ value }}_is_not_{{ type }}"
@@ -587,6 +623,7 @@ class BasicConstraintsEntity
     }
 
     /**
+     * @return null
      * @Assert\Type(
      *     type="null",
      *     message="{{ value }}_is_not_{{ type }}"
@@ -598,6 +635,7 @@ class BasicConstraintsEntity
     }
 
     /**
+     * @return int
      * @Assert\Type(
      *     type="numeric",
      *     message="{{ value }}_is_not_{{ type }}"
@@ -609,6 +647,7 @@ class BasicConstraintsEntity
     }
 
     /**
+     * @return \StdClass
      * @Assert\Type(
      *     type="object",
      *     message="{{ value }}_is_not_{{ type }}"
@@ -620,6 +659,7 @@ class BasicConstraintsEntity
     }
 
     /**
+     * @return int
      * @Assert\Type(
      *     type="scalar",
      *     message="{{ value }}_is_not_{{ type }}"
@@ -631,6 +671,7 @@ class BasicConstraintsEntity
     }
 
     /**
+     * @return string
      * @Assert\Type(
      *     type="string",
      *     message="{{ value }}_is_not_{{ type }}"
@@ -641,13 +682,8 @@ class BasicConstraintsEntity
         return 'a';
     }
 
-    public static function getChoicesList()
-    {
-        return array('June', 'July', 'August');
-    }
-
-
     /**
+     * @return string
      * @Assert\Choice(
      *     choices={"male", "female"},
      *     message="singleChoice_{{ value }}"
@@ -659,6 +695,7 @@ class BasicConstraintsEntity
     }
 
     /**
+     * @return array
      * @Assert\Choice(
      *     callback="getChoicesList",
      *     multiple=true,
@@ -671,6 +708,7 @@ class BasicConstraintsEntity
     }
 
     /**
+     * @return array
      * @Assert\Choice(
      *     callback="getChoicesList",
      *     multiple=true,
@@ -684,6 +722,7 @@ class BasicConstraintsEntity
     }
 
     /**
+     * @return array
      * @Assert\Choice(
      *     callback="getChoicesList",
      *     multiple=true,

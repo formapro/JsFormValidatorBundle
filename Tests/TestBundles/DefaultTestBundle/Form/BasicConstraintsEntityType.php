@@ -6,11 +6,16 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
+/**
+ * Class BasicConstraintsEntityType
+ *
+ * @package Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form
+ */
 class BasicConstraintsEntityType extends AbstractType
 {
-        /**
+    /**
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -23,10 +28,9 @@ class BasicConstraintsEntityType extends AbstractType
             ->add('ip')
             ->add('time', 'text')
             ->add('date', 'text')
-            ->add('datetime', 'text')
-        ;
+            ->add('datetime', 'text');
     }
-    
+
     /**
      * @param OptionsResolverInterface $resolver
      */
