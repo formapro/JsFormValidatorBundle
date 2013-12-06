@@ -28,7 +28,14 @@
 
     <filter>
         <whitelist>
-            <directory>./Tests</directory>
+            <directory>./</directory>
+            <exclude>
+                <directory>./build</directory>
+                <directory>./composer</directory>
+                <directory>./Tests</directory>
+                <directory>./travis</directory>
+                <directory>./vendor</directory>
+            </exclude>
         </whitelist>
     </filter>
 </phpunit>
