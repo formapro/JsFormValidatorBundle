@@ -185,4 +185,14 @@ class JavascriptModelsTest extends BaseTestCase
         // TODO: need to implement functionality and tests for all the %ToLocalized% data transformers
     }
 
+    /**
+     * Test onvalidate event listeners
+     */
+    public function testListeners()
+    {
+        $form = $this->getSubmittedForm('listeners');
+
+        $errors = $this->getElementErrors($form->getParent()->findById('onvalidate_listeners_element'));
+        $this->assertEquals(array('global_listener', 'local_listener'), $errors);
+    }
 } 

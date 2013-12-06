@@ -203,4 +203,30 @@ class FunctionalTestsController extends Controller
             array('form' => $form)
         );
     }
+
+    /**
+     * Check onvalidate listeners
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function onValidateListenersAction()
+    {
+        $builder = $this->createFormBuilder(null, array());
+        $builder
+            ->add('name', 'text', array(
+                'constraints' => array(
+                    new NotBlank(array(
+                        'message' => '{{ value }}'
+                    ))
+                )
+            ));
+
+        return $this->render(
+            'DefaultTestBundle:FunctionalTests:index.html.twig',
+            array(
+                'form'           => $builder->getForm(),
+                'checkListeners' => true
+            )
+        );
+    }
 }

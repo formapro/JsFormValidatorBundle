@@ -41,5 +41,7 @@ before_script:
   - sleep 4
 
 script: phpunit -v
+after_script:
+  - php vendor/bin/coveralls -v
 after_failure:
   - cat selenium.log

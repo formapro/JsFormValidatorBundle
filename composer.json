@@ -3,17 +3,18 @@
     "type": "symfony-bundle",
     "description": "Javascript validation for sf2 forms.",
     "keywords": ["Symfony", "Form", "Javascript", "Validation"],
-    "homepage": "https://github.com/yury-maltsev/FpJsFormValidatorBundle",
+    "homepage": "https://github.com/formapro/JsFormValidatorBundle",
     "license": "MIT",
     "authors": [
         {
-            "name": "Yury Maltsev",
-            "email": "dev.yury.maltsev@gmail.com"
-        },
-        {
             "name": "Ton",
             "email": "forma@66ton99.org.ua"
+        },
+        {
+            "name": "Yury Maltsev",
+            "email": "dev.yury.maltsev@gmail.com"
         }
+
     ],
 
     "require": {
@@ -27,7 +28,14 @@
         "symfony/assetic-bundle": "2.3.*",
         "phpunit/phpunit": "3.7.*",
         "behat/mink-bundle": "dev-master",
-        "behat/mink-selenium2-driver": "1.1.*"
+        "behat/mink-selenium2-driver": "1.1.*",
+        "satooshi/php-coveralls": "dev-master"
+    },
+
+    "suggest": {
+        "doctrine/orm": ">=2.2.3,<2.4-dev",
+        "doctrine/doctrine-bundle": "1.2.*",
+        "symfony/assetic-bundle": "2.3.*"
     },
 
     "autoload": {

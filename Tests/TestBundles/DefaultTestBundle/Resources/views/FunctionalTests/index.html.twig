@@ -189,3 +189,23 @@
 {{ form_end(view) }}
 
 {{ fp_jsfv(form) }}
+
+{% if checkListeners|default(false) %}
+    <div>
+        <ul class="form-error" id="onvalidate_listeners_list"></ul>
+        <div id="onvalidate_listeners_element"></div>
+    </div>
+    <script type="text/javascript">
+        function addOnValidateListenerResult(name) {
+            var li = document.createElement('li');
+            li.innerHTML = name;
+            document.getElementById('onvalidate_listeners_list').appendChild(li);
+        }
+        FpJsFormValidatorFactory.onvalidate = function(){
+            addOnValidateListenerResult('global_listener')
+        };
+        document.getElementsByTagName('form')[0].onvalidate = function(){
+            addOnValidateListenerResult('local_listener')
+        };
+    </script>
+{% endif %}

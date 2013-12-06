@@ -56,4 +56,14 @@ $collection->add(
     )
 );
 
+$collection->add(
+    'fp_js_form_validator_test_listeners',
+    new Route(
+        '/fp_js_form_validator/javascript_unit_test/listeners',
+        array(
+            '_controller' => $controllerClass . '::onValidateListenersAction',
+        )
+    )
+);
+
 return $collection;
