@@ -4,10 +4,13 @@
  */
 function SymfonyBridgeDoctrineValidatorConstraintsUniqueEntity() {
     this.message          = 'This value is already used.';
+    this.service          = 'doctrine.orm.validator.unique';
+    this.em               = null;
+    this.repositoryMethod = 'findBy';
     this.fields           = [];
     this.errorPath        = null;
     this.ignoreNull       = true;
-    this.repositoryMethod = 'findBy';
+
     this.groups           = [];
 
     /**
@@ -23,10 +26,17 @@ function SymfonyBridgeDoctrineValidatorConstraintsUniqueEntity() {
         model.addRequest(
             model.getConfig()['routing']['check_unique_entity'],
             {
-                entity: model.getDataClass(),
-                ignoreNull: this.ignoreNull ? 1 : 0,
+                message:          this.message,
+                service:          this.service,
+                em:               this.em,
                 repositoryMethod: this.repositoryMethod,
-                data: this.getValues(model, this.fields)
+                fields:           this.fields,
+                errorPath:        this.errorPath,
+                ignoreNull:       this.ignoreNull ? 1 : 0,
+                groups:           this.groups,
+
+                entity:           model.getDataClass(),
+                data:             this.getValues(model, this.fields)
             },
             function(response){
                 response = JSON.parse(response);

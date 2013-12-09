@@ -12,7 +12,7 @@ It converts form type constraints into JavaScript validation rules.
 Add the next line to your ``composer.json`` file:
 
 ```json
-"require-dev": {
+"require": {
     ...
     "fp/jsformvalidator-bundle": "dev-master"
 }
@@ -54,11 +54,12 @@ In the head of your document you should include the next twig template which col
 </html>
 ```
 
-### Step 4: Set up the routing
+This method uses assets, so if you don't use the Assetic bundle, you have to add manually all the scripts
+placed in the @FpJsFormValidatorBundle/Resources/public/js folder
 
-If you don't use checking the uniqueness of entities, you can skip this step.
+### Step 4: Add routes
 
-Otherwise you should to include routes:
+Include the next routes to your routing config:
 
 ```yaml
 //app/config/routing.yml
@@ -79,7 +80,7 @@ access_control:
 
 ## Usage
 
-First of all pay attention that you should pass to your view NOT the form view object (```$form->createView()```) but the native form object (```$form```):
+First of all, pay attention that you should pass NOT a form view object to your view (```$form->createView()```), but a native form object (```$form```):
 
 ```php
 class ExampleController extends Controller
@@ -119,4 +120,79 @@ Just add this option to your config:
 # ...
 fp_js_form_validator:
     translation_domain: "custom_domain_name"
+```
+
+### Checking the uniqueness of entities
+
+By default our module sends an ajax request to own controller to check the uniqueness using the Doctrine ORM as database manager.
+If you use another database manager or you have another reason to customize this action,
+you can do it by adding the next option:
+
+```yaml
+//app/config/config.yml
+# ...
+fp_js_form_validator:
+    routing:
+        check_unique_entity: "custom_route_name"
+```
+
+Do not forget to create a controller that will be matched with this route:
+
+```php
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+// ...
+/**
+ * @Route("/check_unique_entity", name="custom_route_name")
+ */
+public function customCheckUniqueEntityAction()
+{
+    $data = $this->getRequest()->request->all();
+    // ...
+}
+```
+
+The ```$data``` array contains all the properties of the UniqueEntity constraint, the entity name and values of the necessary fields.
+This is all the necessary data to make a custom validation action.
+
+### Customizing error output
+
+If you are disagree with an initial error output functionality, you can customize it by redefining the following function:
+
+```js
+FpJsFormValidatorFactory.showErrors = function(errors) {
+    // put here your logic to show errors
+}
+
+// The "errors" parameter has the next structure:
+var errors = {
+    user_gender: {      // This is the DOM identifier of the current field
+        type: 'choice', // This is the form type which you've set up in a form builder
+        errors: [       // An array of error-messages
+            'This field shoul not be blank.'
+        ]
+
+    }
+}
+```
+
+### Adding extra actions after validation
+
+The next action will be globally called for all the forms on the current page:
+
+```js
+FpJsFormValidatorFactory.onvalidate = function(errors) {
+    // put here your extra actions
+}
+
+// The "errors" parameter has the same format as on the previous step:
+```
+
+The next action will be called for the specified form:
+
+```js
+document.getElementById('specified_form_id').onvalidate = function(errors) {
+    // put here your extra actions
+}
+
+// The "errors" parameter has the same format as on the previous step:
 ```
