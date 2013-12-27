@@ -201,11 +201,22 @@
             li.innerHTML = name;
             document.getElementById('onvalidate_listeners_list').appendChild(li);
         }
-        FpJsFormValidatorFactory.onvalidate = function(){
-            addOnValidateListenerResult('global_listener')
-        };
-        document.getElementsByTagName('form')[0].onvalidate = function(){
-            addOnValidateListenerResult('local_listener')
-        };
+
+        {% if  checkListenersMode == 'onvalidate' %}
+            FpJsFormValidatorFactory.onvalidate = function(){
+                addOnValidateListenerResult('global_listener')
+            };
+            document.getElementsByTagName('form')[0].onvalidate = function(){
+                addOnValidateListenerResult('local_listener')
+            };
+        {% elseif checkListenersMode == 'global_errors' %}
+            FpJsFormValidatorFactory.showErrors = function(){
+                addOnValidateListenerResult('errors_global_listener')
+            };
+        {% elseif checkListenersMode == 'local_errors' %}
+            document.getElementsByTagName('form')[0].showErrors = function(){
+                addOnValidateListenerResult('errors_local_listener')
+            };
+        {% endif %}
     </script>
 {% endif %}

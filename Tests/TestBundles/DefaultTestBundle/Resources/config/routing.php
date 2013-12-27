@@ -59,7 +59,7 @@ $collection->add(
 $collection->add(
     'fp_js_form_validator_test_listeners',
     new Route(
-        '/fp_js_form_validator/javascript_unit_test/listeners',
+        '/fp_js_form_validator/javascript_unit_test/listeners/{mode}',
         array(
             '_controller' => $controllerClass . '::onValidateListenersAction',
         )

@@ -207,9 +207,11 @@ class FunctionalTestsController extends Controller
     /**
      * Check onvalidate listeners
      *
+     * @param $mode
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function onValidateListenersAction()
+    public function onValidateListenersAction($mode)
     {
         $builder = $this->createFormBuilder(null, array());
         $builder
@@ -224,8 +226,9 @@ class FunctionalTestsController extends Controller
         return $this->render(
             'DefaultTestBundle:FunctionalTests:index.html.twig',
             array(
-                'form'           => $builder->getForm(),
-                'checkListeners' => true
+                'form'               => $builder->getForm(),
+                'checkListeners'     => true,
+                'checkListenersMode' => $mode
             )
         );
     }

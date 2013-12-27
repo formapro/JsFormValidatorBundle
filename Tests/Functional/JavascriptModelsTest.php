@@ -188,11 +188,25 @@ class JavascriptModelsTest extends BaseTestCase
     /**
      * Test onvalidate event listeners
      */
-    public function testListeners()
+    public function testOnValidateListeners()
     {
-        $form = $this->getSubmittedForm('listeners');
+        $form = $this->getSubmittedForm('listeners/onvalidate');
 
         $errors = $this->getElementErrors($form->getParent()->findById('onvalidate_listeners_element'));
         $this->assertEquals(array('global_listener', 'local_listener'), $errors);
+    }
+
+    /**
+     * Test onvalidate event listeners
+     */
+    public function testShowErrorListeners()
+    {
+        $form = $this->getSubmittedForm('listeners/global_errors');
+        $errors = $this->getElementErrors($form->getParent()->findById('onvalidate_listeners_element'));
+        $this->assertEquals(array('errors_global_listener'), $errors);
+
+        $form = $this->getSubmittedForm('listeners/local_errors');
+        $errors = $this->getElementErrors($form->getParent()->findById('onvalidate_listeners_element'));
+        $this->assertEquals(array('errors_local_listener'), $errors);
     }
 } 
