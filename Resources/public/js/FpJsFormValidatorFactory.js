@@ -87,7 +87,7 @@ var FpJsFormValidatorFactory = new function() {
             } else {
                 if (!isValid) {
                     event.preventDefault();
-                    self.showErrors(model.getForm(), model.getMappedErrors());
+                    self.getMethodAndShowErrors(model);
                 }
                 self.postValidateEvent(model);
             }
@@ -134,11 +134,24 @@ var FpJsFormValidatorFactory = new function() {
                 callback(request.responseText, model.requests[requestId].owner);
 
                 if (!model.countProcessedRequests()) {
-                    self.showErrors(model.getForm(), model.getMappedErrors());
+                    self.getMethodAndShowErrors(model);
                     self.postValidateEvent(model);
                 }
             }
         };
+    };
+
+    /**
+     * Returns the global or local method which shows errors
+     *
+     * @param {FpJsFormElement} model
+     */
+    this.getMethodAndShowErrors = function(model) {
+        if (undefined !== model.getForm().showErrors) {
+            model.getForm().showErrors(model.getForm(), model.getMappedErrors());
+        } else {
+            this.showErrors(model.getForm(), model.getMappedErrors());
+        }
     };
 
     /**

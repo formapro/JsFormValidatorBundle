@@ -158,12 +158,27 @@ This is all the necessary data to make a custom validation action.
 
 If you are disagree with an initial error output functionality, you can customize it by redefining the following function:
 
+To redefine a global method:
+
 ```js
-FpJsFormValidatorFactory.showErrors = function(errors) {
+FpJsFormValidatorFactory.showErrors = function(form, errors) {
     // put here your logic to show errors
 }
+```
 
-// The "errors" parameter has the next structure:
+To redefine for a specified form:
+
+```js
+document.getElementById('specified_form_id').showErrors = function(form, errors) {
+    // put here your logic to show errors
+}
+```
+
+The "form" parameter is the current HTMLFormElement element.
+
+The "errors" parameter is an objech which has the next structure:
+
+```js
 var errors = {
     user_gender: {      // This is the DOM identifier of the current field
         type: 'choice', // This is the form type which you've set up in a form builder
