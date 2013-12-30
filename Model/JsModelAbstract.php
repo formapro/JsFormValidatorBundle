@@ -66,7 +66,7 @@ abstract class JsModelAbstract
         }
         // For string
         elseif (is_string($value)) {
-            $value = addcslashes($value, '\'');
+            $value = addcslashes($value, '\'\\');
 
             return "'$value'";
         }

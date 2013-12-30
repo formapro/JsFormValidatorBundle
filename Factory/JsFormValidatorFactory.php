@@ -127,7 +127,7 @@ class JsFormValidatorFactory
             $metadata = $this->getEntityMetadata($form);
             $groups   = $this->getValidationGroups($form);
             $model->addValidationData($this->getMappingValidationData($metadata, $groups));
-            $model->setDataClass(addcslashes($form->getConfig()->getDataClass(), '\\'));
+            $model->setDataClass($form->getConfig()->getDataClass());
         } elseif (!$metadata instanceof ClassMetadata) {
             $metadata = null;
         }

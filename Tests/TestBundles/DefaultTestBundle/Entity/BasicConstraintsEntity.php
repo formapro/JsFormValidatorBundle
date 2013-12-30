@@ -63,7 +63,7 @@ class BasicConstraintsEntity
      *
      * @Assert\Regex(
      *     message="regex_{{ value }}",
-     *     pattern="/^a{3}$/"
+     *     pattern="/^a{3}\d+$/"
      * )
      */
     private $regex;

@@ -394,8 +394,9 @@ function FpJsFormElement(options) {
     };
 
     this.createTransformer = function(item) {
-        if (undefined !== window[item.name]) {
-            var transformer = new window[item.name]();
+        var name = String(item.name).replace(/\\/g, '');
+        if (undefined !== window[name]) {
+            var transformer = new window[name]();
 
             if (typeof transformer.reverseTransform !== 'function') {
                 return null;

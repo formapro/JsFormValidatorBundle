@@ -109,8 +109,9 @@ function FpJsValidationData(options) {
      * @returns {Object}|{null}
      */
     this.getEntityModel = function(getter) {
-        if (undefined !== window[getter['class']]) {
-            var model = new window[getter['class']]();
+        var name = String(getter['class']).replace(/\\/g, '');
+        if (undefined !== window[name]) {
+            var model = new window[name]();
 
             if (typeof model[getter['name']] === 'function') {
                 return model;

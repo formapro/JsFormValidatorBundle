@@ -104,7 +104,7 @@ class FunctionalTestsController extends Controller
                 'notBlank' => 'a',
                 'email'    => 'example@google.com',
                 'url'      => 'https://www.google.com',
-                'regex'    => 'aaa',
+                'regex'    => 'aaa123',
                 'ip'       => '125.125.125.0',
                 'time'     => '12:15:32',
                 'date'     => '2013-04-04',
