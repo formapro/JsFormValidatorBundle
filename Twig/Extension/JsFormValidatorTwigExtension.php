@@ -2,7 +2,6 @@
 
 namespace Fp\JsFormValidatorBundle\Twig\Extension;
 
-use Symfony\Component\Form\Form;
 use Fp\JsFormValidatorBundle\Factory\JsFormValidatorFactory;
 
 /**
@@ -12,6 +11,17 @@ use Fp\JsFormValidatorBundle\Factory\JsFormValidatorFactory;
  */
 class JsFormValidatorTwigExtension extends \Twig_Extension
 {
+    /** @var  \Twig_Environment */
+    protected $env;
+
+    /**
+     * @param \Twig_Environment $environment
+     */
+    public function initRuntime(\Twig_Environment $environment)
+    {
+        $this->env = $environment;
+    }
+
     /**
      * @var JsFormValidatorFactory
      */
@@ -47,15 +57,18 @@ class JsFormValidatorTwigExtension extends \Twig_Extension
     }
 
     /**
-     * @param Form $form
-     *
      * @return string
      */
-    public function getJsValidator(Form $form)
+    public function getJsValidator()
     {
-        $model = $this->getFactory()->createJsModel($form);
+        $models = $this->getFactory()->processQueue();
 
-        return "<script type=\"text/javascript\">FpJsFormValidatorFactory.initNewModel(" . $model . ')</script>';
+        $result = array();
+        foreach ($models as $model) {
+            $result[] = 'FpJsFormValidatorFactory.initNewModel(' . $model . ');';
+        }
+
+        return '<script type="text/javascript">' . implode("\n", $result) . '</script>';
     }
 
     /**

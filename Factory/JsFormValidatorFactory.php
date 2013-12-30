@@ -44,6 +44,11 @@ class JsFormValidatorFactory
     protected $config = array();
 
     /**
+     * @var Form[]
+     */
+    protected $queue = array();
+
+    /**
      * @param Validator  $validator
      * @param Translator $translator
      * @param Router     $router
@@ -429,4 +434,31 @@ class JsFormValidatorFactory
         return $result;
     }
 
+    /**
+     * Add a new form to processing queue
+     *
+     * @param \Symfony\Component\Form\Form $form
+     *
+     * @return array
+     */
+    public function addToQueue(Form $form)
+    {
+        $this->queue[$form->getName()] = $form;
+    }
+
+    /**
+     * @return JsFormElement[]
+     */
+    public function processQueue()
+    {
+        $result = array();
+
+        foreach ($this->queue as $form) {
+            $result[] = $this->createJsModel($form);
+        };
+
+        $this->queue = array();
+
+        return $result;
+    }
 } 

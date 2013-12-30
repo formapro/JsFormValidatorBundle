@@ -77,18 +77,16 @@ var FpJsFormValidatorFactory = new function() {
         var self = this;
         return function(event){
             self.clearModel(model);
-            self.clearDomErrors(model.getForm());
 
             var isValid = self.validateRecursively(model);
             var hasRequests = self.sendModelRequests(model);
 
-            if (hasRequests) {
+            if (hasRequests || !isValid) {
                 event.preventDefault();
-            } else {
-                if (!isValid) {
-                    event.preventDefault();
-                    self.getMethodAndShowErrors(model);
-                }
+            }
+
+            if (!hasRequests) {
+                self.getMethodAndShowErrors(model);
                 self.postValidateEvent(model);
             }
         };
@@ -255,11 +253,21 @@ var FpJsFormValidatorFactory = new function() {
 
             var parent = element;
             if (parent && 'form' !== errors[elementId].type) {
+                //noinspection JSValidateTypes
                 parent = element.parentNode;
             } else if (!parent) {
                 parent = form;
             }
 
+            // Remove existing errors
+            var existList = parent.getElementsByTagName(errorList.tagName);
+            var listLen = existList.length;
+            while (listLen--) {
+                if (errorList.className.toLowerCase() == existList[listLen].className.toLowerCase()) {
+                    existList[listLen].parentNode.removeChild(existList[listLen]);
+                }
+            }
+            // Show new errors
             parent.insertBefore(errorList, parent.firstChild);
         }
     };
@@ -282,25 +290,6 @@ var FpJsFormValidatorFactory = new function() {
         }
 
         return list;
-    };
-
-    /**
-     * Delete all the DOM elemets contains errors
-     *
-     * @param {HTMLFormElement} form
-     *
-     * @returns {FpJsFormValidatorFactory}
-     */
-    this.clearDomErrors = function(form) {
-        var errorClass = new RegExp('(^|\s)' + this.errorClass + '($|\s)');
-        var elems = form.getElementsByTagName('*');
-        for (var i in elems) {
-            if (errorClass.test(elems[i].className)) {
-                elems[i].parentNode.removeChild(elems[i]);
-            }
-        }
-
-        return this;
     };
 
     /**

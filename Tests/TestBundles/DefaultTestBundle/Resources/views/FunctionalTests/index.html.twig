@@ -1,5 +1,4 @@
 {{ include('FpJsFormValidatorBundle::javascripts.html.twig') }}
-{% set view = form.createView() %}
 
 <script type="text/javascript">
     function FpJsFormValidatorBundleTestsTestBundlesDefaultTestBundleEntityTestEntity() {
@@ -183,12 +182,10 @@
 </script>
 
 <div id="transformer_result"></div>
-{{ form_start(view, { 'attr': {'novalidate': 'novalidate' }}) }}
+{{ form_start(form, { 'attr': {'novalidate': 'novalidate' }}) }}
     <input type="submit" name="form_submit" id="form_submit"/>
-    {{ form_rest(view) }}
-{{ form_end(view) }}
-
-{{ fp_jsfv(form) }}
+    {{ form_rest(form) }}
+{{ form_end(form) }}
 
 {% if checkListeners|default(false) %}
     <div>

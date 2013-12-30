@@ -12,7 +12,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  *
  * @package Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form
  */
-class TestFormType extends AbstractType
+class TestFormTypeValidationFalse extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -37,7 +37,6 @@ class TestFormType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class'    => 'Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\TestEntity',
-            'js_validation' => true
         ));
     }
 
@@ -46,6 +45,6 @@ class TestFormType extends AbstractType
      */
     public function getName()
     {
-        return 'form';
+        return 'form_no_validation';
     }
 }

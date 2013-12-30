@@ -39,15 +39,16 @@ class JsFormValidatorTwigExtensionTest extends BaseTestCase
     {
         $factory = $this->getMock(
             'Fp\JsFormValidatorBundle\Factory\JsFormValidatorFactory',
-            array('createJsModel'),
+            array('processQueue'),
             array(),
             '',
             false
         );
-        $model   = new JsFormElement('id', 'form_id');
+        $modelOne   = new JsFormElement('id_1', 'form_id_1');
+        $modelTwo   = new JsFormElement('id_2', 'form_id_2');
         $factory->expects($this->once())
-            ->method('createJsModel')
-            ->will($this->returnValue($model));
+            ->method('processQueue')
+            ->will($this->returnValue(array($modelOne, $modelTwo)));
 
         $extension = $this->getMock(
             'Fp\JsFormValidatorBundle\Twig\Extension\JsFormValidatorTwigExtension',
@@ -66,7 +67,7 @@ class JsFormValidatorTwigExtensionTest extends BaseTestCase
         $form = $formFactory->create('text');
         /** @var JsFormElement $result */
         $result = $extension->getJsValidator($form);
-        $model = "<script type=\"text/javascript\">FpJsFormValidatorFactory.initNewModel(" . $model . ")</script>";
+        $model = "<script type=\"text/javascript\">FpJsFormValidatorFactory.initNewModel(" . $modelOne . ");\nFpJsFormValidatorFactory.initNewModel(" . $modelTwo . ");</script>";
         $this->assertEquals($result, $model);
     }
 }

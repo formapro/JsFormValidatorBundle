@@ -338,7 +338,7 @@ function FpJsFormElement(options) {
     /**
      * Add some errors to the container
      *
-     * @param {Array} errors
+     * @param {Array|String} errors
      *
      * @returns FpJsFormElement
      */

@@ -37,7 +37,7 @@ class FunctionalTestsController extends Controller
 
         return $this->render(
             'DefaultTestBundle:FunctionalTests:index.html.twig',
-            array('form' => $form)
+            array('form' => $form->createView())
         );
     }
 
@@ -48,7 +48,7 @@ class FunctionalTestsController extends Controller
      */
     public function translationAction()
     {
-        $builder = $this->createFormBuilder(null, array());
+        $builder = $this->createFormBuilder(null, array('js_validation' => true));
         $builder
             ->add('name', 'text', array(
                 'constraints' => array(
@@ -60,7 +60,7 @@ class FunctionalTestsController extends Controller
 
         return $this->render(
             'DefaultTestBundle:FunctionalTests:index.html.twig',
-            array('form' => $builder->getForm())
+            array('form' => $builder->getForm()->createView())
         );
     }
 
@@ -85,7 +85,7 @@ class FunctionalTestsController extends Controller
 
         return $this->render(
             'DefaultTestBundle:FunctionalTests:index.html.twig',
-            array('form' => $parent)
+            array('form' => $parent->createView())
         );
     }
 
@@ -131,7 +131,7 @@ class FunctionalTestsController extends Controller
 
         return $this->render(
             'DefaultTestBundle:FunctionalTests:index.html.twig',
-            array('form' => $form, 'isValid' => $isValid)
+            array('form' => $form->createView(), 'isValid' => $isValid)
         );
     }
 
@@ -160,7 +160,7 @@ class FunctionalTestsController extends Controller
                 'ChoicesToBooleanArray' => array('m', 'f'),
                 'ChoiceToBooleanArray'  => 'f',
                 'repeated'              => 'asdf'
-            ))
+            ), array('js_validation' => true))
             ->add('date', 'date', array('constraints' => array($blank)))
             ->add('time', 'time', array('constraints' => array($blank)))
             ->add('datetime', 'datetime', array('constraints' => array($blank)))
@@ -200,20 +200,20 @@ class FunctionalTestsController extends Controller
 
         return $this->render(
             'DefaultTestBundle:FunctionalTests:index.html.twig',
-            array('form' => $form)
+            array('form' => $form->createView())
         );
     }
 
     /**
      * Check onvalidate listeners
      *
-     * @param $mode
+     * @param string $mode
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
     public function onValidateListenersAction($mode)
     {
-        $builder = $this->createFormBuilder(null, array());
+        $builder = $this->createFormBuilder(null, array('js_validation' => true));
         $builder
             ->add('name', 'text', array(
                 'constraints' => array(
@@ -226,7 +226,7 @@ class FunctionalTestsController extends Controller
         return $this->render(
             'DefaultTestBundle:FunctionalTests:index.html.twig',
             array(
-                'form'               => $builder->getForm(),
+                'form'               => $builder->getForm()->createView(),
                 'checkListeners'     => true,
                 'checkListenersMode' => $mode
             )

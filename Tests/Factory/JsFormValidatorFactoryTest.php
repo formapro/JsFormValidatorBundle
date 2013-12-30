@@ -51,10 +51,10 @@ class JsFormValidatorFactoryTest extends BaseTestCase
         /** @var TestConstraint $constraint */
         $constraint = $this->callNoPublicMethod($factory, 'translateConstraint', array($constraint));
         // Translator should translate only those properties, which name contains the "message" substring
-        $this->assertEquals($this->testTransMessage, $constraint->errorMessage);
-        $this->assertEquals($this->testTransMessage, $constraint->messageError);
-        $this->assertEquals($this->testTransMessage, $constraint->someMessageError);
-        $this->assertNotEquals($this->testTransMessage, $constraint->value);
+        $this->assertEquals($this->testTransMessage, $constraint->errorMessage, 'The "errorMessage" option is recognized as message');
+        $this->assertEquals($this->testTransMessage, $constraint->messageError, 'That the "messageError" option is recognized as message');
+        $this->assertEquals($this->testTransMessage, $constraint->someMessageError, 'That the "someMessageError" option is recognized as message');
+        $this->assertNotEquals($this->testTransMessage, $constraint->value, 'That the "value" option is NOT recognized as message');
     }
 
     /**
@@ -80,8 +80,8 @@ class JsFormValidatorFactoryTest extends BaseTestCase
         $constraints        = array($notBlankConstraint, $testConstraint);
 
         $result = $this->callNoPublicMethod($factory, 'parseConstraints', array($constraints));
-        $this->assertInstanceOf($notBlankName, $result[$notBlankName][0]);
-        $this->assertInstanceOf($testName, $result[$testName][0]);
+        $this->assertInstanceOf($notBlankName, $result[$notBlankName][0], 'The native Symfony constraint was parsed successfully');
+        $this->assertInstanceOf($testName, $result[$testName][0], 'Our custom constraint was parsed successfully');
     }
 
     /**
@@ -107,8 +107,8 @@ class JsFormValidatorFactoryTest extends BaseTestCase
         $metadata->addGetterConstraint('fileLegal', new NotBlank());
 
         $result = $this->callNoPublicMethod($factory, 'parseGetters', array($metadata->getters));
-        $this->assertCount(1, $result['nameLegal']['constraints']);
-        $this->assertCount(1, $result['fileLegal']['constraints']);
+        $this->assertCount(1, $result['nameLegal']['constraints'], 'The first getter was parsed successfully and has all the passed constraints');
+        $this->assertCount(1, $result['fileLegal']['constraints'], 'The second getter was parsed successfully and has all the passed constraints');
     }
 
     /**
@@ -135,13 +135,13 @@ class JsFormValidatorFactoryTest extends BaseTestCase
 
         $trans = $this->callNoPublicMethod($factory, 'parseTransformers', array($collection));
         // Receive two transformers
-        $this->assertCount(2, $trans);
+        $this->assertCount(2, $trans, 'All the transformers were parsed successfully');
         // The first one is a chain contains two items
         $chain = new DataTransformerChain(array());
-        $this->assertEquals(get_class($chain), $trans[0]['name']);
-        $this->assertCount(2, $trans[0]['transformers']);
+        $this->assertEquals(get_class($chain), $trans[0]['name'], 'Datatransformer chain has correct name');
+        $this->assertCount(2, $trans[0]['transformers'], 'Datatransformer chain has two transformers');
         // The secons one is a simple transformer
-        $this->assertArrayNotHasKey('transformers', $trans[1]);
+        $this->assertArrayNotHasKey('transformers', $trans[1], 'The second transformer is not parsed as a chain');
     }
 
     /**
@@ -164,7 +164,7 @@ class JsFormValidatorFactoryTest extends BaseTestCase
         // Get from a Form element
         $formFactory = Forms::createFormFactory();
         $form        = $formFactory->create('datetime');
-        $this->assertCount(1, $this->callNoPublicMethod($factory, 'getTransformersList', array($form)));
+        $this->assertCount(1, $this->callNoPublicMethod($factory, 'getTransformersList', array($form)), 'Were received all the necessary transformers');
     }
 
     /**
@@ -182,13 +182,13 @@ class JsFormValidatorFactoryTest extends BaseTestCase
         $formFactory = Forms::createFormFactory();
         // Not for buttons
         $element = $formFactory->create('button');
-        $this->assertFalse($this->callNoPublicMethod($factory, 'isProcessableElement', array($element)));
+        $this->assertFalse($this->callNoPublicMethod($factory, 'isProcessableElement', array($element)), 'Buttons should NOT be processed');
         // Not for hiddens
         $element = $formFactory->create('hidden');
-        $this->assertFalse($this->callNoPublicMethod($factory, 'isProcessableElement', array($element)));
+        $this->assertFalse($this->callNoPublicMethod($factory, 'isProcessableElement', array($element)), 'Hidden inputs should NOT be processed');
         // Just for forms
         $element = $formFactory->create('text');
-        $this->assertTrue($this->callNoPublicMethod($factory, 'isProcessableElement', array($element)));
+        $this->assertTrue($this->callNoPublicMethod($factory, 'isProcessableElement', array($element)), 'Forms should be processed');
     }
 
     /**
@@ -207,10 +207,10 @@ class JsFormValidatorFactoryTest extends BaseTestCase
 
         // Check element with metadata
         $element = $formFactory->create('file');
-        $this->assertTrue($this->callNoPublicMethod($factory, 'hasMetadata', array($element)));
+        $this->assertTrue($this->callNoPublicMethod($factory, 'hasMetadata', array($element)), 'The "file" element has metadata');
         // Check element without metadata
         $element = $formFactory->create('text');
-        $this->assertFalse($this->callNoPublicMethod($factory, 'hasMetadata', array($element)));
+        $this->assertFalse($this->callNoPublicMethod($factory, 'hasMetadata', array($element)), 'The "text" element has NOT metadata');
     }
 
     /**
@@ -228,15 +228,15 @@ class JsFormValidatorFactoryTest extends BaseTestCase
         $formFactory = Forms::createFormFactory();
         // Without groups
         $form = $formFactory->create(new TestForm());
-        $this->assertCount(0, $this->callNoPublicMethod($factory, 'getValidationGroups', array($form)));
+        $this->assertCount(0, $this->callNoPublicMethod($factory, 'getValidationGroups', array($form)), 'This form should NOT have validation groups');
         // Groups as an array
         $form = $formFactory->create(new FormGroupsArray());
-        $this->assertCount(1, $this->callNoPublicMethod($factory, 'getValidationGroups', array($form)));
+        $this->assertCount(1, $this->callNoPublicMethod($factory, 'getValidationGroups', array($form)), 'This form should have validation groups as array');
         // Groups as an function
         $formType = new FormGroupsClosure();
         $formName = get_class($formType);
         $form     = $formFactory->create($formType);
-        $this->assertEquals($formName, $this->callNoPublicMethod($factory, 'getValidationGroups', array($form)));
+        $this->assertEquals($formName, $this->callNoPublicMethod($factory, 'getValidationGroups', array($form)), 'This form should have validation groups as closure');
     }
 
     /**
@@ -258,10 +258,10 @@ class JsFormValidatorFactoryTest extends BaseTestCase
 
         // Check element with metadata
         $element = $formFactory->create('file');
-        $this->assertTrue($this->callNoPublicMethod($factory, 'getEntityMetadata', array($element)));
+        $this->assertTrue($this->callNoPublicMethod($factory, 'getEntityMetadata', array($element)), 'The "file" element has metadata');
         // Check element without metadata
         $element = $formFactory->create('text');
-        $this->assertNull($this->callNoPublicMethod($factory, 'getEntityMetadata', array($element)));
+        $this->assertNull($this->callNoPublicMethod($factory, 'getEntityMetadata', array($element)), 'The "text" element has NOT metadata');
     }
 
     /**
@@ -287,9 +287,9 @@ class JsFormValidatorFactoryTest extends BaseTestCase
 
         $result = $this->callNoPublicMethod($factory, 'processChildren', array($form, $metadata, array()));
 
-        $this->assertNotNull($result['name']);
-        $this->assertNull($result['file']);
-        $this->assertFalse(isset($result['save']));
+        $this->assertNotNull($result['name'], 'The "name" child is processed');
+        $this->assertNull($result['file'], 'The "file" child is processed');
+        $this->assertFalse(isset($result['save']), 'The "save" child is NOT processed');
     }
 
     /**
@@ -320,27 +320,27 @@ class JsFormValidatorFactoryTest extends BaseTestCase
         // Check for a ClassMetadata
         /** @var JsValidationData $data */
         $data = $this->callNoPublicMethod($factory, 'getMappingValidationData', array($metadata, array('test')));
-        $this->assertCount(1, $data->getConstraints());
-        $this->assertCount(2, $data->getGetters());
-        $this->assertCount(2, $data->getGroups());
+        $this->assertCount(1, $data->getConstraints(), '');
+        $this->assertCount(2, $data->getGetters(), 'The "ClassMetadata" has two getters');
+        $this->assertCount(2, $data->getGroups(), 'The "ClassMetadata" has two groups');
 
-        // Check for an array
+        // Check for an array of ProperyMetadata's
         $metadata = $metadata->getMemberMetadatas('name');
         /** @var JsValidationData[] $aData */
         $aData = $this->callNoPublicMethod($factory, 'getMappingValidationData', array($metadata, array()));
-        $this->assertCount(1, $aData);
-        $this->assertCount(1, $aData[0]->getConstraints());
-        $this->assertCount(0, $aData[0]->getGetters());
-        $this->assertCount(1, $aData[0]->getGroups());
+        $this->assertCount(1, $aData, 'Were parsed one metadata form an array');
+        $this->assertCount(1, $aData[0]->getConstraints(), 'The parsed medatada has one constraint');
+        $this->assertCount(0, $aData[0]->getGetters(), 'The parsed medatada has NOT getters');
+        $this->assertCount(1, $aData[0]->getGroups(), 'The parsed medatada has one group');
 
         // Check for a ProperyMetadata
         $metadata = $metadata[0];
         /** @var JsValidationData $data */
         $data = $this->callNoPublicMethod($factory, 'getMappingValidationData', array($metadata, array()));
-        $this->assertCount(1, $data->getConstraints());
+        $this->assertCount(1, $data->getConstraints(), 'The "ProperyMetadata" has one constraint');
 
         // Check for null
-        $this->assertCount(0, $this->callNoPublicMethod($factory, 'getMappingValidationData', array(null, array())));
+        $this->assertCount(0, $this->callNoPublicMethod($factory, 'getMappingValidationData', array(null, array())), 'Neither metadata has not been parsed');
     }
 
     /**
@@ -383,9 +383,10 @@ class JsFormValidatorFactoryTest extends BaseTestCase
 
         $data = $this->callNoPublicMethod($factory, 'getElementValidationData', array($form, array()));
 
-        $this->assertCount(1, $data->getConstraints());
-        $this->assertCount(0, $data->getGetters());
-        $this->assertCount(1, $data->getGroups());
+        $this->assertInstanceOf('Fp\JsFormValidatorBundle\Model\JsValidationData', $data, 'Successfully received the JsValidationData object');
+        $this->assertCount(1, $data->getConstraints(), 'Data has on constraint');
+        $this->assertCount(0, $data->getGetters(), 'Data has NOT getters');
+        $this->assertCount(1, $data->getGroups(), 'Data has one group');
     }
 
     /**
@@ -435,18 +436,18 @@ class JsFormValidatorFactoryTest extends BaseTestCase
         /** @var Form $form */
         $form  = $formFactory->create('file');
         $model = $factory->createJsModel($form, $metadata, array());
-        $this->assertEquals('entity_metadata', $model->getChildren());
+        $this->assertEquals('entity_metadata', $model->getChildren(), 'Has been parsed as the parent element with its own metada');
 
         // Check with child element and Class metadata
         $form  = $formFactory->create(new TestForm())->get('name');
         $model = $factory->createJsModel($form, $metadata, array());
         /** @var ClassMetadata $data */
         $data = $model->getChildren();
-        $this->assertEquals('Fp\JsFormValidatorBundle\Tests\Fixtures\Entity', $data->getClassName());
+        $this->assertEquals('Fp\JsFormValidatorBundle\Tests\Fixtures\Entity', $data->getClassName(), 'Has been parsed as the child element, metada is received from the parent metadata (the first level child)');
 
         // Check with child element and not Class metadata
         $model = $factory->createJsModel($form, $metadata->getMemberMetadatas('name'), array());
-        $this->assertNull($model->getChildren());
+        $this->assertNull($model->getChildren(), 'Has been parsed as third-level child without metadata');
     }
 
     /**
@@ -463,7 +464,7 @@ class JsFormValidatorFactoryTest extends BaseTestCase
         );
         $transformer = new ChoicesToValuesTransformer(new ChoiceList(array('a', 'b'), array('A', 'B')));
         $result = $this->callNoPublicMethod($factory, 'getTransformerParam', array($transformer, 'choiceList'));
-        $this->assertEquals(array('a', 'b'), $result);
+        $this->assertEquals(array('a', 'b'), $result, 'All the transformer\'s parameres have been received');
     }
 
     /**
@@ -502,7 +503,7 @@ class JsFormValidatorFactoryTest extends BaseTestCase
         $refProperty->setValue($factory, $config);
 
         // Check prepared config
-        $this->assertEquals($expected, $this->callNoPublicMethod($factory, 'getPreparedConfig', array()));
+        $this->assertEquals($expected, $this->callNoPublicMethod($factory, 'getPreparedConfig', array()), 'The config has been prepared successfully');
     }
 
     /**
@@ -521,6 +522,6 @@ class JsFormValidatorFactoryTest extends BaseTestCase
             )
         );
 
-        $this->assertEquals($defaultConfig, $factory->getConfig());
+        $this->assertEquals($defaultConfig, $factory->getConfig(), 'Check the bundle config');
     }
 }
