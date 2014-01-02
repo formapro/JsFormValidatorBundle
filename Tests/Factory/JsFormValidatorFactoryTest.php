@@ -278,7 +278,13 @@ class JsFormValidatorFactoryTest extends BaseTestCase
         );
         $factory->expects($this->exactly(2))
             ->method('createJsModel')
-            ->will($this->returnArgument(1));
+            ->will($this->returnCallback(function($child, $childMetadata, $groups){
+                if (null === $childMetadata) {
+                    return 'null_metadata';
+                } else {
+                    return 'has_metadata';
+                }
+            }));
         $formFactory = Forms::createFormFactory();
         $form        = $formFactory->create(new TestForm());
 
@@ -287,8 +293,8 @@ class JsFormValidatorFactoryTest extends BaseTestCase
 
         $result = $this->callNoPublicMethod($factory, 'processChildren', array($form, $metadata, array()));
 
-        $this->assertNotNull($result['name'], 'The "name" child is processed');
-        $this->assertNull($result['file'], 'The "file" child is processed');
+        $this->assertEquals($result['name'], 'has_metadata', 'The "name" child is processed');
+        $this->assertEquals($result['file'], 'null_metadata', 'The "file" child is processed');
         $this->assertFalse(isset($result['save']), 'The "save" child is NOT processed');
     }
 
@@ -396,11 +402,15 @@ class JsFormValidatorFactoryTest extends BaseTestCase
     {
         $factory = $this->getMock(
             'Fp\JsFormValidatorBundle\Factory\JsFormValidatorFactory',
-            array('getPreparedConfig', 'processChildren', 'getEntityMetadata', 'getMappingValidationData', 'getElementValidationData', 'getTransformersList'),
+            array('getConfig', 'getPreparedConfig', 'processChildren', 'getEntityMetadata', 'getMappingValidationData', 'getElementValidationData', 'getTransformersList'),
             array(),
             '',
             false
         );
+
+        $factory->expects($this->exactly(3))
+            ->method('getConfig')
+            ->will($this->returnValue(array('js_validation' => null)));
 
         $factory->expects($this->exactly(3))
             ->method('getPreparedConfig')
@@ -519,7 +529,8 @@ class JsFormValidatorFactoryTest extends BaseTestCase
             'translation_domain' => 'validation',
             'routing' => array(
                 'check_unique_entity' => 'fp_js_form_validator.check_unique_entity'
-            )
+            ),
+            'js_validation' => null
         );
 
         $this->assertEquals($defaultConfig, $factory->getConfig(), 'Check the bundle config');

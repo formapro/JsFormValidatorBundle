@@ -263,7 +263,7 @@ class JsFormValidatorFactory
                     ? $metadata->getMemberMetadatas($name)
                     : null;
 
-                $childModel = $this->createJsModel($child, $childMetadata, $groups, false);
+                $childModel = $this->createJsModel($child, $childMetadata, $groups);
                 if (null !== $childModel) {
                     $result[$name] = $childModel;
                 }
