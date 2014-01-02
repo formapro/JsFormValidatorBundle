@@ -15,6 +15,10 @@ var FpJsFormValidatorFactory = new function() {
     this.initNewModel = function(model) {
         var self = this;
 
+        if (!model) {
+            return;
+        }
+
         this.onDocumentReady(function(){
             model.initialize(self.getFormDomElement(model));
             self.forms[model.getId()] = model;

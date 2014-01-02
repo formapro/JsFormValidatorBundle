@@ -27,8 +27,7 @@ $container->loadFromExtension('doctrine', array(
 $container->loadFromExtension(
     'mink',
     array(
-        'browser_name' => 'chrome',
-        'base_url' => 'http://jsfv.int/index.php',
+        'base_url' => 'http://localhost/index.php',
         'selenium2' => array(),
     )
 );

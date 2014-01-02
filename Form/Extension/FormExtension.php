@@ -1,10 +1,13 @@
 <?php
 namespace Fp\JsFormValidatorBundle\Form\Extension;
 
-use Fp\JsFormValidatorBundle\Form\EventSubscriber\FormSubscriber;
 use Fp\JsFormValidatorBundle\Factory\JsFormValidatorFactory;
+use Fp\JsFormValidatorBundle\Form\Subscriber\SubscriberToQueue;
 use Symfony\Component\Form\AbstractTypeExtension;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**
@@ -33,11 +36,7 @@ class FormExtension extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        if (!$options['js_validation']) {
-            return;
-        }
-
-        $builder->addEventSubscriber(new FormSubscriber($this->factory));
+        $builder->addEventSubscriber(new SubscriberToQueue($this->factory));
     }
 
     /**
@@ -45,7 +44,7 @@ class FormExtension extends AbstractTypeExtension
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setDefaults(array('js_validation' => false));
+        $resolver->setDefaults(array('js_validation' => null));
     }
 
     /**

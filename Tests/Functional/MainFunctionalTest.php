@@ -10,7 +10,7 @@ use Fp\JsFormValidatorBundle\Tests\BaseTestCase;
  *
  * @package Fp\JsFormValidatorBundle\Tests\Functional
  */
-class JavascriptModelsTest extends BaseTestCase
+class MainFunctionalTest extends BaseTestCase
 {
     protected $base;
 
