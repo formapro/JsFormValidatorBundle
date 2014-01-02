@@ -361,6 +361,10 @@ function FpJsFormElement(options) {
      * @returns {boolean}
      */
     this.isValid = function() {
+        if (!this.element) {
+            return true;
+        }
+
         var value = this.getValue();
 
         var i = this.validationData.length;
