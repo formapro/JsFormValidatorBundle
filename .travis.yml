@@ -1,8 +1,10 @@
 language: php
 
-php: [5.3]
+php: [5.3,5.4,5.5]
 
 env:
+  - SF_VERSION='2.1.*'
+  - SF_VERSION='2.2.*'
   - SF_VERSION='2.3.*'
 
 before_script:
@@ -14,7 +16,7 @@ before_script:
 
   - curl http://getcomposer.org/installer | php
   - php composer.phar require --no-update symfony/framework-bundle=$SF_VERSION
-  - php composer.phar install --dev
+  - php composer.phar install --dev --prefer-dist
 
   - sudo chmod 0777 Tests/app/cache
   - sudo chmod 0777 Tests/app/logs
