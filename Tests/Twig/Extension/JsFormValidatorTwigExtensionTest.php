@@ -29,7 +29,7 @@ class JsFormValidatorTwigExtensionTest extends BaseTestCase
         );
 
         /** @var JsFormValidatorTwigExtension $extension */
-        $this->assertArrayHasKey('fp_jsfv', $extension->getFunctions());
+        $this->assertArrayHasKey('init_js_validation', $extension->getFunctions());
     }
 
     /**

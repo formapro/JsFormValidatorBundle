@@ -2,6 +2,7 @@
 
 namespace Fp\JsFormValidatorBundle\Tests\Form;
 
+use Fp\JsFormValidatorBundle\Model\JsFormElement;
 use Fp\JsFormValidatorBundle\Tests\BaseTestCase;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\TestFormType;
 
@@ -43,6 +44,7 @@ class SwitchingValidationTest extends BaseTestCase
             ->add('name_false')
             ->getForm();
 
+        /** @var JsFormElement[] $result */
         $result = $fpFactory->processQueue();
 
         $this->assertCount(2, $result);
@@ -74,6 +76,7 @@ class SwitchingValidationTest extends BaseTestCase
             ->add('name_false')
             ->getForm();
 
+        /** @var JsFormElement[] $result */
         $result = $fpFactory->processQueue();
 
         $this->assertCount(1, $result);
@@ -129,6 +132,7 @@ class SwitchingValidationTest extends BaseTestCase
             ->add('name_true_false', 'text', array('js_validation' => false)) // disabled
             ->getForm();
 
+        /** @var JsFormElement[] $result */
         $result = $fpFactory->processQueue();
 
         $this->assertCount(2, $result);

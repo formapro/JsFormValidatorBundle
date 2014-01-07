@@ -4,6 +4,7 @@ namespace Fp\JsFormValidatorBundle\Tests\Functional;
 
 use Behat\Mink\Element\NodeElement;
 use Fp\JsFormValidatorBundle\Tests\BaseTestCase;
+use Symfony\Component\DependencyInjection\Container;
 
 /**
  * Class JavascriptModelsTest
@@ -16,9 +17,9 @@ class MainFunctionalTest extends BaseTestCase
 
     protected function setUp()
     {
-        $this->base = $this->getKernel()
-            ->getContainer()
-            ->getParameter('mink.base_url');
+        /** @var Container $container */
+        $container = $this->getKernel()->getContainer();
+        $this->base = $container->getParameter('mink.base_url');
     }
 
     /**
@@ -208,5 +209,16 @@ class MainFunctionalTest extends BaseTestCase
         $form = $this->getSubmittedForm('listeners/local_errors');
         $errors = $this->getElementErrors($form->getParent()->findById('onvalidate_listeners_element'));
         $this->assertEquals(array('errors_local_listener'), $errors);
+    }
+
+    /**
+     * Test that part of form works successfully
+     */
+    public function testPartOfForm()
+    {
+        $form = $this->getSubmittedForm('part');
+
+        $errors = $this->getElementErrors($form);
+        $this->assertEquals(array('name_'), $errors, 'Wait for error for the name only');
     }
 } 

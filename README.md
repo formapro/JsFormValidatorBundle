@@ -40,8 +40,6 @@ public function registerBundles()
 
 ### Step 3: Enable the javascript libraries
 
-In the head of your document you should include the next twig template which collects all the necessary libraries:
-
 ```twig
 <html>
     <head>
@@ -53,9 +51,6 @@ In the head of your document you should include the next twig template which col
     </body>
 </html>
 ```
-
-This method uses assets, so if you don't use the Assetic bundle, you have to add manually all the scripts
-placed in the @FpJsFormValidatorBundle/Resources/public/js folder
 
 ### Step 4: Add routes
 
@@ -69,58 +64,124 @@ fp_js_form_validator:
     prefix: /fp_js_form_validator
 ```
 
-and add this paths to your security settings:
-
-```yaml
-//app/config/security.yml
-# ...
-access_control:
-    - { path: ^/fp_js_form_validator/, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-```
+At the moment we use routes to send ajax-requests to check the uniqueness of entities.
+Pay attention that your security settings can prevent this action.
+So if you are going to use this functional, please check that the requests has necessary permissions.
+Or you can redefine this functional (see the Customization paragraph).
 
 ## Usage
 
-First of all, pay attention that you should pass NOT a form view object to your view (```$form->createView()```), but a native form object (```$form```):
+There are three levels (app, form, field) and three statuses (default, true, false) of the validation.
 
-```php
-class ExampleController extends Controller
-{
-    public function indexAction()
-    {
-        $user = new User();
-        $form = $this->createForm(new UserType(), $user);
+### An application level:
 
-        return $this->render('AcmeDemoBundle:Example:index.html.twig', array(
-            'form' => $form
-        ));
-    }
-}
-```
-
-Now you can enable the javascript validation in your view after initializing the form:
-
-```twig
-{{ form(form.createView()) }}
-
-{{ fp_jsfv(form) }}
-```
-
-## Customization
-
-### Configure translations
-
-By default, this bundle uses (just like Symfony2 forms) the "validation" domain for message translation.
-
-If you had changed this option for the server side, you should also make changes for our bundle.
-
-Just add this option to your config:
+The validation can be switched on/off globally in your config:
 
 ```yaml
 //app/config/config.yml
 # ...
 fp_js_form_validator:
-    translation_domain: "custom_domain_name"
+    js_validation: true
 ```
+
+### A form level:
+
+You can enable/disable the validation for a specified form in its own from builder:
+
+```php
+namespace Acme\DemoBundle\Form
+
+class UserFormType extends AbstractType
+{
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $resolver->setDefaults(array(
+            'js_validation' => true
+        ));
+    }
+}
+```
+
+or in a controller:
+
+```php
+class DefaultController extends Controller
+{
+    public function indexAction()
+    {
+        $form = $this->createForm(new UserType(), new User(), array(
+            'js_validation' => true
+        ));
+
+        return $this->render('AcmeDemoBundle:Default:index.html.twig',
+            array('form' => $form->createView())
+        );
+    }
+```
+
+### A field level:
+
+You can enable/disable the validation for specified fields only:
+
+```php
+public function buildForm(FormBuilderInterface $builder, array $options)
+{
+    $builder
+        ->add('name', 'text', array(
+            'js_validation' => true
+        ));
+}
+```
+
+### Statuses of the validation:
+
+1) Default (value is not set) - is disabled, but can be enabled on the level and sub-levels.
+
+2) ```true``` - is enabled for the level and sub-levels, but can be disabled on sub-levels.
+
+3) ```false``` - is disabled for the level and sub-levels, regardless of values specified on sub-levels.
+
+### Examples
+
+The next examples shows you how to manipulate of the validation on the three levels.
+
+~~validation is disabled~~
+**validation is enabled**
+
+1. ~~config (default)~~ -> ~~form (default)~~ -> **field (true)**
+
+2. ~~config (default)~~ -> **form (true)** -> **field (default)**
+
+3. ~~config (default)~~ -> **form (true)** -> ~~field (false)~~
+
+4. **config (true)** -> **form (default)** -> **field (default)**
+
+5. **config (true)** -> ~~form (false)~~ -> ~~field (true)~~
+
+6. ~~config (false)~~ -> ~~form (true)~~ -> ~~field (true)~~
+
+### Issue with sub-requests
+
+Currently js-data for each your form is enabled inside of the template that you have included on the installation step 3.
+So if your form was rendered in sub-request:
+
+```twig
+<div id="email">
+    {{ render(controller('AcmeDemoBundle:Default:sendEmail')) }}
+</div>
+```
+in this way the main template does not know anything about that form.
+
+To fix it, you have to add the initialization to that template manually:
+```twig
+{# AcmeDemoBundle:Default:sendEmail.html.twig #}
+
+{{ init_js_validation() }}
+
+{{ form(form) }}
+```
+
+## Customization
 
 ### Checking the uniqueness of entities
 
@@ -158,7 +219,7 @@ This is all the necessary data to make a custom validation action.
 
 If you are disagree with an initial error output functionality, you can customize it by redefining the following function:
 
-To redefine a global method:
+To redefine it globally for all the forms:
 
 ```js
 FpJsFormValidatorFactory.showErrors = function(form, errors) {
@@ -183,7 +244,7 @@ var errors = {
     user_gender: {      // This is the DOM identifier of the current field
         type: 'choice', // This is the form type which you've set up in a form builder
         errors: [       // An array of error-messages
-            'This field shoul not be blank.'
+            'This field should not be blank.'
         ]
 
     }
@@ -211,3 +272,32 @@ document.getElementById('specified_form_id').onvalidate = function(errors) {
 
 // The "errors" parameter has the same format as on the previous step:
 ```
+
+**Pay attention** that the the second action does not override the first one.
+In the next example you will receive two alerts for the specified form - 'global' and then 'local':
+
+```js
+FpJsFormValidatorFactory.onvalidate = function(errors) {
+    alert('global')
+}
+document.getElementById('specified_form_id').onvalidate = function(errors) {
+    alert('local')
+}
+```
+
+### Validation groups from a closure
+
+If you have defined validation groups as a callback:
+
+```php
+public function setDefaultOptions(OptionsResolverInterface $resolver)
+{
+    $resolver->setDefaults(array(
+        'validation_groups' => function() {
+            return array('test');
+        }
+    ));
+}
+```
+
+you have to implement it

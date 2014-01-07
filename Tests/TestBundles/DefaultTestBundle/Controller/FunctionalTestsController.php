@@ -232,4 +232,31 @@ class FunctionalTestsController extends Controller
             )
         );
     }
+
+    public function partOfFormAction()
+    {
+        $builder = $this->createFormBuilder(null, array('js_validation' => true));
+        $builder
+            ->add('name', 'text', array(
+                'constraints' => array(
+                    new NotBlank(array(
+                        'message' => 'name_{{ value }}'
+                    ))
+                )
+            ))
+            ->add('email', 'text', array(
+                'constraints' => array(
+                    new NotBlank(array(
+                        'message' => '{{ value }}'
+                    ))
+                )
+            ));
+
+        return $this->render(
+            'DefaultTestBundle:FunctionalTests:partOfForm.html.twig',
+            array(
+                'form' => $builder->getForm()->createView(),
+            )
+        );
+    }
 }

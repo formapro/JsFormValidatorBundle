@@ -66,4 +66,14 @@ $collection->add(
     )
 );
 
+$collection->add(
+    'fp_js_form_validator_test_part',
+    new Route(
+        '/fp_js_form_validator/javascript_unit_test/part',
+        array(
+            '_controller' => $controllerClass . '::partOfFormAction',
+        )
+    )
+);
+
 return $collection;
