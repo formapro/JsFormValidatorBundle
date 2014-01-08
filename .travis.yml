@@ -3,7 +3,8 @@ language: php
 php: [5.3]
 
 env:
-  - SF_VERSION='2.3.*'
+  - SF_VERSION='~2.3'
+  - SF_VERSION='~2.4'
 
 before_script:
   - export WEB_FIXTURES_HOST=http://localhost/index.php
@@ -13,7 +14,7 @@ before_script:
   - sleep 4
 
   - curl http://getcomposer.org/installer | php
-  - php composer.phar require --no-update symfony/framework-bundle=$SF_VERSION
+  - php composer.phar require --no-update symfony/symfony=$SF_VERSION
   - php composer.phar install --dev
 
   - sudo chmod 0777 Tests/app/cache
