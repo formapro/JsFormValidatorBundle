@@ -128,7 +128,9 @@ public function buildForm(FormBuilderInterface $builder, array $options)
 ### Statuses of the validation:
 
 1. Default (value is not set) - the validation is disabled.
+
 2. ```js_validation = true``` - the validation is enabled, but can be disabled for children levels. **Example:** if you set ```true``` for a form, you can disable it for a specified field.
+
 3. ```js_validation = false``` - the validation is disabled forcibly for this level and all the children levels. **Example:** if you set ```false``` in the config - that means the validation will be disabled for all the forms and form-elements regardless of their settings.
 
 ### Issue with sub-requests
@@ -198,62 +200,72 @@ This is all the necessary data to make a custom validation action.
 If you are disagree with an initial error output functionality, you can customize it by redefining the following function:
 To redefine it globally for all the forms:
 ```js
-FpJsFormValidatorFactory.showErrors = function(form, errors) {
-    // put here your logic to show errors
-}
+<script type="text/javascript">
+    FpJsFormValidatorFactory.showErrors = function(form, errors) {
+        // put here your logic to show errors
+    }
+<script/>
 ```
 
 To redefine for a specified form:
 ```js
-document.getElementById('specified_form_id').showErrors = function(form, errors) {
-    // put here your logic to show errors
-}
+<script type="text/javascript">
+    document.getElementById('specified_form_id').showErrors = function(form, errors) {
+        // put here your logic to show errors
+    }
+<script/>
 ```
 
 The "form" parameter is the current HTMLFormElement element.
 The "errors" parameter is an objech which has the next structure:
 ```js
-var errors = {
-    user_gender: {      // This is the DOM identifier of the current field
-        type: 'choice', // This is the form type which you've set up in a form builder
-        errors: [       // An array of error-messages
-            'This field should not be blank.'
-        ]
+<script type="text/javascript">
+    var errors = {
+        user_gender: {      // This is the DOM identifier of the current field
+            type: 'choice', // This is the form type which you've set up in a form builder
+            errors: [       // An array of error-messages
+                'This field should not be blank.'
+            ]
 
+        }
     }
-}
+<script/>
 ```
 
 ### Adding extra actions after validation
 
 The next action will be globally called for all the forms on the current page:
 ```js
-FpJsFormValidatorFactory.onvalidate = function(errors) {
-    // put here your extra actions
-}
+<script type="text/javascript">
+    FpJsFormValidatorFactory.onvalidate = function(errors) {
+        // put here your extra actions
+    }
 
-// The "errors" parameter has the same format as on the previous step:
+    // The "errors" parameter has the same format as on the previous step:
+    ```
+
+    The next action will be called for the specified form:
+    ```js
+    document.getElementById('specified_form_id').onvalidate = function(errors) {
+        // put here your extra actions
+    }
+
+    // The "errors" parameter has the same format as on the previous step:
+<script/>
 ```
 
-The next action will be called for the specified form:
-```js
-document.getElementById('specified_form_id').onvalidate = function(errors) {
-    // put here your extra actions
-}
-
-// The "errors" parameter has the same format as on the previous step:
-```
-
-**Pay attention** that the the second action does not override bot complement the first one.
+**Pay attention** that the the second action does not override but complement the first one.
 In the next example you will receive two alerts for the specified form - 'global' and then 'local':
 
 ```js
-FpJsFormValidatorFactory.onvalidate = function(errors) {
-    alert('global')
-}
-document.getElementById('specified_form_id').onvalidate = function(errors) {
-    alert('local')
-}
+<script type="text/javascript">
+    FpJsFormValidatorFactory.onvalidate = function(errors) {
+        alert('global')
+    }
+    document.getElementById('specified_form_id').onvalidate = function(errors) {
+        alert('local')
+    }
+<script/>
 ```
 
 ### Validation groups from a closure
@@ -277,13 +289,15 @@ class UserFormType extends AbstractType
 you have to implement it on the JS side.
 Just add a JS class with name similar to the full class name of the related form (but without slashes),
 and add there the **'getValidationGroups'** method:
-```javascript
-function AcmeDemoBundleFormUserFormType() {
+```js
+<script type="text/javascript">
+    function AcmeDemoBundleFormUserFormType() {
 
-    this.getValidationGroups = function(model) {
-        return ['test_group'];
+        this.getValidationGroups = function(model) {
+            return ['test_group'];
+        }
     }
-}
+<script/>
 ```
 
 ### The getters validation
@@ -309,13 +323,15 @@ class UserEntity
 ```
 
 you should add the next JS:
-```javascript
-function AcmeDemoBundleFormUserEntity() {
+```js
+<script type="text/javascript">
+    function AcmeDemoBundleFormUserEntity() {
 
-    this.isPasswordValid = function(model) {
-        // Check that the name field is not equal to password
+        this.isPasswordValid = function(model) {
+            // Check that the name field is not equal to password
+        }
     }
-}
+<script/>
 ```
 
 ### Custom constraints
@@ -352,31 +368,33 @@ class ContainsAlphanumericValidator extends ConstraintValidator
 
 To cover it you have to create:
 
-```javascript
-function AcmeDemoBundleValidatorConstraintsContainsAlphanumeric() {
-    /**
-     * This value will be filled with the real message received from your php constraint
-     */
-    this.message = '';
+```js
+<script type="text/javascript">
+    function AcmeDemoBundleValidatorConstraintsContainsAlphanumeric() {
+        /**
+         * This value will be filled with the real message received from your php constraint
+         */
+        this.message = '';
 
-    /**
-     * This method is required
-     * Should return an error message or an array of messages
-     */
-    this.validate = function(value, model) {
-        if (value.length && !/^[a-zA-Za0-9]+$/.test(value)) {
-            return this.message.replace('%string%', value);
+        /**
+         * This method is required
+         * Should return an error message or an array of messages
+         */
+        this.validate = function(value, model) {
+            if (value.length && !/^[a-zA-Za0-9]+$/.test(value)) {
+                return this.message.replace('%string%', value);
+            }
+        }
+
+        /**
+         * Optional method
+         */
+        this.onCreate = function() {
+            // You can put here some extra actions which will be called after build of this constraint
+            // E.g. you can make some preparing actions with the properties
         }
     }
-
-    /**
-     * Optional method
-     */
-    this.onCreate = function() {
-        // You can put here some extra actions which will be called after build of this constraint
-        // E.g. you can make some preparing actions with the properties
-    }
-}
+<script/>
 ```
 
 ### Custom data transformers
@@ -384,20 +402,22 @@ function AcmeDemoBundleValidatorConstraintsContainsAlphanumeric() {
 You can read [here](http://symfony.com/doc/current/cookbook/form/data_transformers.html) about data transformers.
 If you already have a custom composite field with the custom Acme\DemoBundle\Form\DataTransformer\MyTransformer view transformer - you should implement it on JS side to prepare the value for the JS validation:
 
-```javascript
-function AcmeDemoBundleFormDataTransformerMyTransformer() {
-    /**
-     * Some extra option, defined in your transformer. It will be filled from your php class
-     */
-    this.extraOption = '';
+```js
+<script type="text/javascript">
+    function AcmeDemoBundleFormDataTransformerMyTransformer() {
+        /**
+         * Some extra option, defined in your transformer. It will be filled from your php class
+         */
+        this.extraOption = '';
 
-    /**
-     * This method is required
-     * should return the resulting value
-     */
-    this.reverseTransform = function(value, model) {
-        // Some actions to compose the real value
-        return value;
+        /**
+         * This method is required
+         * should return the resulting value
+         */
+        this.reverseTransform = function(value, model) {
+            // Some actions to compose the real value
+            return value;
+        }
     }
-}
+<script/>
 ```
