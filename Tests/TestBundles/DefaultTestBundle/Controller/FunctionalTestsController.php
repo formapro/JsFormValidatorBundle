@@ -2,12 +2,15 @@
 
 namespace Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Controller;
 
+use Composer\Factory;
+use Fp\JsFormValidatorBundle\Factory\JsFormValidatorFactory;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\BasicConstraintsEntity;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\TestEntity;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\BasicConstraintsEntityType;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\TestFormType;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\TestSubFormType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints\Blank;
 use Symfony\Component\Validator\Constraints\False;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -44,11 +47,27 @@ class FunctionalTestsController extends Controller
     /**
      * Check translation service
      *
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     *
+     * @param string                                    $type
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function translationAction()
+    public function translationAction(Request $request, $type)
     {
-        $builder = $this->createFormBuilder(null, array('js_validation' => true));
+        if ($type == 2) {
+            /** @var JsFormValidatorFactory $factory */
+            $factory = $this->get('fp_js_form_validator.factory');
+
+            $config = $factory->getConfig();
+            $config['translation_domain'] = 'test';
+
+            $reflection = new \ReflectionProperty($factory, 'config');
+            $reflection->setAccessible(true);
+            $reflection->setValue($factory, $config);
+        }
+
+        $builder = $this->createFormBuilder(null, array('js_validation' => ($type > 0)));
         $builder
             ->add('name', 'text', array(
                 'constraints' => array(
@@ -58,9 +77,14 @@ class FunctionalTestsController extends Controller
                 )
             ));
 
+        $form = $builder->getForm();
+        if ($request->isMethod('post')) {
+            $form->submit($request);
+        }
+
         return $this->render(
             'DefaultTestBundle:FunctionalTests:index.html.twig',
-            array('form' => $builder->getForm()->createView())
+            array('form' => $form->createView())
         );
     }
 
@@ -81,6 +105,14 @@ class FunctionalTestsController extends Controller
                     ))
                 ),
                 'validation_groups' => array('child')
+            ))
+            ->add('email', new TestSubFormType(), array(
+                'constraints' => array(
+                    new NotBlank(array(
+                        'message' => 'child_message'
+                    ))
+                ),
+                'validation_groups' => function() {return array('child');}
             ));
 
         return $this->render(

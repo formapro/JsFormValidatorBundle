@@ -20,7 +20,7 @@ $collection->add(
 $collection->add(
     'fp_js_form_validator_test_translations',
     new Route(
-        '/fp_js_form_validator/javascript_unit_test/translations',
+        '/fp_js_form_validator/javascript_unit_test/translations/{type}',
         array(
             '_controller' => $controllerClass . '::translationAction',
         )

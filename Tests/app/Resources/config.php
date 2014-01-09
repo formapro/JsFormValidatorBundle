@@ -1,4 +1,16 @@
 <?php
+$defaults = array(
+    'mink' => array(
+        'browser_name' => 'firefox',
+        'base_url' => 'http://localhost/index.php',
+    ),
+);
+
+if (file_exists( __DIR__ . '/local_config.php')) {
+    $localConfig = include_once __DIR__ . '/local_config.php';
+    $defaults = array_merge($defaults, $localConfig);
+}
+
 $container->loadFromExtension('framework', array(
     'translator' => array('fallback' => 'en'),
     'secret' => 'some value',
@@ -27,7 +39,8 @@ $container->loadFromExtension('doctrine', array(
 $container->loadFromExtension(
     'mink',
     array(
-        'base_url' => 'http://localhost/index.php',
+        'browser_name' => $defaults['mink']['browser_name'],
+        'base_url' => $defaults['mink']['base_url'],
         'selenium2' => array(),
     )
 );

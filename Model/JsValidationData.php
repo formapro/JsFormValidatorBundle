@@ -73,10 +73,11 @@ class JsValidationData extends JsModelAbstract
     public function toArray()
     {
         return array(
-            'type'        => $this->getType(),
-            'groups'      => $this->getGroups(),
-            'constraints' => $this->getConstraints(),
-            'getters'     => $this->getGetters(),
+            'type'          => $this->getType(),
+            'groups'        => $this->getGroups(),
+            'defaultGroups' => $this->defaultGroups,
+            'constraints'   => $this->getConstraints(),
+            'getters'       => $this->getGetters(),
         );
     }
 

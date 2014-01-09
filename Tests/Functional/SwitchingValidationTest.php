@@ -104,6 +104,11 @@ class SwitchingValidationTest extends BaseTestCase
             ->add('name_true', new TestFormType())
             ->getForm();
 
+        $formFactory
+            ->createNamedBuilder('form_false', 'form', null, array('js_validation' => false))
+            ->add('name_true', new TestFormType())
+            ->getForm();
+
         $result = $fpFactory->processQueue();
 
         $this->assertCount(0, $result);

@@ -25,16 +25,22 @@ class MainFunctionalTest extends BaseTestCase
     /**
      * @param string $name
      *
+     * @param bool   $isAjax
+     *
      * @return \Behat\Mink\Element\NodeElement|null
      */
-    protected function getSubmittedForm($name)
+    protected function getSubmittedForm($name, $isAjax = true)
     {
         $session = $this->getMink()->getSession('selenium2');
         $session->visit($this->base . '/fp_js_form_validator/javascript_unit_test/' . $name);
+
         $session->getPage()->findButton('form_submit')->click();
-        $session->wait(5000,
-            "FpJsFormValidatorFactory.forms.form.countProcessedRequests() == 0"
-        );
+
+        if ($isAjax) {
+            $session->wait(5000,
+                "FpJsFormValidatorFactory.forms.form.countProcessedRequests() == 0"
+            );
+        }
 
         return $session->getPage()->find('css', 'form');
     }
@@ -87,10 +93,16 @@ class MainFunctionalTest extends BaseTestCase
      */
     public function testTranslations()
     {
-        $form = $this->getSubmittedForm('translations');
+        $form = $this->getSubmittedForm('translations/0', false);
+        $this->assertEquals('translated', $form->find('css', 'li')->getHtml());
 
+        $form = $this->getSubmittedForm('translations/1');
         $errors = $this->getElementErrors($form->findById('form_name'));
         $this->assertEquals(array('translated'), $errors);
+
+        $form = $this->getSubmittedForm('translations/2');
+        $errors = $this->getElementErrors($form->findById('form_name'));
+        $this->assertEquals(array('test'), $errors);
     }
 
     /**
@@ -110,6 +122,12 @@ class MainFunctionalTest extends BaseTestCase
         ), $errors);
 
         $errors = $this->getElementErrors($form->findById('form_name_name'));
+        $this->assertEquals(array('form_message', 'entity_message'), $errors);
+
+        $errors = $this->getElementErrors($form->findById('form_email'));
+        $this->assertEquals(array('child_message', 'getter_message'), $errors);
+
+        $errors = $this->getElementErrors($form->findById('form_email_name'));
         $this->assertEquals(array('form_message', 'entity_message'), $errors);
     }
 

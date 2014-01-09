@@ -23,7 +23,7 @@ class Configuration implements ConfigurationInterface
         $rootNode
             ->children()
                 ->scalarNode('translation_domain')
-                    ->defaultValue('validation')
+                    ->defaultValue('validators')
                 ->end()
                 ->scalarNode('js_validation')
                     ->defaultValue(null)

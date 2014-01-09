@@ -526,7 +526,7 @@ class JsFormValidatorFactoryTest extends BaseTestCase
         $factory = $client->getContainer()->get('fp_js_form_validator.factory');
 
         $defaultConfig = array(
-            'translation_domain' => 'validation',
+            'translation_domain' => 'validators',
             'routing' => array(
                 'check_unique_entity' => 'fp_js_form_validator.check_unique_entity'
             ),

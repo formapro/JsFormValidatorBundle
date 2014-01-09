@@ -6,6 +6,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 
 /**
  * Class FormSubscriber
@@ -64,8 +65,8 @@ class SubscriberToQueue implements EventSubscriberInterface
             return true;
         // If global option is not set and the element is enabled locally (doesn't matter this is parent or child)
         } elseif (null === $jsGlobal && true === $jsLocal) {
-            // If this is enabled child and parent has been already enabled - do not need to duplicate validation
-            if (null !== $form->getParent() && true === $this->getParent($form)->getConfig()->getOption('js_validation')) {
+            // If one of its' parents already has the definition (never mind it's enabled or disabled)
+            if ($this->isRedefinedByParent($form)) {
                 return false;
             } else {
                 return true;
@@ -76,16 +77,20 @@ class SubscriberToQueue implements EventSubscriberInterface
     }
 
     /**
-     * @param Form $form
+     * Checks if one of element's parents already has enabled/disabled
      *
-     * @return null|\Symfony\Component\Form\FormInterface
+     * @param Form|FormInterface $form
+     *
+     * @return bool
      */
-    protected function getParent(Form $form)
+    protected function isRedefinedByParent(Form $form)
     {
-        if (null === $form->getParent()) {
-            return $form;
+        if ($form->getParent() && is_bool($form->getParent()->getConfig()->getOption('js_validation'))) {
+            return true;
+        } elseif (!$form->getParent()) {
+            return false;
         } else {
-            return $this->getParent($form->getParent());
+            return $this->isRedefinedByParent($form->getParent());
         }
     }
 } 

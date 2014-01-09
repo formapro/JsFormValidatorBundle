@@ -1,6 +1,6 @@
 <?php
 
-namespace Fp\JsFormValidatorBundle\Tests\Factory;
+namespace Fp\JsFormValidatorBundle\Tests\Model;
 
 use Fp\JsFormValidatorBundle\Model\JsValidationData;
 use Fp\JsFormValidatorBundle\Tests\BaseTestCase;
@@ -32,10 +32,11 @@ class JsValidationDataTest extends BaseTestCase
     {
         $model = new JsValidationData(array(), 'test');
         $array = array(
-            'type'        => 'test',
-            'groups'      => array('Default'),
-            'constraints' => array(),
-            'getters'     => array()
+            'type'          => 'test',
+            'groups'        => array('Default'),
+            'defaultGroups' => array('Default'),
+            'constraints'   => array(),
+            'getters'       => array()
         );
         $this->assertEquals($array, $model->toArray());
     }
@@ -46,7 +47,7 @@ class JsValidationDataTest extends BaseTestCase
     public function testModelToStringConversion()
     {
         $model  = new JsValidationData(array(), 'test');
-        $string = "new FpJsValidationData({'type':'test','groups':['Default'],'constraints':[],'getters':[]})";
+        $string = "new FpJsValidationData({'type':'test','groups':['Default'],'defaultGroups':['Default'],'constraints':[],'getters':[]})";
         $this->assertEquals($string, $model->__toString());
     }
 }

@@ -3,11 +3,12 @@
  * Created by ymaltsev on 11/21/13.
  */
 function FpJsValidationData(options) {
-    this.type        = null;
-    this.groups      = null;
-    this.constraints = [];
-    this.getters     = [];
-    this.model       = null;
+    this.type          = null;
+    this.groups        = null;
+    this.defaultGroups = [];
+    this.constraints   = [];
+    this.getters       = [];
+    this.model         = null;
 
     for (var optionName in options) {
         this[optionName] = options[optionName];
@@ -130,10 +131,16 @@ function FpJsValidationData(options) {
 
         if (this.groups instanceof Array) {
             groups = this.groups;
-        } else if (this.groups instanceof String && undefined !== window[this.groups]) {
-            var model = new window[this.groups]();
-            if (typeof model['getValidationGroups'] === 'function') {
-                groups = model['getValidationGroups'](this.getModel());
+        } else if (typeof this.groups == 'string') {
+            var formName = String(this.groups).replace(/\\/g, '');
+            if (undefined !== window[formName]) {
+                var model = new window[formName]();
+                if (typeof model['getValidationGroups'] === 'function') {
+                    groups = model['getValidationGroups'](this.getModel());
+                    if (groups instanceof Array) {
+                        groups = groups.concat(this.defaultGroups);
+                    }
+                }
             }
         }
 

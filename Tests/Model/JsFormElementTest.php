@@ -1,6 +1,6 @@
 <?php
 
-namespace Fp\JsFormValidatorBundle\Tests\Factory;
+namespace Fp\JsFormValidatorBundle\Tests\Model;
 
 use Fp\JsFormValidatorBundle\Model\JsFormElement;
 use Fp\JsFormValidatorBundle\Model\JsValidationData;
