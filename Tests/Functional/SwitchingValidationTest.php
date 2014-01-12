@@ -5,6 +5,7 @@ namespace Fp\JsFormValidatorBundle\Tests\Form;
 use Fp\JsFormValidatorBundle\Model\JsFormElement;
 use Fp\JsFormValidatorBundle\Tests\BaseTestCase;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\TestFormType;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
  * Class EventListenerTest
@@ -31,7 +32,7 @@ class SwitchingValidationTest extends BaseTestCase
 
         $formFactory
             ->createNamedBuilder('form_null', 'form', null)
-            ->add('name_null')
+            ->add('name_null', 'text', array('constraints' => new NotBlank()))
             ->getForm();
 
         $formFactory
@@ -86,7 +87,7 @@ class SwitchingValidationTest extends BaseTestCase
     /**
      * Test without the global enabled
      */
-    public function testGlobalDisbledValidation()
+    public function testGlobalDisabledValidation()
     {
         $client = $this->createClient();
         $formFactory = $client->getContainer()->get('form.factory');
@@ -119,22 +120,23 @@ class SwitchingValidationTest extends BaseTestCase
      */
     public function testEnableFieldsValidation()
     {
-        $client = $this->createClient();
+        $client      = $this->createClient();
         $formFactory = $client->getContainer()->get('form.factory');
-        $fpFactory = $client->getContainer()->get('fp_js_form_validator.factory');
+        $fpFactory   = $client->getContainer()->get('fp_js_form_validator.factory');
+        $constr      = array(new NotBlank(array('message' => 'name_{{ value }}')));
 
         $formFactory
             ->createNamedBuilder('form_null', 'form', null, array()) // disabled
-            ->add('name_null_null') // disabled
-            ->add('name_null_true', 'text', array('js_validation' => true)) // enabled as separated element
-            ->add('name_null_false', 'text', array('js_validation' => false)) // disabled
+            ->add('name_null_null', 'text', array('constraints' => $constr)) // disabled
+            ->add('name_null_true', 'text', array('js_validation' => true, 'constraints' => $constr)) // enabled as separated element
+            ->add('name_null_false', 'text', array('js_validation' => false, 'constraints' => $constr)) // disabled
             ->getForm();
 
         $formFactory
             ->createNamedBuilder('form_true', 'form', null, array('js_validation' => true)) // enabled as separated element
-            ->add('name_true_null', 'text', array()) // enabled
-            ->add('name_true_true', 'text', array('js_validation' => true)) // enabled
-            ->add('name_true_false', 'text', array('js_validation' => false)) // disabled
+            ->add('name_true_null', 'text', array('constraints' => $constr)) // enabled
+            ->add('name_true_true', 'text', array('js_validation' => true, 'constraints' => $constr)) // enabled
+            ->add('name_true_false', 'text', array('js_validation' => false, 'constraints' => $constr)) // disabled
             ->getForm();
 
         /** @var JsFormElement[] $result */

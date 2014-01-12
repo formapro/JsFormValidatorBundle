@@ -61,6 +61,7 @@ class JsFormValidatorTwigExtension extends \Twig_Extension
      */
     public function getJsValidator()
     {
+        return '';
         $models = $this->getFactory()->processQueue();
 
         $result = array();

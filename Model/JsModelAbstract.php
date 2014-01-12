@@ -11,11 +11,6 @@ namespace Fp\JsFormValidatorBundle\Model;
  */
 abstract class JsModelAbstract
 {
-    const OUTPUT_FORMAT_JAVASCRIPT = 'js';
-    const OUTPUT_FORMAT_JSON       = 'json';
-
-    protected $outputFormat = self::OUTPUT_FORMAT_JAVASCRIPT;
-
     /**
      * This function converts the model to the related JavaScript model
      *
@@ -23,14 +18,7 @@ abstract class JsModelAbstract
      */
     public function __toString()
     {
-        switch ($this->outputFormat) {
-            case self::OUTPUT_FORMAT_JAVASCRIPT:
-                return $this->phpValueToJs($this->toArray());
-                break;
-            default:
-                return json_encode($this->toArray());
-                break;
-        }
+        return self::phpValueToJs($this->toArray());
     }
 
     /**
@@ -40,7 +28,7 @@ abstract class JsModelAbstract
      *
      * @return string
      */
-    protected function phpValueToJs($value)
+    public static function phpValueToJs($value)
     {
         // For object which has own __toString method
         if (is_object($value) && method_exists($value, '__toString')) {
@@ -50,7 +38,7 @@ abstract class JsModelAbstract
         elseif (is_object($value) || (is_array($value) && array_values($value) !== $value)) {
             $jsObject = array();
             foreach ($value as $paramName => $paramValue) {
-                $jsObject[] = "'$paramName':" . $this->phpValueToJs($paramValue);
+                $jsObject[] = "'$paramName':" . self::phpValueToJs($paramValue);
             }
 
             return sprintf('{%1$s}', implode($jsObject, ','));
@@ -59,7 +47,7 @@ abstract class JsModelAbstract
         elseif (is_array($value)) {
             $jsArray = array();
             foreach ($value as $item) {
-                $jsArray[] = $this->phpValueToJs($item);
+                $jsArray[] = self::phpValueToJs($item);
             }
 
             return sprintf('[%1$s]', implode($jsArray, ','));
@@ -92,29 +80,13 @@ abstract class JsModelAbstract
      * @codeCoverageIgnore
      * @return array
      */
-    abstract public function toArray();
-
-    /**
-     * Get OutputFormat
-     *
-     * @return string
-     */
-    public function getOutputFormat()
+    public function toArray()
     {
-        return $this->outputFormat;
-    }
+        $result = array();
+        foreach ($this as $key => $value) {
+            $result[$key] = $value;
+        }
 
-    /**
-     * Set outputFormat
-     *
-     * @param string $outputFormat
-     *
-     * @return JsModelAbstract
-     */
-    public function setOutputFormat($outputFormat)
-    {
-        $this->outputFormat = $outputFormat;
-
-        return $this;
+        return $result;
     }
 } 

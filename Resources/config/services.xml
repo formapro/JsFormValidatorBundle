@@ -24,7 +24,6 @@
         <service id="fp_js_form_validator.factory" class="%fp_js_form_validator.factory.class%">
             <argument type="service" id="validator" />
             <argument type="service" id="translator" />
-            <argument type="service" id="router" />
             <argument>%fp_js_form_validator.config%</argument>
         </service>
     </services>

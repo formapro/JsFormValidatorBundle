@@ -24,7 +24,15 @@ class TestSubFormType extends AbstractType
             ->add('name', 'text', array(
                 'constraints' => array(
                     new NotBlank(array(
-                        'message' => 'form_message'
+                        'message' => 'form_no_groups_message'
+                    )),
+                    new NotBlank(array(
+                        'message' => 'form_groups_array_message',
+                        'groups' => array('groups_array')
+                    )),
+                    new NotBlank(array(
+                        'message' => 'form_groups_child_message',
+                        'groups' => array('groups_child')
                     ))
                 )
             ));
@@ -36,7 +44,7 @@ class TestSubFormType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\TestEntity',
+            'data_class' => 'Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\TestSubEntity',
         ));
     }
 

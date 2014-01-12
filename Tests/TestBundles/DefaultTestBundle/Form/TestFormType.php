@@ -24,7 +24,15 @@ class TestFormType extends AbstractType
             ->add('name', 'text', array(
                 'constraints' => array(
                     new NotBlank(array(
-                        'message' => 'form_message'
+                        'message' => 'form_no_groups_message'
+                    )),
+                    new NotBlank(array(
+                        'message' => 'form_groups_array_message',
+                        'groups' => array('groups_array')
+                    )),
+                    new NotBlank(array(
+                        'message' => 'form_groups_callback_message',
+                        'groups' => array('groups_callback')
                     ))
                 )
             ));
@@ -37,7 +45,7 @@ class TestFormType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class'    => 'Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\TestEntity',
-            'js_validation' => true
+            'js_validation' => true,
         ));
     }
 

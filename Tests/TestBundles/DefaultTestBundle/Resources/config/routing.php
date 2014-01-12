@@ -30,9 +30,9 @@ $collection->add(
 $collection->add(
     'fp_js_form_validator_test_groups_getters',
     new Route(
-        '/fp_js_form_validator/javascript_unit_test/groups_getters',
+        '/fp_js_form_validator/javascript_unit_test/ggc/{type}/{js}',
         array(
-            '_controller' => $controllerClass . '::groupsAndGettersAction',
+            '_controller' => $controllerClass . '::groupsGettersCascadeAction',
         )
     )
 );
@@ -72,6 +72,16 @@ $collection->add(
         '/fp_js_form_validator/javascript_unit_test/part',
         array(
             '_controller' => $controllerClass . '::partOfFormAction',
+        )
+    )
+);
+
+$collection->add(
+    'fp_js_form_validator_test_empty',
+    new Route(
+        '/fp_js_form_validator/javascript_unit_test/empty',
+        array(
+            '_controller' => $controllerClass . '::emptyElementsAction',
         )
     )
 );

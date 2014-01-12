@@ -23,6 +23,7 @@ function SymfonyComponentFormExtensionCoreDataTransformerDateTimeToArrayTransfor
                 value['second'] ? value['second'] : '0'
             ]));
         }
+        console.log(result);
 
         return result.join(' ');
     };

@@ -271,7 +271,7 @@ class JsFormValidatorFactoryTest extends BaseTestCase
     {
         $factory = $this->getMock(
             'Fp\JsFormValidatorBundle\Factory\JsFormValidatorFactory',
-            array('createJsModel'),
+            array('createJsModel', 'getEntityMetadata'),
             array(),
             '',
             false
@@ -285,6 +285,11 @@ class JsFormValidatorFactoryTest extends BaseTestCase
                     return 'has_metadata';
                 }
             }));
+
+        $factory->expects($this->exactly(2))
+            ->method('getEntityMetadata')
+            ->will($this->returnArgument(0));
+
         $formFactory = Forms::createFormFactory();
         $form        = $formFactory->create(new TestForm());
 
@@ -313,7 +318,7 @@ class JsFormValidatorFactoryTest extends BaseTestCase
         $factory->expects($this->exactly(3))
             ->method('parseConstraints')
             ->will($this->returnArgument(0));
-        $factory->expects($this->exactly(1))
+        $factory->expects($this->exactly(3))
             ->method('parseGetters')
             ->will($this->returnArgument(0));
 
@@ -389,10 +394,10 @@ class JsFormValidatorFactoryTest extends BaseTestCase
 
         $data = $this->callNoPublicMethod($factory, 'getElementValidationData', array($form, array()));
 
-        $this->assertInstanceOf('Fp\JsFormValidatorBundle\Model\JsValidationData', $data, 'Successfully received the JsValidationData object');
-        $this->assertCount(1, $data->getConstraints(), 'Data has on constraint');
-        $this->assertCount(0, $data->getGetters(), 'Data has NOT getters');
-        $this->assertCount(1, $data->getGroups(), 'Data has one group');
+        $this->assertInstanceOf('Fp\JsFormValidatorBundle\Model\JsValidationData', $data[0], 'Successfully received the JsValidationData object');
+        $this->assertCount(1, $data[0]->getConstraints(), 'Data has on constraint');
+        $this->assertCount(0, $data[0]->getGetters(), 'Data has NOT getters');
+        $this->assertCount(1, $data[0]->getGroups(), 'Data has one group');
     }
 
     /**
@@ -408,7 +413,7 @@ class JsFormValidatorFactoryTest extends BaseTestCase
             false
         );
 
-        $factory->expects($this->exactly(3))
+        $factory->expects($this->never())
             ->method('getConfig')
             ->will($this->returnValue(array('js_validation' => null)));
 

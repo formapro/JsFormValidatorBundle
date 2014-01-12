@@ -15,7 +15,7 @@ use /** @noinspection PhpUnusedAliasInspection */
  * @ORM\Entity()
  *
  */
-class TestEntity
+class TestSubEntity
 {
     /**
      * @var integer
@@ -30,35 +30,17 @@ class TestEntity
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255)
-     * @Assert\NotBlank(message="entity_no_groups_message")
+     * @Assert\NotBlank(message="sub_entity_no_groups_message")
      * @Assert\NotBlank(
-     *     message="entity_groups_array_message",
+     *     message="sub_entity_groups_array_message",
      *     groups={"groups_array"}
      * )
      * @Assert\NotBlank(
-     *     message="entity_groups_callback_message",
-     *     groups={"groups_callback"}
+     *     message="sub_entity_groups_child_message",
+     *     groups={"groups_child"}
      * )
      */
     private $name;
-
-    /**
-     * @var string
-     *
-     * @Assert\Type(
-     *     type="integer",
-     *     message="entity_groups_array_message",
-     *     groups={"groups_array"}
-     * )
-     * @Assert\Type(
-     *     type="integer",
-     *     message="entity_groups_child_message",
-     *     groups={"groups_child"}
-     * )
-     *
-     * @ORM\Column(name="email", type="string", length=50)
-     */
-    private $email;
 
     /**
      * Get id
@@ -95,29 +77,17 @@ class TestEntity
     }
 
     /**
-     * @return string
-     */
-    public function getEmail()
-    {
-        return $this->email;
-    }
-
-    /**
-     * @param string $email
-     */
-    public function setEmail($email)
-    {
-        $this->email = $email;
-    }
-
-    /**
      * @return bool
      * @Assert\True(
-     *     message="getter_groups_array_message",
+     *     message="sub_entity_getter_groups_child_message",
+     *     groups={"groups_child"}
+     * )
+     * @Assert\True(
+     *     message="sub_entity_getter_groups_array_message",
      *     groups={"groups_array"}
      * )
      * @Assert\True(
-     *     message="getter_no_groups_message"
+     *     message="sub_entity_getter_no_groups_message"
      * )
      */
     public function isNameValid()

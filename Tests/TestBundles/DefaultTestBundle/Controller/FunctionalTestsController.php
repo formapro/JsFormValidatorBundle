@@ -10,11 +10,13 @@ use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\BasicConst
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\TestFormType;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\TestSubFormType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints\Blank;
 use Symfony\Component\Validator\Constraints\False;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\True;
+use Symfony\Component\Validator\Constraints\Type;
 
 /**
  * Class FunctionalTestsController
@@ -92,33 +94,104 @@ class FunctionalTestsController extends Controller
      * Check groups as array and as callback.
      * Also check initializing of getters
      *
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param string                                    $type
+     * @param string                                    $js
+     *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function groupsAndGettersAction()
+    public function groupsGettersCascadeAction(Request $request, $type, $js)
     {
-        $parent = $this
-            ->createForm(new TestFormType(), new TestEntity(), array('validation_groups' => array('parent')))
-            ->add('name', new TestSubFormType(), array(
-                'constraints' => array(
-                    new NotBlank(array(
-                        'message' => 'child_message'
-                    ))
-                ),
-                'validation_groups' => array('child')
-            ))
-            ->add('email', new TestSubFormType(), array(
-                'constraints' => array(
-                    new NotBlank(array(
-                        'message' => 'child_message'
-                    ))
-                ),
-                'validation_groups' => function() {return array('child');}
-            ));
+        switch ($type) {
+            case 'array':
+                $form = $this->getSimpleForm(array('groups_array'), (bool) $js);
+                break;
+            case 'callback':
+                $form = $this->getSimpleForm(function() {return array('groups_callback');}, (bool) $js);
+                break;
+            case 'nested':
+                $form = $this->getNestedForm(true, array('groups_child'), (bool) $js);
+                break;
+            case 'nested_no_groups':
+                $form = $this->getNestedForm(true, array(), (bool) $js);
+                break;
+            case 'nested_no_cascade':
+                $form = $this->getNestedForm(false, array(), (bool) $js);
+                break;
+            default:
+                $form = $this->getSimpleForm(array(), (bool) $js);
+                break;
+        }
+
+        if ($request->isMethod('post')) {
+            $form->submit($request);
+        }
 
         return $this->render(
             'DefaultTestBundle:FunctionalTests:index.html.twig',
-            array('form' => $parent->createView())
+            array('form' => $form->createView())
         );
+    }
+
+    /**
+     * @param Form $form
+     *
+     * @return array
+     */
+    protected function getGroups($form)
+    {
+        $result = array();
+        $result['groups'] = $form->getConfig()->getOption('validation_groups');
+        $result['children'] = array();
+        /** @var Form $element */
+        foreach ($form->all() as $name => $element) {
+            $result['children'][$name] = $this->getGroups($element);
+        }
+
+        return $result;
+    }
+
+    protected function getSimpleForm($groups, $js)
+    {
+        return $this
+            ->createForm(
+                new TestFormType(),
+                new TestEntity(),
+                array(
+                    'validation_groups' => $groups,
+                    'js_validation'     => $js
+                )
+            );
+    }
+
+    protected function getNestedForm($cascade, $childGroups, $js)
+    {
+        return $this
+            ->createForm(
+                new TestFormType(),
+                new TestEntity(),
+                array(
+                    'validation_groups' => array('groups_array'),
+                    'cascade_validation' => $cascade,
+                    'js_validation'     => $js,
+                )
+            )
+            ->add('email', new TestSubFormType(), array(
+                'error_bubbling' => false,
+                'constraints' => array(
+                    new Type(array(
+                        'type' => 'integer',
+                        'message' => 'child_groups_array_message',
+                        'groups' => array('groups_array'),
+                    )),
+                    new Type(array(
+                        'type' => 'integer',
+                        'message' => 'child_groups_child_message',
+                        'groups' => array('groups_child'),
+                    ))
+                ),
+                'validation_groups' => $childGroups
+            ));
     }
 
     /**
@@ -283,6 +356,27 @@ class FunctionalTestsController extends Controller
                     ))
                 )
             ));
+
+        return $this->render(
+            'DefaultTestBundle:FunctionalTests:partOfForm.html.twig',
+            array(
+                'form' => $builder->getForm()->createView(),
+            )
+        );
+    }
+
+    public function emptyElementsAction()
+    {
+        $builder = $this->createFormBuilder(null, array('js_validation' => true));
+        $builder
+            ->add('name', 'text', array(
+                'constraints' => array(
+                    new NotBlank(array(
+                        'message' => 'name_{{ value }}'
+                    ))
+                )
+            ))
+            ->add('email', 'text', array());
 
         return $this->render(
             'DefaultTestBundle:FunctionalTests:partOfForm.html.twig',

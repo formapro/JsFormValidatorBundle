@@ -189,6 +189,7 @@
 
 <div id="transformer_result"></div>
 {{ form_start(form, { 'attr': {'novalidate': 'novalidate' }}) }}
+    {{ form_errors(form) }}
     <input type="submit" name="form_submit" id="form_submit"/>
     {{ form_rest(form) }}
 {{ form_end(form) }}
