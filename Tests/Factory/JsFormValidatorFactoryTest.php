@@ -415,7 +415,7 @@ class JsFormValidatorFactoryTest extends BaseTestCase
 
         $factory->expects($this->never())
             ->method('getConfig')
-            ->will($this->returnValue(array('js_validation' => null)));
+            ->will($this->returnValue(array('js_validation' => true)));
 
         $factory->expects($this->exactly(3))
             ->method('getPreparedConfig')
@@ -535,7 +535,7 @@ class JsFormValidatorFactoryTest extends BaseTestCase
             'routing' => array(
                 'check_unique_entity' => 'fp_js_form_validator.check_unique_entity'
             ),
-            'js_validation' => null
+            'js_validation' => true
         );
 
         $this->assertEquals($defaultConfig, $factory->getConfig(), 'Check the bundle config');

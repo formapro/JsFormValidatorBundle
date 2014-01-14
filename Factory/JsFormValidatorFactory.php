@@ -1,9 +1,10 @@
 <?php
 namespace Fp\JsFormValidatorBundle\Factory;
 
+use Fp\JsFormValidatorBundle\Model\JsConfig;
 use Fp\JsFormValidatorBundle\Model\JsFormElement;
 use Fp\JsFormValidatorBundle\Model\JsModelAbstract;
-use Fp\JsFormValidatorBundle\Model\JsValidationData;
+use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceListInterface;
 use Symfony\Component\Form\Form;
@@ -35,6 +36,11 @@ class JsFormValidatorFactory
     protected $translator;
 
     /**
+     * @var Router
+     */
+    protected $router;
+
+    /**
      * @var array
      */
     protected $config = array();
@@ -47,12 +53,14 @@ class JsFormValidatorFactory
     /**
      * @param Validator  $validator
      * @param Translator $translator
+     * @param Router     $router
      * @param array      $config
      */
-    public function __construct(Validator $validator, Translator $translator, $config)
+    public function __construct(Validator $validator, Translator $translator, Router $router, $config)
     {
         $this->validator  = $validator;
         $this->translator = $translator;
+        $this->router     = $router;
         $this->config     = $config;
     }
 
@@ -83,13 +91,45 @@ class JsFormValidatorFactory
     }
 
     /**
+     * Generate an URL from the route
+     * @param string $route
+     *
+     * @return string
+     * @codeCoverageIgnore
+     */
+    protected function generateUrl($route)
+    {
+        return $this->router->generate($route);
+    }
+
+    /**
      * Get Config
      *
-     * @return array
+     * @param null|string $name
+     *
+     * @return mixed
      */
-    public function getConfig()
+    public function getConfig($name = null)
     {
-        return $this->config;
+        if ($name) {
+            return isset($this->config[$name]) ? $this->config[$name] : null;
+        } else {
+            return $this->config;
+        }
+    }
+
+    public function createJsConfigModel()
+    {
+        $result = array();
+        if (!empty($this->config['routing'])) {
+            foreach ($this->config['routing'] as $param => $value) {
+                $result['routing'][$param] = $this->generateUrl($value);
+            }
+        }
+        $model = new JsConfig;
+        $model->routing = $result['routing'];
+
+        return $model;
     }
 
     /**
@@ -132,26 +172,19 @@ class JsFormValidatorFactory
      */
     public function createJsModel(Form $form)
     {
-        $conf         = $form->getConfig();
-        $isDisabled   = false === $conf->getOption('js_validation');
-        $vData        = $this->getValidationData($form);
-        $transformers = $this->parseTransformers($form->getConfig()->getViewTransformers());
-        $children     = $this->processChildren($form);
-
+        $conf = $form->getConfig();
         // If field is disabled or has no any validations
-        if ($isDisabled || (!$vData && !$transformers && !$this->hasParentTransformers($form) && empty($children))) {
-            return null;
-        }
+        if (false === $conf->getOption('js_validation')) return null;
 
         $model                 = new JsFormElement;
         $model->id             = $this->getElementId($form);
-        $model->name           = $form->getName();
+        $model->name           = $form->getName() ;
         $model->type           = $conf->getType()->getInnerType()->getName();
         $model->invalidMessage = $conf->getOption('invalid_message');
-        $model->transformers   = $transformers;
+        $model->transformers   = $this->parseTransformers($form->getConfig()->getViewTransformers());
         $model->cascade        = $conf->getOption('cascade_validation');
-        $model->data           = $vData;
-        $model->children       = $children;
+        $model->data           = $this->getValidationData($form);
+        $model->children       = $this->processChildren($form);
 
         // Return self id to add it as child to the parent model
         return $model;
@@ -178,22 +211,6 @@ class JsFormValidatorFactory
         }
 
         return $result;
-    }
-
-    /**
-     * @param Form|FormInterface $form
-     *
-     * @return bool
-     */
-    protected function hasParentTransformers(Form $form)
-    {
-        if ($form->getConfig()->getViewTransformers()) {
-            return true;
-        } elseif ($form->getParent()) {
-            return $this->hasParentTransformers($form->getParent());
-        } else {
-            return false;
-        }
     }
 
     /**
@@ -301,7 +318,7 @@ class JsFormValidatorFactory
      */
     protected function getValidationGroups(Form $form)
     {
-        $result = JsModelAbstract::phpValueToJs(array('default'));
+        $result = JsModelAbstract::phpValueToJs(array('Default'));
         $groups = $form->getConfig()->getOption('validation_groups');
 
         if (empty($groups)) {

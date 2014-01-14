@@ -1,6 +1,29 @@
+{% javascripts '@DefaultTestBundle/Resources/public/js/jquery-1.9.1.js' %}
+<script src="{{ asset_url }}"></script>
+{% endjavascripts %}
 {{ include('FpJsFormValidatorBundle::javascripts.html.twig') }}
 
 <script type="text/javascript">
+    $(function(){
+        $('input').jsFormValidator({
+            defaultEvent: false,
+            customEvents: function() {
+                $(this).change(function(){
+                    $(this).jsFormValidator('validate');
+                });
+            },
+            showErrors: function(errors) {
+                console.log($(this).jsFormValidator('type'));
+                var list = $(this).parent('div').find('ul.errors');
+                list.empty();
+                for (var i in errors) {
+                    $(this).append('<li>'+errors[i]+'</li>');
+                }
+            }
+        });
+    });
+
+
     function FpJsFormValidatorBundleTestsTestBundlesDefaultTestBundleEntityTestEntity() {
         //noinspection JSUnusedGlobalSymbols
         this.isNameValid = function() {

@@ -33,46 +33,24 @@ class SubscriberToQueue implements EventSubscriberInterface
      */
     public static function getSubscribedEvents()
     {
-        return array(FormEvents::POST_SET_DATA => array('onFormEvent', -10));
+        return array(FormEvents::POST_SET_DATA => array('onFormSetData', -10));
     }
 
     /**
      * @param FormEvent $event
      */
-    public function onFormEvent(FormEvent $event)
+    public function onFormSetData(FormEvent $event)
     {
         /** @var Form $form */
         $form = $event->getForm();
 
-        if ($this->formShouldBeProcessed($form)) {
+        // Add only parent forms which are not disabled
+        if (
+            !$form->getParent() &&
+            $this->isEnabled($form) &&
+            'form' == $form->getConfig()->getType()->getInnerType()->getName()
+        ) {
             $this->factory->addToQueue($form);
-        }
-    }
-
-    /**
-     * @param Form $form
-     *
-     * @return bool
-     */
-    protected function formShouldBeProcessed(Form $form)
-    {
-        $conf = $this->factory->getConfig();
-        $jsGlobal = $conf['js_validation'];
-        $jsLocal = $form->getConfig()->getOption('js_validation');
-
-        // If validation is enabled globally: add all the parent forms which are not disabled locally
-        if (true === $jsGlobal && false !== $jsLocal && null === $form->getParent()) {
-            return true;
-        // If global option is not set and the element is enabled locally (doesn't matter this is parent or child)
-        } elseif (null === $jsGlobal && true === $jsLocal) {
-            // If one of its' parents already has the definition (never mind it's enabled or disabled)
-            if ($this->isRedefinedByParent($form)) {
-                return false;
-            } else {
-                return true;
-            }
-        } else {
-            return false;
         }
     }
 
@@ -83,14 +61,17 @@ class SubscriberToQueue implements EventSubscriberInterface
      *
      * @return bool
      */
-    protected function isRedefinedByParent(Form $form)
+    protected function isEnabled(Form $form)
     {
-        if ($form->getParent() && is_bool($form->getParent()->getConfig()->getOption('js_validation'))) {
-            return true;
-        } elseif (!$form->getParent()) {
+        if (
+            false === $this->factory->getConfig('js_validation') ||
+            false === $form->getConfig()->getOption('js_validation')
+        ) {
             return false;
+        } elseif ($form->getParent()) {
+            return $this->isEnabled($form->getParent());
         } else {
-            return $this->isRedefinedByParent($form->getParent());
+            return true;
         }
     }
 } 

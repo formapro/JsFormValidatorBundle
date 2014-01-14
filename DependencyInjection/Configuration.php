@@ -26,7 +26,7 @@ class Configuration implements ConfigurationInterface
                     ->defaultValue('validators')
                 ->end()
                 ->scalarNode('js_validation')
-                    ->defaultValue(null)
+                    ->defaultValue(true)
                 ->end()
                 ->arrayNode('routing')
                     ->addDefaultsIfNotSet()

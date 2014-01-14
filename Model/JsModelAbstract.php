@@ -38,6 +38,7 @@ abstract class JsModelAbstract
         elseif (is_object($value) || (is_array($value) && array_values($value) !== $value)) {
             $jsObject = array();
             foreach ($value as $paramName => $paramValue) {
+                $paramName = addcslashes($paramName, '\'\\');
                 $jsObject[] = "'$paramName':" . self::phpValueToJs($paramValue);
             }
 

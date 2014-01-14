@@ -37,7 +37,7 @@ class JsFormElement extends JsModelAbstract
     public $cascade = false;
 
     /**
-     * @var JsValidationData[]
+     * @var array
      */
     public $data = array();
 

@@ -265,7 +265,7 @@ class FunctionalTestsController extends Controller
                 'ChoicesToBooleanArray' => array('m', 'f'),
                 'ChoiceToBooleanArray'  => 'f',
                 'repeated'              => 'asdf'
-            ), array('js_validation' => true))
+            ))
             ->add('date', 'date', array('constraints' => array($blank)))
             ->add('time', 'time', array('constraints' => array($blank)))
             ->add('datetime', 'datetime', array('constraints' => array($blank)))
@@ -318,7 +318,7 @@ class FunctionalTestsController extends Controller
      */
     public function onValidateListenersAction($mode)
     {
-        $builder = $this->createFormBuilder(null, array('js_validation' => true));
+        $builder = $this->createFormBuilder(null);
         $builder
             ->add('name', 'text', array(
                 'constraints' => array(
@@ -340,7 +340,7 @@ class FunctionalTestsController extends Controller
 
     public function partOfFormAction()
     {
-        $builder = $this->createFormBuilder(null, array('js_validation' => true));
+        $builder = $this->createFormBuilder(null);
         $builder
             ->add('name', 'text', array(
                 'constraints' => array(
@@ -367,7 +367,7 @@ class FunctionalTestsController extends Controller
 
     public function emptyElementsAction()
     {
-        $builder = $this->createFormBuilder(null, array('js_validation' => true));
+        $builder = $this->createFormBuilder(null);
         $builder
             ->add('name', 'text', array(
                 'constraints' => array(

@@ -38,7 +38,6 @@ class BasicConstraintsEntityType extends AbstractType
     {
         $resolver->setDefaults(array(
             'data_class' => 'Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\BasicConstraintsEntity',
-            'js_validation' => true
         ));
     }
 

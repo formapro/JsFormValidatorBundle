@@ -1,32 +1,33 @@
 //noinspection JSUnusedGlobalSymbols
-/**
- * Created by ymaltsev on 11/21/13.
- */
-var FpJsFormValidatorFactory = new function() {
+var FpJsFormValidator = new function() {
     this.forms = {};
     this.errorClass = 'form-error';
+    this.config = {};
+
+    this.validateAction = function() {
+        console.log('validate');
+    };
+
+    this.showErrorsAction = function(errors) {
+        console.log(errors);
+    };
+
+    this.postValidateAction = function(errors) {
+        console.log(errors);
+    };
 
     //noinspection JSUnusedGlobalSymbols
-    /**
-     * The general function to init validation for a form
-     *
-     * @param {FpJsFormElement} model
-     */
-    this.initNewModel = function(model) {
+    this.addModel = function(model) {
         var self = this;
-
-        if (!model) {
-            return;
-        }
-
+        if (!model) return;
         this.onDocumentReady(function(){
             self.forms[model.id] = model;
-//            model.initialize(self.getFormDomElement(model));
-//            self.forms[model.getId()] = model;
-//
-//            self.bindDefaultEvents(model);
-//            self.bindEvents(model);
+            //var element =
         });
+    };
+
+    this.initModel = function(model) {
+
     };
 
     this.onDocumentReady = function(callback) {
@@ -38,27 +39,6 @@ var FpJsFormValidatorFactory = new function() {
             removeListener( eventName, arguments.callee, false );
             callback();
         }, false )
-    };
-
-    /**
-     * Bind the specified events which were received from the server
-     *
-     * @param {FpJsFormElement} model
-     */
-    this.bindEvents = function(model) {
-        for (var elementId in model.events) {
-            var i;
-            var element = document.getElementById(elementId);
-
-            i = model.events[elementId].length;
-            while (i--) {
-                element.addEventListener(model.events[elementId][i], this.getEventCallback(model));
-            }
-        }
-
-        for (var childName in model.children) {
-            this.bindEvents(model.children[childName]);
-        }
     };
 
     /**
