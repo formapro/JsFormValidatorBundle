@@ -211,3 +211,32 @@ document.getElementById('specified_form_id').onvalidate = function(errors) {
 
 // The "errors" parameter has the same format as on the previous step:
 ```
+
+## Development
+
+### Run tests
+
+To run the tests, install composer dependencies:
+
+```shell
+composer install
+```
+
+Start a webserver that serves the test app under ```Tests/app```
+
+```shell
+cd Tests/app
+php -S localhost:80
+```
+
+Start a selenium2 server
+
+```shell
+java -jar selenium-server-standalone.jar
+```
+
+You´re all set to run the tests
+
+```shell
+phpunit
+```
