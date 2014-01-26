@@ -9,6 +9,7 @@ function SymfonyComponentValidatorConstraintsType() {
     this.type = '';
 
     this.validate = function(value) {
+        var errors = [];
         var isValid = false;
 
         switch (this.type) {
@@ -67,10 +68,14 @@ function SymfonyComponentValidatorConstraintsType() {
                 throw 'The wrong "'+this.type+'" type was passed to the Type constraint';
         }
 
-        return !isValid
-            ? this.message
-                .replace('{{ value }}', value)
-                .replace('{{ type }}', this.type)
-            : null;
+        if (!isValid) {
+            errors.push(
+                this.message
+                    .replace('{{ value }}', value)
+                    .replace('{{ type }}', this.type)
+            );
+        }
+
+        return errors;
     }
 }

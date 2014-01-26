@@ -392,7 +392,7 @@ class BasicConstraintsEntity
      */
     public function isNotEqualTo()
     {
-        return 1;
+        return 0;
     }
 
     /**
@@ -410,7 +410,7 @@ class BasicConstraintsEntity
      */
     public function isNotIdenticalTo()
     {
-        return 1;
+        return "1";
     }
 
     /**
@@ -419,7 +419,7 @@ class BasicConstraintsEntity
      */
     public function isLessThan()
     {
-        return 1;
+        return 0;
     }
 
     /**
@@ -437,7 +437,7 @@ class BasicConstraintsEntity
      */
     public function isGreaterThan()
     {
-        return 1;
+        return 2;
     }
 
     /**
@@ -732,6 +732,6 @@ class BasicConstraintsEntity
      */
     public function isMaxMultipleChoice()
     {
-        return array('June', 'July');
+        return array('June');
     }
 }

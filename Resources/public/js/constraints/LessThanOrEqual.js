@@ -8,12 +8,15 @@ function SymfonyComponentValidatorConstraintsLessThanOrEqual() {
     this.message = '';
     this.value = null;
 
-    this.validate = function(value) {
-        return (value <= this.value)
-            ? null
-            : this.message
-            .replace('{{ value }}', String(value))
-            .replace('{{ compared_value }}', String(this.value))
-            ;
+    this.validate = function (value) {
+        if (value <= this.value) {
+            return [];
+        } else {
+            return [
+                this.message
+                    .replace('{{ value }}', String(value))
+                    .replace('{{ compared_value }}', String(this.value))
+            ];
+        }
     }
 }

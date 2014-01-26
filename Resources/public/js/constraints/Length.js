@@ -11,30 +11,39 @@ function SymfonyComponentValidatorConstraintsLength() {
     this.max = null;
     this.min = null;
 
-    this.validate = function(value) {
+    this.validate = function (value) {
+        var errors = [];
         if (typeof value == 'number' || typeof value == 'string' || value instanceof Array) {
             var length = value.length;
             if (this.max === this.min && length !== this.min) {
-                return this.exactMessage
-                    .replace('{{ value }}', String(value))
-                    .replace('{{ limit }}', this.min);
+                errors.push(
+                    this.exactMessage
+                        .replace('{{ value }}', String(value))
+                        .replace('{{ limit }}', this.min)
+                );
+
+                return errors;
             }
             if (!isNaN(this.max) && length > this.max) {
-                return this.maxMessage
-                    .replace('{{ value }}', String(value))
-                    .replace('{{ limit }}', this.max);
+                errors.push(
+                    this.maxMessage
+                        .replace('{{ value }}', String(value))
+                        .replace('{{ limit }}', this.max)
+                );
             }
             if (!isNaN(this.min) && length < this.min) {
-                return this.minMessage
-                    .replace('{{ value }}', String(value))
-                    .replace('{{ limit }}', this.min);
+                errors.push(
+                    this.minMessage
+                        .replace('{{ value }}', String(value))
+                        .replace('{{ limit }}', this.min)
+                );
             }
         }
 
-        return null;
+        return errors;
     };
 
-    this.onCreate = function() {
+    this.onCreate = function () {
         this.min = parseInt(this.min);
         this.max = parseInt(this.max);
     }

@@ -1,7 +1,7 @@
 /**
  * Created by ymaltsev on 11/21/13.
  */
-function FpJsFormElement(options) {
+function oldFpJsFormElement(options) {
     this.id                = null;
     this.name              = null;
     this.form              = null;

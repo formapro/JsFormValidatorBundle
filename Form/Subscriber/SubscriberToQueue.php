@@ -42,36 +42,14 @@ class SubscriberToQueue implements EventSubscriberInterface
     public function onFormSetData(FormEvent $event)
     {
         /** @var Form $form */
-        $form = $event->getForm();
+        $form         = $event->getForm();
+        $globalSwitch = $this->factory->getConfig('js_validation');
+        $localSwitch  = $form->getConfig()->getOption('js_validation');
+        $isForm       = 'form' == $form->getConfig()->getType()->getInnerType()->getName();
 
         // Add only parent forms which are not disabled
-        if (
-            !$form->getParent() &&
-            $this->isEnabled($form) &&
-            'form' == $form->getConfig()->getType()->getInnerType()->getName()
-        ) {
+        if (!$form->getParent() && $globalSwitch && $localSwitch && $isForm) {
             $this->factory->addToQueue($form);
-        }
-    }
-
-    /**
-     * Checks if one of element's parents already has enabled/disabled
-     *
-     * @param Form|FormInterface $form
-     *
-     * @return bool
-     */
-    protected function isEnabled(Form $form)
-    {
-        if (
-            false === $this->factory->getConfig('js_validation') ||
-            false === $form->getConfig()->getOption('js_validation')
-        ) {
-            return false;
-        } elseif ($form->getParent()) {
-            return $this->isEnabled($form->getParent());
-        } else {
-            return true;
         }
     }
 } 

@@ -4,53 +4,58 @@
  * @author dev.ymalcev@gmail.com
  */
 function SymfonyComponentValidatorConstraintsChoice() {
-    this.choices         = [];
-    this.callback        = null;
-    this.max             = null;
-    this.min             = null;
-    this.message         = '';
-    this.maxMessage      = '';
-    this.minMessage      = '';
-    this.multiple        = false;
+    this.choices = [];
+    this.callback = null;
+    this.max = null;
+    this.min = null;
+    this.message = '';
+    this.maxMessage = '';
+    this.minMessage = '';
+    this.multiple = false;
     this.multipleMessage = '';
-    this.strict          = false;
+    this.strict = false;
 
-    this.validate = function(value) {
+    this.validate = function (value, element) {
+        var errors = [];
         value = this.getValue(value);
         if (null === value) {
-            return null;
+            return errors;
         }
 
-        var compared = this.compareChoices(value, this.getChoicesList());
+        var compared = this.compareChoices(value, this.getChoicesList(element));
         var isValid = value.length === compared.length;
 
         if (this.multiple) {
             if (!isValid) {
-                return this.multipleMessage.replace('{{ value }}', String(value))
+                errors.push(this.multipleMessage.replace('{{ value }}', String(value)));
             }
             if (!isNaN(this.min) && value.length < this.min) {
-                return this.minMessage
-                    .replace('{{ value }}', String(value))
-                    .replace('{{ limit }}', this.min);
+                errors.push(
+                    this.minMessage
+                        .replace('{{ value }}', String(value))
+                        .replace('{{ limit }}', this.min)
+                );
             }
             if (!isNaN(this.max) && value.length > this.max) {
-                return this.maxMessage
-                    .replace('{{ value }}', String(value))
-                    .replace('{{ limit }}', this.max);
+                errors.push(
+                    this.maxMessage
+                        .replace('{{ value }}', String(value))
+                        .replace('{{ limit }}', this.max)
+                );
             }
         } else if (!isValid) {
-            return this.message.replace('{{ value }}', String(value));
+            errors.push(this.message.replace('{{ value }}', String(value)));
         }
 
-        return null;
+        return errors;
     };
 
-    this.onCreate = function() {
+    this.onCreate = function () {
         this.min = parseInt(this.min);
         this.max = parseInt(this.max);
     };
 
-    this.getValue = function(value) {
+    this.getValue = function (value) {
         if (-1 !== [undefined, null, ''].indexOf(value)) {
             return null;
         } else if (!(value instanceof Array)) {
@@ -60,39 +65,35 @@ function SymfonyComponentValidatorConstraintsChoice() {
         }
     };
 
-    this.getChoicesList = function() {
+    /**
+     * @param {FpJsFormElement} element
+     * @return {Array}
+     */
+    this.getChoicesList = function (element) {
         var choices = null;
-        if (this.callback instanceof Array) {
-            var model = null;
-            if (undefined !== window[this.callback[0]]) {
-                model = new window[this.callback[0]]();
-            }
-
-            if (model && typeof model[this.callback[1]] === 'function') {
-                choices = model[this.callback[1]]();
+        if (this.callback) {
+            if (typeof element.callbacks[this.callback] == "function") {
+                choices = element.callbacks[this.callback].apply(element);
             } else {
-                throw new Error('Can not find the method "'+this.callback[1]+'" for the model "'+this.callback[0]+'" to get the choices list.');
+                throw new Error('Can not find a "' + this.callback + '" callback for the element id="' + element.id + '" to get a choices list.');
             }
-
         }
 
         if (null == choices) {
-            choices = (null !== this.choices)
-                ? this.choices
-                : []
+            choices = (null == this.choices) ? [] : this.choices;
         }
 
         return choices;
     };
 
-    this.compareChoices = function(value, validChoices) {
+    this.compareChoices = function (value, validChoices) {
         // Compare arrays by value
-        var callbackFilter = function(n) {
+        var callbackFilter = function (n) {
             return validChoices.indexOf(n) != -1
         };
         // More precise comparison by type
         if (this.strict) {
-            callbackFilter = function(n) {
+            callbackFilter = function (n) {
                 var result = false;
                 for (var i in validChoices) {
                     if (n === validChoices[i]) {

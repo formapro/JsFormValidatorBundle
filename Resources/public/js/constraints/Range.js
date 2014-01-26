@@ -11,26 +11,33 @@ function SymfonyComponentValidatorConstraintsRange() {
     this.max = null;
     this.min = null;
 
-    this.validate = function(value) {
+    this.validate = function (value) {
+        var errors = [];
         if (isNaN(value)) {
-            return this.invalidMessage
-                .replace('{{ value }}', String(value));
+            errors.push(
+                this.invalidMessage
+                    .replace('{{ value }}', String(value))
+            );
         }
         if (!isNaN(this.max) && value > this.max) {
-            return this.maxMessage
-                .replace('{{ value }}', String(value))
-                .replace('{{ limit }}', this.max);
+            errors.push(
+                this.maxMessage
+                    .replace('{{ value }}', String(value))
+                    .replace('{{ limit }}', this.max)
+            );
         }
         if (!isNaN(this.min) && value < this.min) {
-            return this.minMessage
-                .replace('{{ value }}', String(value))
-                .replace('{{ limit }}', this.min);
+            errors.push(
+                this.minMessage
+                    .replace('{{ value }}', String(value))
+                    .replace('{{ limit }}', this.min)
+            );
         }
 
-        return null;
+        return errors;
     };
 
-    this.onCreate = function() {
+    this.onCreate = function () {
         this.min = parseInt(this.min);
         this.max = parseInt(this.max);
     }

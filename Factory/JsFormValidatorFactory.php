@@ -1,9 +1,10 @@
 <?php
 namespace Fp\JsFormValidatorBundle\Factory;
 
+use Fp\JsFormValidatorBundle\Form\Constraint\UniqueEntity;
 use Fp\JsFormValidatorBundle\Model\JsConfig;
 use Fp\JsFormValidatorBundle\Model\JsFormElement;
-use Fp\JsFormValidatorBundle\Model\JsModelAbstract;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity as BaseUniqueEntity;
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceListInterface;
@@ -49,6 +50,11 @@ class JsFormValidatorFactory
      * @var Form[]
      */
     protected $queue = array();
+
+    /**
+     * @var Form
+     */
+    protected $currentElement = null;
 
     /**
      * @param Validator  $validator
@@ -172,6 +178,8 @@ class JsFormValidatorFactory
      */
     public function createJsModel(Form $form)
     {
+        $this->currentElement = $form;
+
         $conf = $form->getConfig();
         // If field is disabled or has no any validations
         if (false === $conf->getOption('js_validation')) return null;
@@ -318,7 +326,7 @@ class JsFormValidatorFactory
      */
     protected function getValidationGroups(Form $form)
     {
-        $result = JsModelAbstract::phpValueToJs(array('Default'));
+        $result = json_encode(array('Default'));
         $groups = $form->getConfig()->getOption('validation_groups');
 
         if (empty($groups)) {
@@ -328,10 +336,10 @@ class JsFormValidatorFactory
             }
         } elseif (is_array($groups)) {
             // If groups is an array - return groups as is
-            $result = JsModelAbstract::phpValueToJs($groups);
+            $result = json_encode($groups);
         } elseif ($groups instanceof \Closure) {
             // If groups is a Closure - return the form class name to look for javascript
-            $result = get_class($form->getConfig()->getType()->getInnerType());
+            $result = json_encode($this->getElementId($form));
         }
 
         return $result;
@@ -413,12 +421,8 @@ class JsFormValidatorFactory
     protected function parseGetters(array $getters)
     {
         $result = array();
-        foreach ($getters as $name => $getter) {
-            $result[$name] = array(
-                'class'       => $getter->getClassName(),
-                'name'        => $getter->getName(),
-                'constraints' => $this->parseConstraints((array)$getter->getConstraints()),
-            );
+        foreach ($getters as $getter) {
+            $result[$getter->getName()] = $this->parseConstraints((array)$getter->getConstraints());
         }
 
         return $result;
@@ -441,6 +445,11 @@ class JsFormValidatorFactory
                     $item->{$propName} = $this->translateMessage($propValue);
                 }
             }
+
+            if ($item instanceof BaseUniqueEntity) {
+                $item = new UniqueEntity($item, $this->currentElement->getConfig()->getDataClass());
+            }
+
             $result[get_class($item)][] = $item;
         }
 

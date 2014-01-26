@@ -10,9 +10,12 @@ function SymfonyComponentValidatorConstraintsRegex() {
     this.match = true;
 
     this.validate = function(value) {
-        return (String(value).length > 0 && !this.pattern.test(value))
-            ? this.message.replace('{{ value }}', String(value))
-            : null;
+        var errors = [];
+        if (String(value).length > 0 && !this.pattern.test(value)) {
+            errors.push(this.message.replace('{{ value }}', String(value)));
+        }
+
+        return errors;
     };
 
     this.onCreate = function() {

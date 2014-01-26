@@ -2,7 +2,7 @@
 /**
  * Created by ymaltsev on 11/26/13.
  */
-function SymfonyBridgeDoctrineValidatorConstraintsUniqueEntity() {
+function FpJsFormValidatorBundleFormConstraintUniqueEntity() {
     this.message          = 'This value is already used.';
     this.service          = 'doctrine.orm.validator.unique';
     this.em               = null;
@@ -10,21 +10,28 @@ function SymfonyBridgeDoctrineValidatorConstraintsUniqueEntity() {
     this.fields           = [];
     this.errorPath        = null;
     this.ignoreNull       = true;
+    this.entityName       = null;
 
     this.groups           = [];
 
     /**
      * @param {*} value
-     * @param {FpJsFormElement} model
+     * @param {FpJsFormElement} element
      */
-    this.validate = function(value, model) {
-        var self = this;
-        if (typeof this.fields === 'string') {
-            this.fields = [this.fields];
+    this.validate = function(value, element) {
+        var self   = this;
+        var route  = null;
+        var config = FpJsFormValidator.config;
+        if (config['routing'] && config['routing']['check_unique_entity']) {
+            route = config['routing']['check_unique_entity'];
         }
 
-        model.addRequest(
-            model.getConfig()['routing']['check_unique_entity'],
+        if (!route) {
+            return [];
+        }
+
+        FpJsFormValidator.ajax.sendRequest(
+            route,
             {
                 message:          this.message,
                 service:          this.service,
@@ -35,28 +42,37 @@ function SymfonyBridgeDoctrineValidatorConstraintsUniqueEntity() {
                 ignoreNull:       this.ignoreNull ? 1 : 0,
                 groups:           this.groups,
 
-                entity:           model.getDataClass(),
-                data:             this.getValues(model, this.fields)
+                entityName:       this.entityName,
+                data:             this.getValues(element, this.fields)
             },
             function(response){
                 response = JSON.parse(response);
                 if (false === response) {
-                    self.addErrors(model);
+                    self.showErrors(element);
                 }
-            }
+            },
+            element
         );
+
+        return [];
+    };
+
+    this.onCreate = function() {
+        if (typeof this.fields === 'string') {
+            this.fields = [this.fields];
+        }
     };
 
     /**
-     * @param {FpJsFormElement} model
+     * @param {FpJsFormElement} element
      * @param {Array} fields
      * @returns {{}}
      */
-    this.getValues = function(model, fields) {
+    this.getValues = function(element, fields) {
         var value;
         var result = {};
         for (var i = 0; i < fields.length; i++) {
-            value = model.getChild(this.fields[i]).getValue();
+            value = FpJsFormValidator.getElementValue(element.children[this.fields[i]]);
             value = value ? value : '';
             result[fields[i]] = value;
         }
@@ -65,20 +81,22 @@ function SymfonyBridgeDoctrineValidatorConstraintsUniqueEntity() {
     };
 
     /**
-     * @param {FpJsFormElement} model
+     * @param {FpJsFormElement} element
      */
-    this.addErrors = function(model) {
+    this.showErrors = function(element) {
         var fields = this.fields;
-        if (null !== this.errorPath) {
+        if (this.errorPath) {
             fields = [this.errorPath];
         }
-        var values = this.getValues(model, fields);
+        var values = this.getValues(element, fields);
         for (var i = 0; i < fields.length; i++) {
-            var child = model.getChild(fields[i]);
+            var child = element.children[fields[i]];
             if (child) {
                 var value = String(values[fields[i]]);
                 var error = this.message.replace('{{ value }}', value);
-                child.addErrors(error);
+                element.errors.push(error);
+                child.showErrors.apply(element, [[error]]);
+                child.postValidate.apply(element, [[error]]);
             }
         }
     }

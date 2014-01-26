@@ -5,209 +5,75 @@
 
 <script type="text/javascript">
     $(function(){
-        $('input').jsFormValidator({
-            defaultEvent: false,
+        var _t = {
+            isValid: '{{ isValid|default(1) }}',
+
+            get: function(trueVal, falseVal) {
+                return this.isValid === '1' ? trueVal : falseVal;
+            }
+        };
+
+        $('#form_name').jsFormValidator({
             customEvents: function() {
                 $(this).change(function(){
-                    $(this).jsFormValidator('validate');
+                    if (!$(this).jsFormValidator('validate')) {
+                        console.log('custom_event');
+                    }
                 });
             },
             showErrors: function(errors) {
-                console.log($(this).jsFormValidator('type'));
-                var list = $(this).parent('div').find('ul.errors');
-                list.empty();
-                for (var i in errors) {
-                    $(this).append('<li>'+errors[i]+'</li>');
-                }
+                console.log('custom_show_errors', errors);
+            }
+        });
+
+        $('form').jsFormValidator({
+            callbacks: {
+                isNameValid: function() { return false; },
+
+                isTrue:                 function() { return _t.get(true, false); },
+                isFalse:                function() { return _t.get(false, true) },
+                isNull:                 function() { return _t.get(null, 1); },
+                isNotNull:              function() { return _t.get(1, null); },
+                isEqualTo:              function() { return _t.get("1", "0"); },
+                isNotEqualTo:           function() { return _t.get("0", "1"); },
+                isIdenticalTo:          function() { return _t.get(1, "1"); },
+                isNotIdenticalTo:       function() { return _t.get("1", 1); },
+                isLessThan:             function() { return _t.get(0, 1); },
+                isLessThanOrEqual:      function() { return _t.get(1, 2); },
+                isGreaterThan:          function() { return _t.get(2, 1); },
+                isGreaterThanOrEqual:   function() { return _t.get(1, 0); },
+                isLengthMin:            function() { return _t.get('a', ''); },
+                isLengthMax:            function() { return _t.get('a', 'aa'); },
+                isLengthExact:          function() { return _t.get('a', 'aa'); },
+                isCountMin:             function() { return _t.get(['a'], []); },
+                isCountMax:             function() { return _t.get(['a'], ['a', 'b']); },
+                isCountExact:           function() { return _t.get(['a'], ['a', 'a']); },
+                isRangeMin:             function() { return _t.get(2, 0); },
+                isRangeMax:             function() { return _t.get(1, 2); },
+                isRangeValueValid:      function() { return _t.get(1, 'a'); },
+                isTypeArray:            function() { return _t.get(['a'], 'a'); },
+                isTypeBool:             function() { return _t.get(true, 'a'); },
+                isTypeCallable:         function() { return _t.get(function(){}, 'a'); },
+                isTypeFloat:            function() { return _t.get(1.0, 1); },
+                isTypeInteger:          function() { return _t.get(1, 1.0); },
+                isTypeNull:             function() { return _t.get(null, 'a'); },
+                isTypeNumeric:          function() { return _t.get("1", 'a'); },
+                isTypeObject:           function() { return _t.get({}, 'a'); },
+                isTypeScalar:           function() { return _t.get(1, [1,2,3]); },
+                isTypeString:           function() { return _t.get('1', 1); },
+                isValidSingleChoice:    function() { return _t.get('male', 'wrong_choice'); },
+                isValidMultipleChoice:  function() { return _t.get(['June', 'July'], ['June', 'May']); },
+                isMinMultipleChoice:    function() { return _t.get(['June', 'July'], ['June']); },
+                isMaxMultipleChoice:    function() { return _t.get(['June'], ['June', 'July']); },
+
+                getChoicesList: function() { return ['June', 'July', 'August']; }
+            },
+            groups: function () {
+                console.log('custom_groups', this);
+                return [];
             }
         });
     });
-
-
-    function FpJsFormValidatorBundleTestsTestBundlesDefaultTestBundleEntityTestEntity() {
-        //noinspection JSUnusedGlobalSymbols
-        this.isNameValid = function() {
-            return false;
-        }
-    }
-
-    function FpJsFormValidatorBundleTestsTestBundlesDefaultTestBundleEntityBasicConstraintsEntity() {
-        this.isValid = '{{ isValid|default(1) }}';
-
-        this.getValidVariable = function(trueVal, falseVal) {
-            return this.isValid === '1' ? trueVal : falseVal;
-        };
-
-        //noinspection JSUnusedGlobalSymbols
-        this.isTrue = function() {
-            return this.getValidVariable(true, false);
-        };
-        //noinspection JSUnusedGlobalSymbols
-        this.isFalse = function() {
-            return this.getValidVariable(false, true)
-        };
-        //noinspection JSUnusedGlobalSymbols
-        this.isNull = function() {
-            return this.getValidVariable(null, 1);
-        };
-        //noinspection JSUnusedGlobalSymbols
-        this.isNotNull = function() {
-            return this.getValidVariable(1, null);
-        };
-
-        //noinspection JSUnusedGlobalSymbols
-        this.isEqualTo = function() {
-            return this.getValidVariable("1", "0");
-        };
-
-        //noinspection JSUnusedGlobalSymbols
-        this.isNotEqualTo = function() {
-            return this.getValidVariable("0", "1");
-        };
-
-        //noinspection JSUnusedGlobalSymbols
-        this.isIdenticalTo = function() {
-            return this.getValidVariable(1, "1");
-        };
-
-        //noinspection JSUnusedGlobalSymbols
-        this.isNotIdenticalTo = function() {
-            return this.getValidVariable("1", 1);
-        };
-
-        //noinspection JSUnusedGlobalSymbols
-        this.isLessThan = function() {
-            return this.getValidVariable(0, 1);
-        };
-
-        //noinspection JSUnusedGlobalSymbols
-        this.isLessThanOrEqual = function() {
-            return this.getValidVariable(1, 2);
-        };
-
-        //noinspection JSUnusedGlobalSymbols
-        this.isGreaterThan = function() {
-            return this.getValidVariable(2, 1);
-        };
-
-        //noinspection JSUnusedGlobalSymbols
-        this.isGreaterThanOrEqual = function() {
-            return this.getValidVariable(1, 0);
-        };
-
-        //noinspection JSUnusedGlobalSymbols
-        this.isLengthMin = function() {
-            return this.getValidVariable('a', '');
-        };
-
-        //noinspection JSUnusedGlobalSymbols
-        this.isLengthMax = function() {
-            return this.getValidVariable('a', 'aa');
-        };
-
-        //noinspection JSUnusedGlobalSymbols
-        this.isLengthExact = function() {
-            return this.getValidVariable('a', 'aa');
-        };
-
-        //noinspection JSUnusedGlobalSymbols
-        this.isCountMin = function() {
-            return this.getValidVariable(['a'], []);
-        };
-
-        //noinspection JSUnusedGlobalSymbols
-        this.isCountMax = function() {
-            return this.getValidVariable(['a'], ['a', 'b']);
-        };
-
-        //noinspection JSUnusedGlobalSymbols
-        this.isCountExact = function() {
-            return this.getValidVariable(['a'], ['a', 'a']);
-        };
-
-        //noinspection JSUnusedGlobalSymbols
-        this.isRangeMin = function() {
-            return this.getValidVariable(2, 0);
-        };
-
-        //noinspection JSUnusedGlobalSymbols
-        this.isRangeMax = function() {
-            return this.getValidVariable(1, 2);
-        };
-
-        //noinspection JSUnusedGlobalSymbols
-        this.isRangeValueValid = function() {
-            return this.getValidVariable(1, 'a');
-        };
-
-        //noinspection JSUnusedGlobalSymbols
-        this.isTypeArray = function() {
-            return this.getValidVariable(['a'], 'a');
-        };
-        //noinspection JSUnusedGlobalSymbols
-        this.isTypeBool = function() {
-            return this.getValidVariable(true, 'a');
-        };
-        //noinspection JSUnusedGlobalSymbols
-        this.isTypeCallable = function() {
-            return this.getValidVariable(function(){}, 'a');
-        };
-        //noinspection JSUnusedGlobalSymbols
-        this.isTypeFloat = function() {
-            return this.getValidVariable(1.0, 1);
-        };
-        //noinspection JSUnusedGlobalSymbols
-        this.isTypeInteger = function() {
-            return this.getValidVariable(1, 1.0);
-        };
-        //noinspection JSUnusedGlobalSymbols
-        this.isTypeNull = function() {
-            return this.getValidVariable(null, 'a');
-        };
-        //noinspection JSUnusedGlobalSymbols
-        this.isTypeNumeric = function() {
-            return this.getValidVariable("1", 'a');
-        };
-        //noinspection JSUnusedGlobalSymbols
-        this.isTypeObject = function() {
-            return this.getValidVariable({}, 'a');
-        };
-        //noinspection JSUnusedGlobalSymbols
-        this.isTypeScalar = function() {
-            return this.getValidVariable(1, [1,2,3]);
-        };
-        //noinspection JSUnusedGlobalSymbols
-        this.isTypeString = function() {
-            return this.getValidVariable('1', 1);
-        };
-
-
-        this.getChoicesList = function() {
-            return ['June', 'July', 'August'];
-        };
-        //noinspection JSUnusedGlobalSymbols
-        this.isValidSingleChoice = function() {
-            return this.getValidVariable('male', 'wrong_choice');
-        };
-        //noinspection JSUnusedGlobalSymbols
-        this.isValidMultipleChoice = function() {
-            return this.getValidVariable(['June', 'July'], ['June', 'May']);
-        };
-        //noinspection JSUnusedGlobalSymbols
-        this.isMinMultipleChoice = function() {
-            return this.getValidVariable(['June', 'July'], ['June']);
-        };
-        //noinspection JSUnusedGlobalSymbols
-        this.isMaxMultipleChoice = function() {
-            return this.getValidVariable(['June'], ['June', 'July']);
-        };
-    }
-
-    function FpJsFormValidatorBundleTestsTestBundlesDefaultTestBundleFormTestSubFormType() {
-        this.getValidationGroups = function() {
-            return ['child'];
-        }
-    }
 </script>
 
 <div id="transformer_result"></div>

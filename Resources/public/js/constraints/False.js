@@ -7,9 +7,12 @@
 function SymfonyComponentValidatorConstraintsFalse() {
     this.message = '';
 
-    this.validate = function(value) {
-        return (false !== value)
-            ? [this.message.replace('{{ value }}', value)]
-            : null;
+    this.validate = function (value) {
+        var errors = [];
+        if (false !== value) {
+            errors.push(this.message.replace('{{ value }}', value));
+        }
+
+        return errors;
     }
 }

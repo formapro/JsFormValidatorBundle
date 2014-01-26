@@ -1,33 +1,163 @@
-//noinspection JSUnusedGlobalSymbols
+function FpJsFormElement() {
+    this.id             = '';
+    this.name           = '';
+    this.type           = '';
+    this.invalidMessage = '';
+    this.cascade        = true;
+    this.transformers   = [];
+    this.data           = {};
+    this.children       = {};
+    this.parent         = null;
+    this.domNode        = null;
+
+    this.callbacks = {};
+    this.errors    = [];
+
+    this.groups  = function() {
+        return ['Default'];
+    };
+
+    this.validate = function() {
+        this.errors = [];
+        FpJsFormValidator.validateElement(this);
+
+        this.showErrors.apply(this.domNode, [this.errors]);
+        this.postValidate.apply(this.domNode, [this.errors]);
+
+
+        return this.errors.length == 0;
+    };
+
+    this.showErrors = function(errors) {
+        if (errors.length) {
+            console.log('--se--', this.name, errors);
+        }
+    };
+
+    this.postValidate = function(errors) {
+        if (errors.length) {
+            console.log('--pv--', this.name, errors);
+        }
+    };
+}
+
+function AjaxRequest() {
+    this.queue = {};
+
+    this.hasRequest = function(element) {
+        return this.queue[element.id] && this.queue[element.id]['count'] > 0;
+    };
+
+    this.addCallback = function(element, callbalck) {
+        if (this.queue[element.id]) {
+            this.queue[element.id]['callback'] = callbalck;
+        }
+    };
+
+    this.sendRequest = function (path, data, callback, owner) {
+        var self = this;
+        var request = this.createRequest();
+
+        try {
+            request.open("POST", path, true);
+            request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            request.onreadystatechange = function () {
+                if (4 == request.readyState && 200 == request.status) {
+                    callback(request.responseText, owner);
+                    self.decreaseQueue(owner);
+                }
+            };
+
+            request.send(this.serializeData(data, null));
+            self.increaseQueue(owner);
+        } catch (e) {
+            console.log(e.message);
+        }
+    };
+
+    this.increaseQueue = function (owner) {
+        if (undefined == this.queue[owner.id]) {
+            this.queue[owner.id] = {
+                'count': 0,
+                'callback': function() {}
+            };
+        }
+        this.queue[owner.id].count++;
+    };
+
+    this.decreaseQueue = function (owner) {
+        if (undefined != this.queue[owner.id]) {
+            this.queue[owner.id].count--;
+
+            if (0 == this.queue[owner.id].count) {
+                this.queue[owner.id].callback(owner);
+            }
+        }
+    };
+
+    this.serializeData = function (obj, prefix) {
+        var queryParts = [];
+        for (var paramName in obj) {
+            var key = prefix
+                ? prefix + "[" + paramName + "]"
+                : paramName;
+
+            var child = obj[paramName];
+
+            queryParts.push(
+                (typeof child == "object")
+                    ? this.serializeData(child, key)
+                    : encodeURIComponent(key) + "=" + encodeURIComponent(child)
+            );
+        }
+
+        return queryParts.join("&");
+    };
+
+    /**
+     * @return {XMLHttpRequest|null}
+     */
+    this.createRequest = function () {
+        var request = null;
+        if (window.XMLHttpRequest) {
+            //IE7+, Firefox, Chrome, Opera, Safari
+            request = new XMLHttpRequest();
+        } else {
+            //IE6, IE5
+            try {
+                request = new ActiveXObject("Microsoft.XMLHTTP");
+            } catch (e) {
+            }
+            try {
+                request = new ActiveXObject("Msxml2.XMLHTTP");
+            } catch (e) {
+            }
+            try {
+                request = new ActiveXObject("Msxml2.XMLHTTP.6.0");
+            } catch (e) {
+            }
+            try {
+                request = new ActiveXObject("Msxml2.XMLHTTP.3.0");
+            } catch (e) {
+            }
+        }
+
+        return request;
+    };
+}
+
 var FpJsFormValidator = new function() {
-    this.forms = {};
+    this.forms      = {};
     this.errorClass = 'form-error';
-    this.config = {};
+    this.config     = {};
+    this.ajax       = new AjaxRequest();
 
-    this.validateAction = function() {
-        console.log('validate');
-    };
-
-    this.showErrorsAction = function(errors) {
-        console.log(errors);
-    };
-
-    this.postValidateAction = function(errors) {
-        console.log(errors);
-    };
-
-    //noinspection JSUnusedGlobalSymbols
     this.addModel = function(model) {
         var self = this;
         if (!model) return;
         this.onDocumentReady(function(){
-            self.forms[model.id] = model;
-            //var element =
+            self.forms[model.id] = self.initModel(model);
         });
-    };
-
-    this.initModel = function(model) {
-
     };
 
     this.onDocumentReady = function(callback) {
@@ -42,256 +172,345 @@ var FpJsFormValidator = new function() {
     };
 
     /**
-     * This events is defined by default by this library
-     * To prevent this events just redefine this function as empty fucntion
-     *
-     * @param {FpJsFormElement} model
+     * @param {Object} model
      */
-    this.bindDefaultEvents = function(model) {
-        model.form.addEventListener('submit', this.getEventCallback(model));
-    };
-
-    /**
-     * Create a callback that will ba called on the each event that requires the form validation
-     *
-     * @param {FpJsFormElement} model
-     *
-     * @returns {Function}
-     */
-    this.getEventCallback = function(model) {
-        var self = this;
-        return function(event){
-            self.clearModel(model);
-
-            var isValid = self.validateRecursively(model);
-            var hasRequests = self.sendModelRequests(model);
-
-            if (hasRequests || !isValid) {
-                event.preventDefault();
-            }
-
-            if (!hasRequests) {
-                self.getMethodAndShowErrors(model);
-                self.postValidateEvent(model);
-            }
-        };
-    };
-
-    /**
-     * Send all the exists ajax requests for the model
-     *
-     * @param {FpJsFormElement} model
-     *
-     * @returns {boolean}
-     */
-    this.sendModelRequests = function(model) {
-        var len = model.requests.length;
-        if (len) {
-            for (var i = 0; i < len; i++) {
-                var req = model.requests[i];
-                req.request.onreadystatechange =
-                    this.getXmlHttpRequestCallback(i, req.request, req.callback, model);
-
-                req.request.send(req.params);
-            }
-            return true;
-        } else {
-            return false;
+    this.initModel = function(model) {
+        var element = this.createElement(model);
+        var form = this.findFormElement(element);
+        if (form) {
+            this.attachDefaultEvent(element, form);
         }
+
+        return element;
     };
 
     /**
-     * Create a major callback fucntion that will be called on each model's ajax response
+     * @param {Object} model
      *
-     * @param {String|Number} requestId
-     * @param {XMLHttpRequest} request
-     * @param {function} callback
-     * @param {FpJsFormElement} model
-     *
-     * @returns {Function}
+     * @return {FpJsFormElement}
      */
-    this.getXmlHttpRequestCallback = function(requestId, request, callback, model) {
-        var self = this;
-        return function() {
-            if (4 == request.readyState && 200 == request.status) {
-                callback(request.responseText, model.requests[requestId].owner);
+    this.createElement = function(model) {
+        var element = new FpJsFormElement();
+        for (var key in model) {
+            if ('children' == key) {
+                for (var childName in model.children) {
+                    element.children[childName] = this.createElement(model.children[childName]);
+                    element.children[childName].parent = element;
+                }
+            } else {
+                element[key] = model[key];
+            }
+        }
 
-                if (!model.countProcessedRequests()) {
-                    self.getMethodAndShowErrors(model);
-                    self.postValidateEvent(model);
+        // Parse constraints
+        for (var groupMarker in element.data) {
+            var constraints = [];
+            if (element.data[groupMarker].constraints) {
+                constraints = this.parseConstraints(element.data[groupMarker].constraints);
+            }
+            element.data[groupMarker].constraints = constraints;
+
+            var getters = {};
+            if (element.data[groupMarker].getters) {
+                for (var getterName in element.data[groupMarker].getters) {
+                    getters[getterName] = this.parseConstraints(element.data[groupMarker].getters[getterName]);
                 }
             }
-        };
+            element.data[groupMarker].getters = getters;
+        }
+
+        element.domNode = this.findDomElement(model);
+        this.attachElement(element);
+
+        return element;
     };
 
     /**
-     * Returns the global or local method which shows errors
-     *
-     * @param {FpJsFormElement} model
+     * @param {FpJsFormElement} element
      */
-    this.getMethodAndShowErrors = function(model) {
-        if (undefined !== model.getForm().showErrors) {
-            model.getForm().showErrors(model.getForm(), model.getMappedErrors());
+    this.validateElement = function(element) {
+        var errors = [];
+
+        for (var groups in element.data) {
+            // Evaluate groups
+            var groupsValue = JSON.parse(groups);
+            if (typeof groupsValue == "string") {
+                groupsValue = this.getParentElementById(groupsValue, element).groups.apply(element.domNode);
+            }
+            errors = errors.concat(this.validateConstraints(
+                this.getElementValue(element),
+                element.data[groups].constraints,
+                groupsValue,
+                element
+            ));
+
+            for (var getterName in element.data[groups].getters) {
+                if (typeof element.callbacks[getterName] == "function") {
+                    var receivedValue = element.callbacks[getterName].apply(element.domNode);
+                    errors = errors.concat(this.validateConstraints(
+                        receivedValue,
+                        element.data[groups].getters[getterName],
+                        groupsValue,
+                        element
+                    ));
+                }
+            }
+        }
+
+        element.errors = errors;
+    };
+
+    /**
+     * @param value
+     * @param {Array} constraints
+     * @param {Array} groups
+     * @param {FpJsFormElement} owner
+     *
+     * @return {Array}
+     */
+    this.validateConstraints = function(value, constraints, groups, owner) {
+        var errors = [];
+        var i = constraints.length;
+        while (i--) {
+            if (this.checkValidationGroups(groups, constraints[i].groups)) {
+                errors = errors.concat(constraints[i].validate(value, owner));
+            }
+        }
+        return errors;
+    };
+
+    /**
+     * @param {Array} needle
+     * @param {Array} haystack
+     * @return {boolean}
+     */
+    this.checkValidationGroups = function(needle, haystack) {
+        var result = false;
+        var i = needle.length;
+        while (i--) {
+            if (-1 !== haystack.indexOf(needle[i])) {
+                result = true;
+                break;
+            }
+        }
+
+        return result;
+    };
+
+    /**
+     * @param {FpJsFormElement} element
+     */
+    this.getElementValue = function(element) {
+        var i = element.transformers.length;
+        var value = this.getInputValue(element);
+
+        if (i && undefined === value) {
+            value = this.getMappedValue(element);
         } else {
-            this.showErrors(model.getForm(), model.getMappedErrors());
+            value = this.getSpecifiedElementTypeValue(element);
         }
+
+        while (i--) {
+            value = element.transformers[i].reverseTransform(value, element);
+        }
+
+        return value;
     };
 
-    /**
-     * This event will be called after the synchronous or asynchronous form validation
-     *
-     * @param {FpJsFormElement} model
-     */
-    this.postValidateEvent = function(model) {
-        var form = model.getForm();
-        var errors = model.getMappedErrors();
-        // Run the global event
-        this.onvalidate(errors);
-        // Run the local event for this form
-        if (typeof form.onvalidate === 'function') {
-            form.onvalidate(errors);
-        }
+    this.getInputValue = function(element) {
+        return element.domNode? element.domNode.value : undefined;
     };
 
-    /**
-     * This event can be redefined to run some actions after form validation
-     * This event calls globally for all the forms
-     *
-     * @param {{}} errors
-     */
-    this.onvalidate = function(errors) {};
+    this.getMappedValue = function(element) {
+        var result = this.getSpecifiedElementTypeValue(element);
 
-    /**
-     * Get the "from" DOM element due to model type
-     *
-     * @param {FpJsFormElement} model
-     */
-    this.getFormDomElement = function(model) {
-        var id = model.id;
-        var form = this.findClosestForm(document.getElementById(id));
-        if (!form) {
-            // Just get the first child name
-            //noinspection LoopStatementThatDoesntLoopJS
-            for(var childName in model.getChildren()) break;
-            var childId = model.getChild(childName).getId();
-            form = this.findClosestForm(document.getElementById(childId));
+        if (undefined === result) {
+            result = {};
+            for (var childName in element.children) {
+                var child = this.children[childName];
+                result[child.name] = this.getMappedValue(child);
+            }
         }
 
-        if (!form) {
-            throw new Error('Can not find the form element with id="'+id+'"');
+        return result;
+    };
+
+    this.getSpecifiedElementTypeValue = function(element) {
+        if (!element.domNode) {
+            return undefined;
+        }
+
+        var value;
+        if ('checkbox' == element.type || 'radio' == element.type) {
+            value = element.domNode.checked;
+        } else if ('select' === element.domNode.tagName.toLowerCase()) {
+            value = [];
+            var field = element.domNode;
+            var len = field.length;
+            while (len--) {
+                if (field.options[len].selected) {
+                    value.push(field.options[len].value);
+                }
+            }
         } else {
-            return form;
+            value = this.getInputValue(element);
         }
+
+        return value;
     };
 
     /**
-     * Find a closest "form" tag for specified DOM element
-     *
-     * @param {HTMLElement|Node} element
-     *
-     * @returns {HTMLElement|null}
+     * @param {Object} list
      */
-    this.findClosestForm = function(element) {
-        if (element && 'form' === element.tagName.toLowerCase()) {
+    this.parseConstraints = function(list) {
+        var constraints = [];
+        for (var name in list) {
+            var className = name.replace(/\\/g, '');
+            if (undefined !== window[className]) {
+                var i = list[name].length;
+                while (i--) {
+                    var constraint = new window[className]();
+                    for (var param in list[name][i]) {
+                        constraint[param] = list[name][i][param];
+                    }
+                    if (typeof constraint.onCreate === 'function') {
+                        constraint.onCreate();
+                    }
+                    constraints.push(constraint);
+                }
+            }
+        }
+
+        return constraints;
+    };
+
+    /**
+     * @param {String} id
+     * @param {FpJsFormElement} element
+     */
+    this.getParentElementById = function(id, element) {
+        if (id == element.id) {
             return element;
-        } else if (element && element.parentNode) {
-            return this.findClosestForm(element.parentNode);
+        } else if (element.parent) {
+            return this.getParentElementById(id, element.parent);
         } else {
             return null;
         }
     };
 
     /**
-     * Validate the form model and all its children
-     *
-     * @param {FpJsFormElement} model
+     * @param {FpJsFormElement} element
      */
-    this.validateRecursively = function(model) {
-        var isValid = model.isValid();
-        var parent = model.getParent();
-        for (var childName in model.getChildren()) {
-            var child = model.getChild(childName);
-            if (!parent || parent.isCascade() || !child.hasValidConstraint()) {
-                isValid = !this.validateRecursively(child) ? false : isValid;
+    this.attachElement = function(element) {
+        if (!element.domNode) {
+            return;
+        }
+
+        if (undefined !== element.domNode.jsFormValidator) {
+            for (var key in element.domNode.jsFormValidator) {
+                element[key] = element.domNode.jsFormValidator[key];
             }
         }
 
-        return isValid;
+        element.domNode.jsFormValidator = element;
     };
 
     /**
-     * Show all the form errors on a page
-     *
+     * @param {FpJsFormElement} element
      * @param {HTMLFormElement} form
-     * @param {{}} errors
      */
-    this.showErrors = function(form, errors) {
-        for (var elementId in errors) {
-            var element = document.getElementById(elementId);
-            if (null === element && 'form' === errors[elementId].type) {
-                // Just get the first child's Id
-                for (var childId in errors) if (elementId !== childId) break;
-                // Looking for the form tag for this child
-                element = this.findClosestForm(document.getElementById(childId));
+    this.attachDefaultEvent = function(element, form) {
+        var self = this;
+        form.addEventListener('submit', function(event) {
+            if (!element.validate()) {
+                console.log('prevent_default');
+                event.preventDefault();
             }
-            var errorList = this.createErrorList(errors[elementId].errors);
-
-            var parent = element;
-            if (parent && 'form' !== errors[elementId].type) {
-                //noinspection JSValidateTypes
-                parent = element.parentNode;
-            } else if (!parent) {
-                parent = form;
+            if (self.ajax.hasRequest(element)) {
+                event.preventDefault();
+                self.ajax.addCallback(element, function(owner){
+                    if (owner.errors.length > 0) {
+                        console.log('invalid_ajax_callback');
+                    } else {
+                        console.log('valid_ajax_callback');
+                        form.submit();
+                    }
+                })
             }
+        });
 
-            // Remove existing errors
-            var existList = parent.getElementsByTagName(errorList.tagName);
-            var listLen = existList.length;
-            while (listLen--) {
-                if (errorList.className.toLowerCase() == existList[listLen].className.toLowerCase()) {
-                    existList[listLen].parentNode.removeChild(existList[listLen]);
+        for (var childName in element.children) {
+            this.attachDefaultEvent(element.children[childName], form);
+        }
+    };
+
+    /**
+     * @param {Object} model
+     *
+     * @return {HTMLElement|null}
+     */
+    this.findDomElement = function(model) {
+        var domElement = document.getElementById(model.id);
+        if (!domElement) {
+            var list = document.getElementsByName(model.name);
+            if (list.length) {
+                domElement = list[0];
+            }
+        }
+
+        return domElement;
+    };
+
+    /**
+     * @param {FpJsFormElement} element
+     *
+     * @return {HTMLFormElement|null}
+     */
+    this.findFormElement = function(element) {
+        var form = null;
+        if ('form' == element.domNode.tagName.toLowerCase()) {
+            form = element.domNode;
+        } else {
+            var realChild = this.findRealChildElement(element);
+            if (realChild) {
+                form = this.findParentForm(realChild);
+            }
+        }
+
+        return form;
+    };
+
+    /**
+     * @param {FpJsFormElement} element
+     *
+     * @return {HTMLElement|null}
+     */
+    this.findRealChildElement = function(element) {
+        var child = element.domNode;
+        if (!child) {
+            for (var childName in element.children) {
+                child = element.children[childName].domNode;
+                if (child) {
+                    break;
                 }
             }
-            // Show new errors
-            parent.insertBefore(errorList, parent.firstChild);
         }
+
+        return child;
     };
 
     /**
-     * Create an "ul" element and add there "li" elements with error messages
+     * @param {HTMLElement|Node} child
      *
-     * @param {Array} errors
-     *
-     * @returns {HTMLElement}
+     * @return {HTMLElement|null}
      */
-    this.createErrorList = function(errors) {
-        var list = document.createElement('ul');
-        list.className = this.errorClass;
-        var i = errors.length;
-        while (i--) {
-            var li = document.createElement('li');
-            li.innerHTML = errors[i];
-            list.appendChild(li);
+    this.findParentForm = function(child) {
+        if ('form' == child.tagName.toLowerCase()) {
+            return child;
+        } else if (child.parentNode) {
+            return this.findParentForm(child.parentNode);
+        } else {
+            return null;
         }
-
-        return list;
     };
-
-    /**
-     * Clear all the necessary data in a model (recursively)
-     *
-     * @param {FpJsFormElement} model
-     *
-     * @returns {FpJsFormValidatorFactory}
-     */
-    this.clearModel = function(model) {
-        model.errors = [];
-        model.requests = [];
-
-        for (var childName in model.getChildren()) {
-            this.clearModel(model.getChild(childName));
-        }
-
-        return this;
-    }
 }();

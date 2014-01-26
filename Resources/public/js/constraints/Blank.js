@@ -7,10 +7,13 @@
 function SymfonyComponentValidatorConstraintsBlank() {
     this.message = '';
 
-    this.validate = function(value) {
-        return ([undefined, null, false, '', [], {}].indexOf(value) === -1)
-            ? this.message.replace('{{ value }}', String(value))
-            : null;
+    this.validate = function (value) {
+        var errors = [];
+        if ([undefined, null, false, '', [], {}].indexOf(value) === -1) {
+            errors.push(this.message.replace('{{ value }}', String(value)));
+        }
+
+        return errors;
     }
 }
 
