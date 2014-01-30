@@ -7,7 +7,7 @@ use Fp\JsFormValidatorBundle\Tests\Fixtures\FormGroupsArray;
 use Fp\JsFormValidatorBundle\Tests\Fixtures\FormGroupsClosure;
 use Fp\JsFormValidatorBundle\Tests\Fixtures\TestConstraint;
 use Fp\JsFormValidatorBundle\Tests\Fixtures\TestForm;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity as BaseUniqueEntity;
 use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceList;
 use Symfony\Component\Form\Extension\Core\DataTransformer\ArrayToPartsTransformer;
 use Symfony\Component\Form\Extension\Core\DataTransformer\ChoicesToValuesTransformer;

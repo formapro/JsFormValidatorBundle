@@ -5,7 +5,7 @@ namespace Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use /** @noinspection PhpUnusedAliasInspection */
-    Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+    Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity as BaseUniqueEntity;
 use Symfony\Component\Validator\ExecutionContextInterface;
 
 /**
