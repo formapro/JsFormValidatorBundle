@@ -4,16 +4,12 @@ namespace Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use /** @noinspection PhpUnusedAliasInspection */
-    Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-
 
 /**
  * Book
  *
  * @ORM\Table()
  * @ORM\Entity()
- *
  */
 class TestEntity
 {
@@ -59,6 +55,14 @@ class TestEntity
      * @ORM\Column(name="email", type="string", length=50)
      */
     private $email;
+
+    /**
+     * Field without any validate rules
+     *
+     * @var string
+     * @ORM\Column(name="clear", type="string", length=50)
+     */
+    private $clear;
 
     /**
      * Get id
@@ -123,5 +127,29 @@ class TestEntity
     public function isNameValid()
     {
         return false;
+    }
+
+    /**
+     * Get Clear
+     *
+     * @return string
+     */
+    public function getClear()
+    {
+        return $this->clear;
+    }
+
+    /**
+     * Set clear
+     *
+     * @param string $clear
+     *
+     * @return TestEntity
+     */
+    public function setClear($clear)
+    {
+        $this->clear = $clear;
+
+        return $this;
     }
 }

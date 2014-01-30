@@ -4,10 +4,7 @@ namespace Fp\JsFormValidatorBundle\Form\Extension;
 use Fp\JsFormValidatorBundle\Factory\JsFormValidatorFactory;
 use Fp\JsFormValidatorBundle\Form\Subscriber\SubscriberToQueue;
 use Symfony\Component\Form\AbstractTypeExtension;
-use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /**

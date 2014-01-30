@@ -1,5 +1,11 @@
 {{ include('FpJsFormValidatorBundle::javascripts.html.twig') }}
 
+<style type="text/css">
+    ul.form-errors:empty {
+        display: none;
+    }
+</style>
+
 {{ form_start(form, { 'attr': {'novalidate': 'novalidate' }}) }}
     <input type="submit" name="form_submit" id="form_submit"/>
     {{ form_row(form.name) }}

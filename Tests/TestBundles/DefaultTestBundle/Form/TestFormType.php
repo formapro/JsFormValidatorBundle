@@ -35,7 +35,8 @@ class TestFormType extends AbstractType
                         'groups' => array('groups_callback')
                     ))
                 )
-            ));
+            ))
+            ->add('clear');
     }
 
     /**

@@ -57,17 +57,24 @@ class JsFormValidatorFactory
     protected $currentElement = null;
 
     /**
+     * @var string
+     */
+    protected $transDomain;
+
+    /**
      * @param Validator  $validator
      * @param Translator $translator
      * @param Router     $router
      * @param array      $config
+     * @param string     $domain
      */
-    public function __construct(Validator $validator, Translator $translator, Router $router, $config)
+    public function __construct(Validator $validator, Translator $translator, Router $router, $config, $domain)
     {
-        $this->validator  = $validator;
-        $this->translator = $translator;
-        $this->router     = $router;
-        $this->config     = $config;
+        $this->validator   = $validator;
+        $this->translator  = $translator;
+        $this->router      = $router;
+        $this->config      = $config;
+        $this->transDomain = $domain;
     }
 
     /**
@@ -93,7 +100,7 @@ class JsFormValidatorFactory
      */
     protected function translateMessage($message)
     {
-        return $this->translator->trans($message, array(), $this->config['translation_domain']);
+        return $this->translator->trans($message, array(), $this->transDomain);
     }
 
     /**
@@ -247,25 +254,20 @@ class JsFormValidatorFactory
      */
     protected function getValidationData(Form $form)
     {
-        $result     = array();
-        $parentData = array();
-        $ownData    = array();
-        $groups     = $this->getValidationGroups($form);
-
         // If parent has metadata
         $parent = $form->getParent();
         if ($parent && null !== $parent->getConfig()->getDataClass()) {
-            $metadata = $this
-                ->getMetadataFor($parent->getConfig()->getDataClass())
-                ->getMemberMetadatas($form->getName());
-
-            /** @var PropertyMetadata $item */
-            foreach ($metadata as $item) {
-                $this->composeValidationData(
-                    $parentData,
-                    $item->getConstraints(),
-                    $getters = !empty($item->getters) ? (array)$item->getters : array()
-                );
+            $classMetadata = $metadata = $this->getMetadataFor($parent->getConfig()->getDataClass());
+            if ($classMetadata->hasMemberMetadatas($form->getName())) {
+                $metadata = $classMetadata->getMemberMetadatas($form->getName());
+                /** @var PropertyMetadata $item */
+                foreach ($metadata as $item) {
+                    $this->composeValidationData(
+                        $parentData,
+                        $item->getConstraints(),
+                        $getters = !empty($item->getters) ? (array)$item->getters : array()
+                    );
+                }
             }
         }
         // If has own metadata
@@ -279,19 +281,47 @@ class JsFormValidatorFactory
         }
         // If has constraints in a form element
         $this->composeValidationData(
-            $ownData,
+            $formData,
             (array) $form->getConfig()->getOption('constraints'),
             array()
         );
 
-        if ($parentData) {
-            $result[$this->getValidationGroups($parent)] = $parentData;
+        $result = array();
+        $groups = $this->getValidationGroups($form);
+
+        if (!empty($parentData)) {
+            $parentData['groups'] = $this->getValidationGroups($parent);
+            $result['parent'] = $parentData;
         }
-        if ($ownData) {
-            $result[$groups] = $ownData;
+        if (!empty($ownData)) {
+            $ownData['groups'] = $groups;
+            $result['entity'] = $ownData;
+        }
+        if (!empty($formData)) {
+            $formData['groups'] = $groups;
+            $result['form'] = $formData;
         }
 
         return $result;
+    }
+
+    protected function mergeDataRecursive(array $array1, array $array2)
+    {
+        foreach ($array2 as $key => $value) {
+            if (empty($array1[$key])) {
+                $array1[$key] = $value;
+            } elseif (is_array($value)) {
+                if ((array_keys($value) !== range(0, count($value) - 1))) {
+                    $array1[$key] = $this->mergeDataRecursive($array1[$key], $value);
+                } else {
+                    $array1[$key] = array_merge($array1[$key], $value);
+                }
+            } else {
+                $array1[$key] = $value;
+            }
+        }
+
+        return $array1;
     }
 
     /**
@@ -303,6 +333,9 @@ class JsFormValidatorFactory
      */
     public function composeValidationData(&$container, $constraints, $getters)
     {
+        if (null == $container) {
+            $container = array();
+        }
         if ($getters) {
             if (!isset($container['getters'])) {
                 $container['getters'] = array();
@@ -326,7 +359,7 @@ class JsFormValidatorFactory
      */
     protected function getValidationGroups(Form $form)
     {
-        $result = json_encode(array('Default'));
+        $result = array('Default');
         $groups = $form->getConfig()->getOption('validation_groups');
 
         if (empty($groups)) {
@@ -336,10 +369,10 @@ class JsFormValidatorFactory
             }
         } elseif (is_array($groups)) {
             // If groups is an array - return groups as is
-            $result = json_encode($groups);
+            $result = $groups;
         } elseif ($groups instanceof \Closure) {
             // If groups is a Closure - return the form class name to look for javascript
-            $result = json_encode($this->getElementId($form));
+            $result = $this->getElementId($form);
         }
 
         return $result;

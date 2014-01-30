@@ -2,82 +2,70 @@
 
 namespace Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Controller;
 
-use Composer\Factory;
-use Fp\JsFormValidatorBundle\Factory\JsFormValidatorFactory;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\BasicConstraintsEntity;
-use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\TestEntity;
+use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\UniqueEntity;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\BasicConstraintsEntityType;
-use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\TestFormType;
-use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\TestSubFormType;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\Form;
+use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\UniqueType;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Validator\Constraints\Blank;
+use Symfony\Component\Validator\Constraints\Choice;
+use Symfony\Component\Validator\Constraints\Date;
+use Symfony\Component\Validator\Constraints\DateTime;
+use Symfony\Component\Validator\Constraints\Email;
+use Symfony\Component\Validator\Constraints\EqualTo;
 use Symfony\Component\Validator\Constraints\False;
+use Symfony\Component\Validator\Constraints\GreaterThan;
+use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
+use Symfony\Component\Validator\Constraints\IdenticalTo;
+use Symfony\Component\Validator\Constraints\Ip;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\LessThan;
+use Symfony\Component\Validator\Constraints\LessThanOrEqual;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\NotEqualTo;
+use Symfony\Component\Validator\Constraints\NotIdenticalTo;
+use Symfony\Component\Validator\Constraints\Range;
+use Symfony\Component\Validator\Constraints\Time;
 use Symfony\Component\Validator\Constraints\True;
 use Symfony\Component\Validator\Constraints\Type;
+use Symfony\Component\Validator\Constraints\Url;
+
 
 /**
  * Class FunctionalTestsController
  *
  * @package Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Controller
  */
-class FunctionalTestsController extends Controller
+class FunctionalTestsController extends BaseTestController
 {
     /**
-     * Check forms and subforms
-     *
-     * @return \Symfony\Component\HttpFoundation\Response
-     */
-    public function levelsAction()
-    {
-        $form = $this->createForm(new TestFormType(), new TestEntity());
-        $form
-            ->add('email', 'text', array(
-                'constraints' => array(
-                    new NotBlank(array('message' => 'controller_message'))
-                )
-            ));
-
-        return $this->render(
-            'DefaultTestBundle:FunctionalTests:index.html.twig',
-            array('form' => $form->createView())
-        );
-    }
-
-    /**
      * Check translation service
+     * /fp_js_form_validator/javascript_unit_test/translations/{domain}/{js}
      *
      * @param \Symfony\Component\HttpFoundation\Request $request
-     *
-     * @param string                                    $type
+     * @param string                                    $domain
+     * @param                                           $js
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function translationAction(Request $request, $type)
-    {
-        if ($type == 2) {
-            /** @var JsFormValidatorFactory $factory */
-            $factory = $this->get('fp_js_form_validator.factory');
-
-            $config = $factory->getConfig();
-            $config['translation_domain'] = 'test';
-
-            $reflection = new \ReflectionProperty($factory, 'config');
-            $reflection->setAccessible(true);
-            $reflection->setValue($factory, $config);
-        }
-
-        $builder = $this->createFormBuilder(null, array('js_validation' => ($type > 0)));
+    public function translationAction(
+        Request $request,
+        /** @noinspection PhpUnusedParameterInspection */
+        $domain,
+        $js
+    ) {
+        $builder = $this->createFormBuilder(null, array('js_validation' => (bool)$js));
         $builder
-            ->add('name', 'text', array(
-                'constraints' => array(
-                    new NotBlank(array(
-                        'message' => 'blank.translation'
-                    ))
+            ->add(
+                'name',
+                'text',
+                array(
+                    'constraints' => array(
+                        new NotBlank(array(
+                            'message' => 'blank.translation'
+                        ))
+                    )
                 )
-            ));
+            );
 
         $form = $builder->getForm();
         if ($request->isMethod('post')) {
@@ -91,8 +79,8 @@ class FunctionalTestsController extends Controller
     }
 
     /**
-     * Check groups as array and as callback.
-     * Also check initializing of getters
+     * Check groups and nested forms
+     * /fp_js_form_validator/javascript_unit_test/nesting/{type}/{js}
      *
      * @param \Symfony\Component\HttpFoundation\Request $request
      * @param string                                    $type
@@ -100,32 +88,35 @@ class FunctionalTestsController extends Controller
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function groupsGettersCascadeAction(Request $request, $type, $js)
+    public function nestingAction(Request $request, $type, $js)
     {
         switch ($type) {
             case 'array':
-                $form = $this->getSimpleForm(array('groups_array'), (bool) $js);
+                $form = $this->getSimpleForm(array('groups_array'), (bool)$js);
                 break;
             case 'callback':
-                $form = $this->getSimpleForm(function() {return array('groups_callback');}, (bool) $js);
+                $form = $this->getSimpleForm(
+                    function () {
+                        return array('groups_callback');
+                    },
+                    (bool)$js
+                );
                 break;
             case 'nested':
-                $form = $this->getNestedForm(true, array('groups_child'), (bool) $js);
+                $form = $this->getNestedForm(true, array('groups_child'), (bool)$js);
                 break;
             case 'nested_no_groups':
-                $form = $this->getNestedForm(true, array(), (bool) $js);
+                $form = $this->getNestedForm(true, array(), (bool)$js);
                 break;
             case 'nested_no_cascade':
-                $form = $this->getNestedForm(false, array(), (bool) $js);
+                $form = $this->getNestedForm(false, array(), (bool)$js);
                 break;
             default:
-                $form = $this->getSimpleForm(array(), (bool) $js);
+                $form = $this->getSimpleForm(array(), (bool)$js);
                 break;
         }
 
-        if ($request->isMethod('post')) {
-            $form->submit($request);
-        }
+        $form->handleRequest($request);
 
         return $this->render(
             'DefaultTestBundle:FunctionalTests:index.html.twig',
@@ -134,74 +125,49 @@ class FunctionalTestsController extends Controller
     }
 
     /**
-     * @param Form $form
+     * Check a unique constraint
+     * /fp_js_form_validator/javascript_unit_test/unique_entity/{isValid}/{js}
      *
-     * @return array
-     */
-    protected function getGroups($form)
-    {
-        $result = array();
-        $result['groups'] = $form->getConfig()->getOption('validation_groups');
-        $result['children'] = array();
-        /** @var Form $element */
-        foreach ($form->all() as $name => $element) {
-            $result['children'][$name] = $this->getGroups($element);
-        }
-
-        return $result;
-    }
-
-    protected function getSimpleForm($groups, $js)
-    {
-        return $this
-            ->createForm(
-                new TestFormType(),
-                new TestEntity(),
-                array(
-                    'validation_groups' => $groups,
-                    'js_validation'     => $js
-                )
-            );
-    }
-
-    protected function getNestedForm($cascade, $childGroups, $js)
-    {
-        return $this
-            ->createForm(
-                new TestFormType(),
-                new TestEntity(),
-                array(
-                    'validation_groups' => array('groups_array'),
-                    'cascade_validation' => $cascade,
-                    'js_validation'     => $js,
-                )
-            )
-            ->add('email', new TestSubFormType(), array(
-                'error_bubbling' => false,
-                'constraints' => array(
-                    new Type(array(
-                        'type' => 'integer',
-                        'message' => 'child_groups_array_message',
-                        'groups' => array('groups_array'),
-                    )),
-                    new Type(array(
-                        'type' => 'integer',
-                        'message' => 'child_groups_child_message',
-                        'groups' => array('groups_child'),
-                    ))
-                ),
-                'validation_groups' => $childGroups
-            ));
-    }
-
-    /**
-     * Check native constraints functionality independs of type of fields
-     *
-     * @param string $isValid
+     * @param Request $request
+     * @param         $isValid
+     * @param         $js
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function basicConstraintsAction($isValid)
+    public function uniqueEntityAction(Request $request, $isValid, $js)
+    {
+        $entity = new UniqueEntity();
+
+        if (false == (bool)$isValid) {
+            $entity->setEmail('existing_email');
+            $entity->setName('existing_name');
+        } else {
+            $entity->setTitle('test');
+        }
+
+        $form = $this->createForm(new UniqueType(), $entity, array('js_validation' => (bool)$js));
+        $form->handleRequest($request);
+
+        return $this->render(
+            'DefaultTestBundle:FunctionalTests:index.html.twig',
+            array(
+                'form'           => $form->createView(),
+                'extraMsg' => $form->isValid() ? 'unique_entity_valid' : ''
+            )
+        );
+    }
+
+    /**
+     * Check native constraints functionality independently of type of fields
+     * /fp_js_form_validator/javascript_unit_test/basic_constraints/{isValid}/{js}
+     *
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param string                                    $isValid
+     * @param string                                    $js
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function basicConstraintsAction(Request $request, $isValid, $js)
     {
         $data = array(
             array(
@@ -228,11 +194,16 @@ class FunctionalTestsController extends Controller
             )
         );
 
-        $data = $isValid ? $data[0] : $data[1];
+        $data   = $isValid ? $data[0] : $data[1];
         $entity = new BasicConstraintsEntity();
         $entity->populate($data);
-        $form = $this->createForm(new BasicConstraintsEntityType(), $entity);
-        $form->handleRequest($this->getRequest());
+        $entity->isValid = (bool)$isValid;
+        $form            = $this->createForm(
+            new BasicConstraintsEntityType(),
+            $entity,
+            array('js_validation' => (bool)$js)
+        );
+        $form->handleRequest($request);
 
         return $this->render(
             'DefaultTestBundle:FunctionalTests:index.html.twig',
@@ -242,66 +213,153 @@ class FunctionalTestsController extends Controller
 
     /**
      * Check different data-transformers
+     * /fp_js_form_validator/javascript_unit_test/transformers/{isValid}/{js}
+     *
+     * @param \Symfony\Component\HttpFoundation\Request $request
+     * @param                                           $isValid
+     * @param                                           $js
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function transformersAction()
+    public function transformersAction(Request $request, $isValid, $js)
     {
         $date = new \DateTime();
         $date->setDate(2009, 4, 7);
         $date->setTime(21, 15);
 
-        $blank = new Blank(array('message' => '{{ value }}'));
         $choices = array('m' => 'male', 'f' => 'female');
 
         $form = $this
-            ->createFormBuilder(array(
-                'date'                  => $date,
-                'time'                  => $date,
-                'datetime'              => $date,
-                'checkbox'              => true,
-                'ChoicesToValues'       => array('m', 'f'),
-                'ChoiceToValue'         => 'f',
-                'ChoicesToBooleanArray' => array('m', 'f'),
-                'ChoiceToBooleanArray'  => 'f',
-                'repeated'              => 'asdf'
-            ))
-            ->add('date', 'date', array('constraints' => array($blank)))
-            ->add('time', 'time', array('constraints' => array($blank)))
-            ->add('datetime', 'datetime', array('constraints' => array($blank)))
-            ->add('checkbox', 'checkbox', array('constraints' => array(new False(array('message' => '{{ value }}')))))
-            ->add('radio', 'radio', array('constraints' => array(new True(array('message' => '{{ value }}')))))
-            ->add('ChoicesToValues', 'choice', array(
-                'multiple'    => true,
-                'choices'     => $choices,
-                'constraints' => array($blank)
-            ))
-            ->add('ChoiceToValue', 'choice', array(
-                'multiple'    => false,
-                'choices'     => $choices,
-                'constraints' => array($blank)
-            ))
-            ->add('ChoicesToBooleanArray', 'choice', array(
-                'expanded'    => true,
-                'multiple'    => true,
-                'choices'     => $choices,
-                'constraints' => array($blank)
-            ))
-            ->add('ChoiceToBooleanArray', 'choice', array(
-                'expanded'    => true,
-                'multiple'    => false,
-                'choices'     => $choices,
-                'constraints' => array($blank)
-            ))
-            ->add('repeated', 'repeated', array(
-                'type'            => 'text',
-                'invalid_message' => 'not_equal',
-                'first_options'   => array('label' => 'Field'),
-                'second_options'  => array('label' => 'Repeat Field', 'data' => 'zxcv'),
-            ))
+            ->createFormBuilder(
+                array(
+                    'date'                  => $date,
+                    'time'                  => $date,
+                    'datetime'              => $date,
+                    'checkbox'              => (bool)$isValid,
+                    'radio'                 => (bool)$isValid,
+                    'ChoicesToValues'       => array('m', 'f'),
+                    'ChoiceToValue'         => 'f',
+                    'ChoicesToBooleanArray' => array('m', 'f'),
+                    'ChoiceToBooleanArray'  => 'f',
+                    'repeated'              => 'asdf'
+                ),
+                array('js_validation' => (bool)$js)
+            )
+            ->add('date', 'date', array('constraints' => array(new Date())))
+            ->add('time', 'time', array('constraints' => array(new Time())))
+            ->add('datetime', 'datetime', array('constraints' => array(new DateTime())))
+            ->add(
+                'checkbox',
+                'checkbox',
+                array(
+                    'constraints' => array(
+                        new True(array(
+                            'message' => 'checkbox_false'
+                        )),
+                        new False(array(
+                            'message' => 'checkbox_true'
+                        ))
+                    )
+                )
+            )
+            ->add(
+                'radio',
+                'radio',
+                array(
+                    'constraints' => array(
+                        new True(array(
+                            'message' => 'radio_false'
+                        )),
+                        new False(array(
+                            'message' => 'radio_true'
+                        ))
+                    )
+                )
+            )
+            ->add(
+                'ChoicesToValues',
+                'choice',
+                array(
+                    'multiple'    => true,
+                    'choices'     => $choices,
+                    'constraints' => array(
+                        new Choice(
+                            array(
+                                'multiple'   => true,
+                                'choices'    => array_keys($choices),
+                                'maxMessage' => 'multiple_choices',
+                                'max'        => $isValid ? 10 : 1
+                            )
+                        )
+                    )
+                )
+            )
+            ->add(
+                'ChoiceToValue',
+                'choice',
+                array(
+                    'multiple'    => false,
+                    'choices'     => $choices,
+                    'constraints' => array(
+                        new Choice(
+                            array(
+                                'multiple' => false,
+                                'choices'  => $isValid ? array_keys($choices) : array('a', 'b'),
+                                'message'  => 'single_choice',
+                            )
+                        )
+                    )
+                )
+            )
+            ->add(
+                'ChoicesToBooleanArray',
+                'choice',
+                array(
+                    'expanded'    => true,
+                    'multiple'    => true,
+                    'choices'     => $choices,
+                    'constraints' => array(
+                        new Choice(
+                            array(
+                                'multiple'        => true,
+                                'choices'         => $isValid ? array_keys($choices) : array('m', 'c'),
+                                'multipleMessage' => 'multiple_boolean_choices'
+                            )
+                        )
+                    )
+                )
+            )
+            ->add(
+                'ChoiceToBooleanArray',
+                'choice',
+                array(
+                    'expanded'    => true,
+                    'multiple'    => false,
+                    'choices'     => $choices,
+                    'constraints' => array(
+                        new Choice(
+                            array(
+                                'multiple' => false,
+                                'choices'  => $isValid ? array_keys($choices) : array('m', 'c'),
+                                'message'  => 'single_boolean_choice'
+                            )
+                        )
+                    )
+                )
+            )
+            ->add(
+                'repeated',
+                'repeated',
+                array(
+                    'type'            => 'text',
+                    'invalid_message' => 'not_equal',
+                    'first_options'   => array('label' => 'Field'),
+                    'second_options'  => array('label' => 'Repeat Field', 'data' => $isValid ? 'asdf' : 'zxcv'),
+                )
+            )
             ->getForm();
 
-        $form->handleRequest($this->getRequest());
+        $form->handleRequest($request);
 
         return $this->render(
             'DefaultTestBundle:FunctionalTests:index.html.twig',
@@ -310,78 +368,110 @@ class FunctionalTestsController extends Controller
     }
 
     /**
-     * Check onvalidate listeners
+     * Set several elements, but show not all of them
+     * /fp_js_form_validator/javascript_unit_test/part/{js}
      *
-     * @param string $mode
+     * @param Request $request
+     * @param         $js
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function onValidateListenersAction($mode)
+    public function partOfFormAction(Request $request, $js)
     {
-        $builder = $this->createFormBuilder(null);
-        $builder
-            ->add('name', 'text', array(
-                'constraints' => array(
-                    new NotBlank(array(
-                        'message' => '{{ value }}'
-                    ))
+        $builder = $this->createFormBuilder(null, array('js_validation' => (bool)$js));
+        $form    = $builder
+            ->add(
+                'name',
+                'text',
+                array(
+                    'constraints' => array(
+                        new NotBlank(array(
+                            'message' => 'name_value'
+                        ))
+                    )
                 )
-            ));
-
-        return $this->render(
-            'DefaultTestBundle:FunctionalTests:index.html.twig',
-            array(
-                'form'               => $builder->getForm()->createView(),
-                'checkListeners'     => true,
-                'checkListenersMode' => $mode
             )
-        );
-    }
+            ->add(
+                'email',
+                'text',
+                array(
+                    'constraints' => array(
+                        new NotBlank(array(
+                            'message' => '{{ value }}'
+                        ))
+                    )
+                )
+            )
+            ->getForm();
 
-    public function partOfFormAction()
-    {
-        $builder = $this->createFormBuilder(null);
-        $builder
-            ->add('name', 'text', array(
-                'constraints' => array(
-                    new NotBlank(array(
-                        'message' => 'name_{{ value }}'
-                    ))
-                )
-            ))
-            ->add('email', 'text', array(
-                'constraints' => array(
-                    new NotBlank(array(
-                        'message' => '{{ value }}'
-                    ))
-                )
-            ));
+        $form->handleRequest($request);
 
         return $this->render(
             'DefaultTestBundle:FunctionalTests:partOfForm.html.twig',
             array(
-                'form' => $builder->getForm()->createView(),
+                'form' => $form->createView(),
             )
         );
     }
 
-    public function emptyElementsAction()
+    /**
+     * Contains an element with no constrains
+     * Also checks some constrains to ignore empty value
+     * /fp_js_form_validator/javascript_unit_test/empty/{js}
+     *
+     * @param Request $request
+     * @param         $js
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function emptyElementsAction(Request $request, $js)
     {
-        $builder = $this->createFormBuilder(null);
-        $builder
-            ->add('name', 'text', array(
-                'constraints' => array(
-                    new NotBlank(array(
-                        'message' => 'name_{{ value }}'
-                    ))
+        $builder = $this->createFormBuilder(null, array('js_validation' => (bool)$js));
+        $form    = $builder
+            ->add(
+                'name',
+                'text',
+                array(
+                    'constraints' => array(
+                        new Email(array('message' => 'wrong_email')),
+                        new EqualTo(array('value' => 'asdf', 'message' => 'wrong_equal_to')),
+                        new False(array('message' => 'wrong_false')),
+                        new GreaterThan(array('value' => 5, 'message' => 'wrong_greater_than')),
+                        new GreaterThanOrEqual(array('value' => 5, 'message' => 'wrong_greater_than_or_equal')),
+                        new IdenticalTo(array('value' => 5, 'message' => 'wrong_identical_to')),
+                        new Ip(array('message' => 'wrong_ip')),
+                        new Length(array('min' => 5, 'minMessage' => 'wrong_length')),
+                        new LessThan(array('value' => -5, 'message' => 'wrong_less_than')),
+                        new LessThanOrEqual(array('value' => -5, 'message' => 'wrong_less_than_or_equal')),
+                        new NotEqualTo(array('value' => 5, 'message' => 'wrong_not_equal_to')),
+                        new NotIdenticalTo(array('value' => 5, 'message' => 'wrong_not_identical_to')),
+                        new Range(
+                            array(
+                                'min'            => 1,
+                                'max'            => 5,
+                                'minMessage'     => 'wrong_min_range',
+                                'maxMessage'     => 'wrong_ax_range',
+                                'invalidMessage' => 'wrong_invalid_range'
+                            )
+                        ),
+                        new Time(array('message' => 'wrong_time')),
+                        new Date(array('message' => 'wrong_date')),
+                        new DateTime(array('message' => 'wrong_date_time')),
+                        new True(array('message' => 'wrong_true')),
+                        new Type(array('type' => 'integer', 'message' => 'wrong_type')),
+                        new Url(array('message' => 'wrong_url')),
+                    )
                 )
-            ))
-            ->add('email', 'text', array());
+            )
+            ->add('email', 'text', array())
+            ->getForm();
+
+        $form->handleRequest($request);
 
         return $this->render(
             'DefaultTestBundle:FunctionalTests:partOfForm.html.twig',
             array(
-                'form' => $builder->getForm()->createView(),
+                'form' => $form->createView(),
             )
         );
     }

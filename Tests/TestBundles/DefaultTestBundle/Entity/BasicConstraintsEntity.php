@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use /** @noinspection PhpUnusedAliasInspection */
     Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\ExecutionContextInterface;
 
 /**
  * Book
@@ -13,13 +14,17 @@ use /** @noinspection PhpUnusedAliasInspection */
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\BasicConstraintsRepository")
  *
- * @UniqueEntity(
- *     fields={"email"},
- *     message="unique_{{ value }}"
- * )
+ * @Assert\Callback({"Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Validator\ExternalValidator", "validateStaticCallback"})
+ * @Assert\Callback({"Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Validator\ExternalValidator", "validateDirectStaticCallback"})
  */
 class BasicConstraintsEntity
 {
+    public $isValid;
+    protected function _t_get($trueVal, $falseVal)
+    {
+        return $this->isValid ? $trueVal : $falseVal;
+    }
+
     /**
      * @var integer
      *
@@ -39,7 +44,7 @@ class BasicConstraintsEntity
     /**
      * @var string
      *
-     * @Assert\NotBlank(message="not_blank_{{ value }}")
+     * @Assert\NotBlank(message="not_blank_value")
      */
     private $notBlank;
 
@@ -92,7 +97,7 @@ class BasicConstraintsEntity
     /**
      * @var string
      *
-     * @Assert\DateTime(message="datetime_{{ value }}")
+     * @Assert\DateTime(message="datetime_value")
      */
     private $datetime;
 
@@ -343,20 +348,20 @@ class BasicConstraintsEntity
 
     /**
      * @return bool
-     * @Assert\True(message="true_{{ value }}")
+     * @Assert\True(message="true_value")
      */
     public function isTrue()
     {
-        return true;
+        return $this->_t_get(true, false);
     }
 
     /**
      * @return bool
-     * @Assert\False(message="false_{{ value }}")
+     * @Assert\False(message="false_value")
      */
     public function isFalse()
     {
-        return false;
+        return $this->_t_get(false, true);
     }
 
     /**
@@ -365,16 +370,16 @@ class BasicConstraintsEntity
      */
     public function isNull()
     {
-        return null;
+        return $this->_t_get(null, 1);
     }
 
     /**
      * @return bool
-     * @Assert\NotNull(message="not_null_{{ value }}")
+     * @Assert\NotNull(message="not_null_value")
      */
     public function isNotNull()
     {
-        return 1;
+        return $this->_t_get(1, null);
     }
 
     /**
@@ -383,7 +388,7 @@ class BasicConstraintsEntity
      */
     public function isEqualTo()
     {
-        return 1;
+        return $this->_t_get("1", "0");
     }
 
     /**
@@ -392,7 +397,7 @@ class BasicConstraintsEntity
      */
     public function isNotEqualTo()
     {
-        return 0;
+        return $this->_t_get("0", "1");
     }
 
     /**
@@ -401,7 +406,7 @@ class BasicConstraintsEntity
      */
     public function isIdenticalTo()
     {
-        return 1;
+        return $this->_t_get(1, "1");
     }
 
     /**
@@ -410,7 +415,7 @@ class BasicConstraintsEntity
      */
     public function isNotIdenticalTo()
     {
-        return "1";
+        return $this->_t_get("1", 1);
     }
 
     /**
@@ -419,7 +424,7 @@ class BasicConstraintsEntity
      */
     public function isLessThan()
     {
-        return 0;
+        return $this->_t_get(0, 1);
     }
 
     /**
@@ -428,7 +433,7 @@ class BasicConstraintsEntity
      */
     public function isLessThanOrEqual()
     {
-        return 1;
+        return $this->_t_get(1, 2);
     }
 
     /**
@@ -437,7 +442,7 @@ class BasicConstraintsEntity
      */
     public function isGreaterThan()
     {
-        return 2;
+        return $this->_t_get(2, 1);
     }
 
     /**
@@ -446,19 +451,19 @@ class BasicConstraintsEntity
      */
     public function isGreaterThanOrEqual()
     {
-        return 1;
+        return $this->_t_get(1, 0);
     }
 
     /**
      * @return string
      * @Assert\Length(
-     *     min=1,
+     *     min=6,
      *     minMessage="{{ value }}_minLength_{{ limit }}"
      * )
      */
     public function isLengthMin()
     {
-        return 'a';
+        return $this->_t_get('long_pass', '');
     }
 
     /**
@@ -470,7 +475,7 @@ class BasicConstraintsEntity
      */
     public function isLengthMax()
     {
-        return 'a';
+        return $this->_t_get('a', 'aa');
     }
 
     /**
@@ -483,31 +488,31 @@ class BasicConstraintsEntity
      */
     public function isLengthExact()
     {
-        return 'a';
+        return $this->_t_get('a', 'aa');
     }
 
     /**
      * @return array
      * @Assert\Count(
      *     min=1,
-     *     minMessage="{{ value }}_minCount_{{ limit }}"
+     *     minMessage="value_minCount_{{ limit }}"
      * )
      */
     public function isCountMin()
     {
-        return array('a');
+        return $this->_t_get(array('a'), array());
     }
 
     /**
      * @return array
      * @Assert\Count(
      *     max=1,
-     *     maxMessage="{{ value }}_maxCount_{{ limit }}"
+     *     maxMessage="value_maxCount_{{ limit }}"
      * )
      */
     public function isCountMax()
     {
-        return array('a');
+        return $this->_t_get(array('a'), array('a', 'b'));
     }
 
     /**
@@ -515,12 +520,12 @@ class BasicConstraintsEntity
      * @Assert\Count(
      *     min=1,
      *     max=1,
-     *     exactMessage="{{ value }}_exactCount_{{ limit }}"
+     *     exactMessage="value_exactCount_{{ limit }}"
      * )
      */
     public function isCountExact()
     {
-        return array('a');
+        return $this->_t_get(array('a'), array('a', 'a'));
     }
 
     /**
@@ -532,7 +537,7 @@ class BasicConstraintsEntity
      */
     public function isRangeMin()
     {
-        return 1;
+        return $this->_t_get(2, 0);
     }
 
     /**
@@ -544,7 +549,7 @@ class BasicConstraintsEntity
      */
     public function isRangeMax()
     {
-        return 1;
+        return $this->_t_get(1, 2);
     }
 
     /**
@@ -557,7 +562,7 @@ class BasicConstraintsEntity
      */
     public function isRangeValueValid()
     {
-        return 1;
+        return $this->_t_get(1, 'a');
     }
 
     /**
@@ -569,7 +574,7 @@ class BasicConstraintsEntity
      */
     public function isTypeArray()
     {
-        return array();
+        return $this->_t_get(array('a'), 'a');
     }
 
     /**
@@ -581,7 +586,7 @@ class BasicConstraintsEntity
      */
     public function isTypeBool()
     {
-        return true;
+        return $this->_t_get(true, 'a');
     }
 
     /**
@@ -593,9 +598,7 @@ class BasicConstraintsEntity
      */
     public function isTypeCallable()
     {
-        return function(){
-
-        };
+        return $this->_t_get(function(){}, 'a');
     }
 
     /**
@@ -607,7 +610,7 @@ class BasicConstraintsEntity
      */
     public function isTypeFloat()
     {
-        return 1.5;
+        return $this->_t_get(1.5, 1);
     }
 
     /**
@@ -619,7 +622,7 @@ class BasicConstraintsEntity
      */
     public function isTypeInteger()
     {
-        return 1;
+        return $this->_t_get(1, 1.5);
     }
 
     /**
@@ -631,7 +634,7 @@ class BasicConstraintsEntity
      */
     public function isTypeNull()
     {
-        return null;
+        return $this->_t_get(null, 'a');
     }
 
     /**
@@ -643,7 +646,7 @@ class BasicConstraintsEntity
      */
     public function isTypeNumeric()
     {
-        return 1;
+        return $this->_t_get("1", 'a');
     }
 
     /**
@@ -655,7 +658,7 @@ class BasicConstraintsEntity
      */
     public function isTypeObject()
     {
-        return new \StdClass();
+        return $this->_t_get(new \StdClass(), 'a');
     }
 
     /**
@@ -667,7 +670,7 @@ class BasicConstraintsEntity
      */
     public function isTypeScalar()
     {
-        return 1;
+        return $this->_t_get(1, array(1,2,3));
     }
 
     /**
@@ -679,7 +682,7 @@ class BasicConstraintsEntity
      */
     public function isTypeString()
     {
-        return 'a';
+        return $this->_t_get('1', 1);
     }
 
     /**
@@ -691,7 +694,7 @@ class BasicConstraintsEntity
      */
     public function isValidSingleChoice()
     {
-        return 'male';
+        return $this->_t_get('male', 'wrong_choice');
     }
 
     /**
@@ -704,7 +707,7 @@ class BasicConstraintsEntity
      */
     public function isValidMultipleChoice()
     {
-        return array('June', 'July');
+        return $this->_t_get(array('June', 'July'), array('June', 'May', 'September'));
     }
 
     /**
@@ -713,12 +716,12 @@ class BasicConstraintsEntity
      *     callback="getChoicesList",
      *     multiple=true,
      *     min=2,
-     *     minMessage="minChoice_{{ value }}"
+     *     minMessage="minChoice_value"
      * )
      */
     public function isMinMultipleChoice()
     {
-        return array('June', 'July');
+        return $this->_t_get(array('June', 'July'), array('June'));
     }
 
     /**
@@ -727,11 +730,22 @@ class BasicConstraintsEntity
      *     callback="getChoicesList",
      *     multiple=true,
      *     max=1,
-     *     maxMessage="maxChoice_{{ value }}"
+     *     maxMessage="maxChoice_value"
      * )
      */
     public function isMaxMultipleChoice()
     {
-        return array('June');
+        return $this->_t_get(array('June'), array('June', 'July'));
+    }
+
+    /**
+     * @Assert\Callback
+     * @param ExecutionContextInterface $context
+     */
+    public function validateCallback(ExecutionContextInterface $context)
+    {
+        if (!$this->isValid) {
+            $context->addViolationAt('email', 'callback_email_' . $this->getEmail(), array(), null);
+        }
     }
 }

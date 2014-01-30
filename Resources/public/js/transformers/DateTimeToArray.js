@@ -12,20 +12,23 @@ function SymfonyComponentFormExtensionCoreDataTransformerDateTimeToArrayTransfor
         if (value['year'] || value['month'] || value['day']) {
             result.push(this.formatDate(this.dateFormat, [
                 value['year']  ? value['year']  : '1970',
-                value['month'] ? value['month'] : '1',
-                value['day']   ? value['day']   : '1'
+                value['month'] ? this.twoDigits(value['month']) : '01',
+                value['day']   ? this.twoDigits(value['day']) : '01'
             ]));
         }
         if (value['hour'] || value['minute'] || value['second']) {
             result.push(this.formatDate(this.timeFormat, [
-                value['hour']   ? value['hour']   : '0',
-                value['minute'] ? value['minute'] : '0',
-                value['second'] ? value['second'] : '0'
+                value['hour']   ? this.twoDigits(value['hour'])   : '00',
+                value['minute'] ? this.twoDigits(value['minute']) : '00',
+                value['second'] ? this.twoDigits(value['second']) : '00'
             ]));
         }
-        console.log(result);
 
         return result.join(' ');
+    };
+
+    this.twoDigits = function(value) {
+        return ('0' + value).slice(-2);
     };
 
     this.formatDate = function(format, date) {

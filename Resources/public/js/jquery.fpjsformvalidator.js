@@ -3,8 +3,10 @@ if(window.jQuery) {
         var methods = {
             'init': function(options) {
                 $(this).each(function(){
-                    if (undefined == this.jsFormValidator) {
-                        this.jsFormValidator = {};
+                    var item = this;
+
+                    if (undefined == item.jsFormValidator) {
+                        item.jsFormValidator = {};
                     }
                     for (var optName in options) {
                         switch (optName) {
@@ -12,22 +14,35 @@ if(window.jQuery) {
                                 options[optName].apply(this);
                                 break;
                             default:
-                                this.jsFormValidator[optName] = options[optName];
+                                item.jsFormValidator[optName] = options[optName];
                                 break;
                         }
                     }
                 });
             },
 
-            'validate': function() {
+            'validate': function(opts) {
                 var isValid = true;
+
                 $(this).each(function(){
-                    if (this.jsFormValidator.validate()) {
+                    var item = this;
+                    var method = (true === opts['recursive'])
+                        ? 'validateRecursively'
+                        : 'validate';
+
+                    if (item.jsFormValidator[method]()) {
                         isValid = false;
                     }
                 });
 
                 return isValid;
+            },
+
+            'showErrors': function(opts) {
+                $(this).each(function(){
+                    var item = this;
+                    item.jsFormValidator.showErrors.apply(item.jsFormValidator.domNode, [opts['errors'], opts['type']]);
+                });
             },
 
             'get': function() {

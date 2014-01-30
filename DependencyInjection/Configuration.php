@@ -22,9 +22,6 @@ class Configuration implements ConfigurationInterface
         /** @noinspection PhpUndefinedMethodInspection */
         $rootNode
             ->children()
-                ->scalarNode('translation_domain')
-                    ->defaultValue('validators')
-                ->end()
                 ->scalarNode('js_validation')
                     ->defaultValue(true)
                 ->end()

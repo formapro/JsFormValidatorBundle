@@ -4,16 +4,12 @@ namespace Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use /** @noinspection PhpUnusedAliasInspection */
-    Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-
 
 /**
  * Book
  *
  * @ORM\Table()
  * @ORM\Entity()
- *
  */
 class TestSubEntity
 {

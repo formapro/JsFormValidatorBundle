@@ -8,8 +8,17 @@ $defaults = array(
 
 if (file_exists( __DIR__ . '/local_config.php')) {
     $localConfig = include_once __DIR__ . '/local_config.php';
-    $defaults = array_merge($defaults, $localConfig);
+    $defaults = array_merge($defaults, (array) $localConfig);
 }
+
+// This trick uses to test different translation domains
+if (!empty($_SERVER['REQUEST_URI'])) {
+    preg_match('/javascript_unit_test\/translations\/(\w+)\/\d/', $_SERVER['REQUEST_URI'], $testTranslationParameters);
+    if ($testTranslationParameters && 'default' != $testTranslationParameters[1]) {
+        $container->setParameter('validator.translation_domain', $testTranslationParameters[1]);
+    }
+}
+
 
 $container->loadFromExtension('framework', array(
     'translator' => array('fallback' => 'en'),

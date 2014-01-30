@@ -16,8 +16,8 @@ class AjaxControllerTest extends BaseTestCase
      */
     public function testCheckUniqueEntityAction()
     {
-        $data = array(
-            'entity'           => 'Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\BasicConstraintsEntity',
+        $data   = array(
+            'entityName'       => 'Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\BasicConstraintsEntity',
             'data'             => array(),
             'ignoreNull'       => '1',
             'repositoryMethod' => 'findBy'
@@ -41,13 +41,13 @@ class AjaxControllerTest extends BaseTestCase
 
         // Check the identical pair
         $data['data']['email'] = 'existing_email';
-        $data['data']['url'] = 'existing_url';
+        $data['data']['url']   = 'existing_url';
         $client->request('POST', '/fp_js_form_validator/check_unique_entity', $data);
         $this->assertFalse(json_decode($client->getResponse()->getContent()), 'A pair of fields is NOT unique');
 
         // Check the pair with ignore null
         $data['data']['email'] = 'wrong_email';
-        $data['data']['url'] = null;
+        $data['data']['url']   = null;
         $client->request('POST', '/fp_js_form_validator/check_unique_entity', $data);
         $this->assertTrue(
             json_decode($client->getResponse()->getContent()),

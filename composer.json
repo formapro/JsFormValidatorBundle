@@ -19,8 +19,8 @@
 
     "require": {
         "php": ">=5.3.2",
-        "symfony/symfony": "~2.3",
-        "symfony/assetic-bundle": "~2.3"
+        "symfony/symfony": ">=2.3",
+        "symfony/assetic-bundle": ">=2.3"
     },
 
     "require-dev": {
@@ -34,8 +34,7 @@
 
     "suggest": {
         "doctrine/orm": ">=2.2.3,<2.4-dev",
-        "doctrine/doctrine-bundle": "1.2.*",
-        "symfony/assetic-bundle": "2.3.*"
+        "doctrine/doctrine-bundle": "1.2.*"
     },
 
     "autoload": {

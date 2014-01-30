@@ -15,28 +15,30 @@ function SymfonyComponentValidatorConstraintsLength() {
         var errors = [];
         if (typeof value == 'number' || typeof value == 'string' || value instanceof Array) {
             var length = value.length;
-            if (this.max === this.min && length !== this.min) {
-                errors.push(
-                    this.exactMessage
-                        .replace('{{ value }}', String(value))
-                        .replace('{{ limit }}', this.min)
-                );
+            if (length) {
+                if (this.max === this.min && length !== this.min) {
+                    errors.push(
+                        this.exactMessage
+                            .replace('{{ value }}', String(value))
+                            .replace('{{ limit }}', this.min)
+                    );
 
-                return errors;
-            }
-            if (!isNaN(this.max) && length > this.max) {
-                errors.push(
-                    this.maxMessage
-                        .replace('{{ value }}', String(value))
-                        .replace('{{ limit }}', this.max)
-                );
-            }
-            if (!isNaN(this.min) && length < this.min) {
-                errors.push(
-                    this.minMessage
-                        .replace('{{ value }}', String(value))
-                        .replace('{{ limit }}', this.min)
-                );
+                    return errors;
+                }
+                if (!isNaN(this.max) && length > this.max) {
+                    errors.push(
+                        this.maxMessage
+                            .replace('{{ value }}', String(value))
+                            .replace('{{ limit }}', this.max)
+                    );
+                }
+                if (!isNaN(this.min) && length < this.min) {
+                    errors.push(
+                        this.minMessage
+                            .replace('{{ value }}', String(value))
+                            .replace('{{ limit }}', this.min)
+                    );
+                }
             }
         }
 

@@ -5,9 +5,9 @@ function SymfonyComponentFormExtensionCoreDataTransformerValueToDuplicatesTransf
     /**
      *
      * @param {{}} value
-     * @param {FpJsFormElement} model
+     * @param {FpJsFormElement} element
      */
-    this.reverseTransform = function(value, model) {
+    this.reverseTransform = function(value, element) {
         var initialValue = undefined;
         for (var key in value) {
             if (undefined === initialValue) {
@@ -15,8 +15,8 @@ function SymfonyComponentFormExtensionCoreDataTransformerValueToDuplicatesTransf
             }
 
             if (value[key] !== initialValue) {
-                var message = model.getInvalidMessage();
-                model.getChild(this.keys[0]).addErrors(message);
+                var child = element.children[this.keys[0]];
+                child.showErrors.apply(child.domNode, [[element.invalidMessage], 'value-to-duplicates']);
                 break;
             }
         }

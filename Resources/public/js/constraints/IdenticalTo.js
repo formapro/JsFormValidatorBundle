@@ -9,6 +9,10 @@ function SymfonyComponentValidatorConstraintsIdenticalTo() {
     this.value = null;
 
     this.validate = function (value) {
+        if ('' === value) {
+            return [];
+        }
+
         var errors = [];
         if (this.value !== value) {
             errors.push(

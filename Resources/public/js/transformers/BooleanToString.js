@@ -6,7 +6,6 @@ function SymfonyComponentFormExtensionCoreDataTransformerBooleanToStringTransfor
     this.trueValue = null;
 
     this.reverseTransform = function(value) {
-        //console.log(value);
         if (typeof value === 'boolean') {
             return value;
         } else if (value === this.trueValue) {

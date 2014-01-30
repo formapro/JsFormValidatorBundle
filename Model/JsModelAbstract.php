@@ -78,7 +78,6 @@ abstract class JsModelAbstract
     }
 
     /**
-     * @codeCoverageIgnore
      * @return array
      */
     public function toArray()

@@ -3,8 +3,6 @@
 namespace Fp\JsFormValidatorBundle\Tests\Factory;
 
 use Fp\JsFormValidatorBundle\Factory\JsFormValidatorFactory;
-use Fp\JsFormValidatorBundle\Model\JsValidationData;
-use Fp\JsFormValidatorBundle\Tests\BaseTestCase;
 use Fp\JsFormValidatorBundle\Tests\Fixtures\FormGroupsArray;
 use Fp\JsFormValidatorBundle\Tests\Fixtures\FormGroupsClosure;
 use Fp\JsFormValidatorBundle\Tests\Fixtures\TestConstraint;
@@ -25,7 +23,9 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
  *
  * @package Fp\JsFormValidatorBundle\Tests\Factory
  */
-class JsFormValidatorFactoryTest extends BaseTestCase
+
+//TODO: should be changed due to new requirements
+class JsFormValidatorFactoryTest// extends BaseTestCase
 {
     /**
      * @var string

@@ -1,3 +1,4 @@
+//noinspection JSUnusedGlobalSymbols
 /**
  * Checks if value is in array of choices
  * @constructor
@@ -22,12 +23,14 @@ function SymfonyComponentValidatorConstraintsChoice() {
             return errors;
         }
 
-        var compared = this.compareChoices(value, this.getChoicesList(element));
-        var isValid = value.length === compared.length;
+        var invalidList = this.getInvalidChoices(value, this.getChoicesList(element));
+        var invalidCnt = invalidList.length;
 
         if (this.multiple) {
-            if (!isValid) {
-                errors.push(this.multipleMessage.replace('{{ value }}', String(value)));
+            if (invalidCnt) {
+                while (invalidCnt--) {
+                    errors.push(this.multipleMessage.replace('{{ value }}', String(invalidList[invalidCnt])));
+                }
             }
             if (!isNaN(this.min) && value.length < this.min) {
                 errors.push(
@@ -43,8 +46,10 @@ function SymfonyComponentValidatorConstraintsChoice() {
                         .replace('{{ limit }}', this.max)
                 );
             }
-        } else if (!isValid) {
-            errors.push(this.message.replace('{{ value }}', String(value)));
+        } else if (invalidCnt) {
+            while (invalidCnt--) {
+                errors.push(this.message.replace('{{ value }}', String(invalidList[invalidCnt])));
+            }
         }
 
         return errors;
@@ -86,17 +91,17 @@ function SymfonyComponentValidatorConstraintsChoice() {
         return choices;
     };
 
-    this.compareChoices = function (value, validChoices) {
+    this.getInvalidChoices = function (value, validChoices) {
         // Compare arrays by value
         var callbackFilter = function (n) {
-            return validChoices.indexOf(n) != -1
+            return validChoices.indexOf(n) == -1
         };
         // More precise comparison by type
         if (this.strict) {
             callbackFilter = function (n) {
                 var result = false;
                 for (var i in validChoices) {
-                    if (n === validChoices[i]) {
+                    if (n !== validChoices[i]) {
                         result = true;
                     }
                 }

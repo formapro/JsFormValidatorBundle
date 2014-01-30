@@ -3,6 +3,14 @@
 {% endjavascripts %}
 {{ include('FpJsFormValidatorBundle::javascripts.html.twig') }}
 
+<style type="text/css">
+    ul.form-errors:empty {
+        display: none;
+    }
+</style>
+
+<div id="extra_msg">{{ extraMsg|default('') }}</div>
+
 <script type="text/javascript">
     $(function(){
         var _t = {
@@ -13,7 +21,7 @@
             }
         };
 
-        $('#form_name').jsFormValidator({
+        $('#form_clear').jsFormValidator({
             customEvents: function() {
                 $(this).change(function(){
                     if (!$(this).jsFormValidator('validate')) {
@@ -26,9 +34,15 @@
             }
         });
 
+        $('#form_email').jsFormValidator({
+            callbacks: {
+                isNameValid: function() { return false; }
+            }
+        });
+
         $('form').jsFormValidator({
             callbacks: {
-                isNameValid: function() { return false; },
+                isNameValid:            function() { return false; },
 
                 isTrue:                 function() { return _t.get(true, false); },
                 isFalse:                function() { return _t.get(false, true) },
@@ -42,7 +56,7 @@
                 isLessThanOrEqual:      function() { return _t.get(1, 2); },
                 isGreaterThan:          function() { return _t.get(2, 1); },
                 isGreaterThanOrEqual:   function() { return _t.get(1, 0); },
-                isLengthMin:            function() { return _t.get('a', ''); },
+                isLengthMin:            function() { return _t.get('long_pass', ''); },
                 isLengthMax:            function() { return _t.get('a', 'aa'); },
                 isLengthExact:          function() { return _t.get('a', 'aa'); },
                 isCountMin:             function() { return _t.get(['a'], []); },
@@ -54,62 +68,69 @@
                 isTypeArray:            function() { return _t.get(['a'], 'a'); },
                 isTypeBool:             function() { return _t.get(true, 'a'); },
                 isTypeCallable:         function() { return _t.get(function(){}, 'a'); },
-                isTypeFloat:            function() { return _t.get(1.0, 1); },
-                isTypeInteger:          function() { return _t.get(1, 1.0); },
+                isTypeFloat:            function() { return _t.get(1.5, 1); },
+                isTypeInteger:          function() { return _t.get(1, 1.5); },
                 isTypeNull:             function() { return _t.get(null, 'a'); },
                 isTypeNumeric:          function() { return _t.get("1", 'a'); },
                 isTypeObject:           function() { return _t.get({}, 'a'); },
                 isTypeScalar:           function() { return _t.get(1, [1,2,3]); },
                 isTypeString:           function() { return _t.get('1', 1); },
                 isValidSingleChoice:    function() { return _t.get('male', 'wrong_choice'); },
-                isValidMultipleChoice:  function() { return _t.get(['June', 'July'], ['June', 'May']); },
+                isValidMultipleChoice:  function() { return _t.get(['June', 'July'], ['June', 'May', 'September']); },
                 isMinMultipleChoice:    function() { return _t.get(['June', 'July'], ['June']); },
                 isMaxMultipleChoice:    function() { return _t.get(['June'], ['June', 'July']); },
 
-                getChoicesList: function() { return ['June', 'July', 'August']; }
+                getChoicesList: function() { return ['June', 'July', 'August']; },
+
+                validateCallback: function() {
+                    var email = $('#form_email');
+                    var errList = [];
+                    if (!_t.get(true, false)) {
+                        errList.push('callback_email_' + email.val());
+                    }
+                    setTimeout(function(){
+                        email.jsFormValidator('showErrors', {
+                            errors: errList,
+                            type: 'validate-callback'
+                        });
+                    }, 500);
+                },
+                'Fp\\JsFormValidatorBundle\\Tests\\TestBundles\\DefaultTestBundle\\Validator\\ExternalValidator': {
+                    validateStaticCallback: function () {
+                        var email = $('#form_email');
+                        var errList = [];
+                        if (!_t.get(true, false)) {
+                            errList.push('static_callback_email_' + email.val());
+                        }
+                        email.jsFormValidator('showErrors', {
+                            errors: errList,
+                            type: 'static-validate-callback'
+                        });
+                    }
+                },
+                validateDirectStaticCallback: function() {
+                    var email = $('#form_email');
+                    var errList = [];
+                    if (!_t.get(true, false)) {
+                        errList.push('direct_static_callback_email_' + email.val());
+                    }
+                    email.jsFormValidator('showErrors', {
+                        errors: errList,
+                        type: 'direct-static-validate-callback'
+                    });
+                }
             },
             groups: function () {
-                console.log('custom_groups', this);
-                return [];
+                return ['groups_callback'];
             }
         });
     });
 </script>
 
 <div id="transformer_result"></div>
+{% form_theme form 'DefaultTestBundle::form_theme.html.twig' %}
 {{ form_start(form, { 'attr': {'novalidate': 'novalidate' }}) }}
     {{ form_errors(form) }}
     <input type="submit" name="form_submit" id="form_submit"/>
     {{ form_rest(form) }}
 {{ form_end(form) }}
-
-{% if checkListeners|default(false) %}
-    <div>
-        <ul class="form-error" id="onvalidate_listeners_list"></ul>
-        <div id="onvalidate_listeners_element"></div>
-    </div>
-    <script type="text/javascript">
-        function addOnValidateListenerResult(name) {
-            var li = document.createElement('li');
-            li.innerHTML = name;
-            document.getElementById('onvalidate_listeners_list').appendChild(li);
-        }
-
-        {% if  checkListenersMode == 'onvalidate' %}
-            FpJsFormValidatorFactory.onvalidate = function(){
-                addOnValidateListenerResult('global_listener')
-            };
-            document.getElementsByTagName('form')[0].onvalidate = function(){
-                addOnValidateListenerResult('local_listener')
-            };
-        {% elseif checkListenersMode == 'global_errors' %}
-            FpJsFormValidatorFactory.showErrors = function(){
-                addOnValidateListenerResult('errors_global_listener')
-            };
-        {% elseif checkListenersMode == 'local_errors' %}
-            document.getElementsByTagName('form')[0].showErrors = function(){
-                addOnValidateListenerResult('errors_local_listener')
-            };
-        {% endif %}
-    </script>
-{% endif %}

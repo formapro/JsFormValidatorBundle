@@ -9,6 +9,10 @@ function SymfonyComponentValidatorConstraintsType() {
     this.type = '';
 
     this.validate = function(value) {
+        if ('' === value) {
+            return [];
+        }
+
         var errors = [];
         var isValid = false;
 
@@ -29,7 +33,7 @@ function SymfonyComponentValidatorConstraintsType() {
             case 'float':
             case 'double':
             case 'real':
-                isValid = (value === parseFloat(value));
+                isValid = typeof value === 'number' && value % 1 != 0;
                 break;
 
             case 'int':
@@ -52,6 +56,7 @@ function SymfonyComponentValidatorConstraintsType() {
 
             case 'scalar':
                 isValid = (/boolean|number|string/).test(typeof value);
+                value = 'Array';
                 break;
 
             case '':

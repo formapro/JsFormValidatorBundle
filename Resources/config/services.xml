@@ -26,6 +26,7 @@
             <argument type="service" id="translator" />
             <argument type="service" id="router" />
             <argument>%fp_js_form_validator.config%</argument>
+            <argument>%validator.translation_domain%</argument>
         </service>
     </services>
 </container>

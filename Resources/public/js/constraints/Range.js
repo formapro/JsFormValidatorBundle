@@ -12,6 +12,10 @@ function SymfonyComponentValidatorConstraintsRange() {
     this.min = null;
 
     this.validate = function (value) {
+        if ('' === value) {
+            return [];
+        }
+
         var errors = [];
         if (isNaN(value)) {
             errors.push(
