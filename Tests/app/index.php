@@ -9,7 +9,7 @@ set_error_handler(
         throw new \ErrorException($message . ' in ' . $file . ' line ' . $line, $code);
     }
 );
-$env = 'test';
+$env = 'dev';
 // This trick uses to test different translation domains
 preg_match('/javascript_unit_test\/translations\/(\w+)\/\d/', $_SERVER['REQUEST_URI'], $testTranslationParameters);
 if ($testTranslationParameters && 'default' != $testTranslationParameters[1]) {
