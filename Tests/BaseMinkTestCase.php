@@ -36,6 +36,7 @@ class BaseMinkTestCase extends  MinkTestCase
     {
         $session = $this->getMink()->getSession('selenium2');
         $session->visit($this->base . '/fp_js_form_validator/javascript_unit_test/' . $name);
+        var_dump($session->getPage()->getHtml());
         $session->getPage()->findButton('form_submit')->click();
 
         if ($wait) {
