@@ -68,7 +68,7 @@ class JsFormValidatorFactory
      * @param array      $config
      * @param string     $domain
      */
-    public function __construct(Validator $validator, Translator $translator, Router $router, $config, $domain)
+    public function __construct(Validator $validator, $translator, Router $router, $config, $domain)
     {
         $this->validator   = $validator;
         $this->translator  = $translator;
@@ -136,7 +136,11 @@ class JsFormValidatorFactory
         $result = array();
         if (!empty($this->config['routing'])) {
             foreach ($this->config['routing'] as $param => $value) {
-                $result['routing'][$param] = $this->generateUrl($value);
+                try {
+                    $result['routing'][$param] = $this->generateUrl($value);
+                } catch (\Exception $e) {
+                    $result['routing'][$param] = null;
+                }
             }
         }
         $model = new JsConfig;

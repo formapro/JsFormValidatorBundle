@@ -20,6 +20,8 @@ before_script:
   - sudo chmod 0777 Tests/app/cache
   - sudo chmod 0777 Tests/app/logs
 
+  - Tests/app/console assets:install Tests/app
+
   - sudo apt-get update > /dev/null
   - sudo apt-get install -y --force-yes apache2 libapache2-mod-php5 > /dev/null
 
