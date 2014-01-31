@@ -23,18 +23,13 @@
     },
 
     "require-dev": {
-        "doctrine/orm": "~2.2,>=2.2.3",
+        "doctrine/orm": ">=2.2.3",
         "doctrine/doctrine-bundle": "~1.2",
         "symfony/assetic-bundle": ">=2.3",
         "phpunit/phpunit": "3.7.*",
         "behat/mink-bundle": "dev-master",
         "behat/mink-selenium2-driver": "dev-master",
         "satooshi/php-coveralls": "dev-master"
-    },
-
-    "suggest": {
-        "doctrine/orm": "~2.2,>=2.2.3",
-        "doctrine/doctrine-bundle": "~1.2"
     },
 
     "autoload": {

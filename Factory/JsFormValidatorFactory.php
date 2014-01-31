@@ -5,17 +5,17 @@ use Fp\JsFormValidatorBundle\Form\Constraint\UniqueEntity;
 use Fp\JsFormValidatorBundle\Model\JsConfig;
 use Fp\JsFormValidatorBundle\Model\JsFormElement;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity as BaseUniqueEntity;
-use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceListInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Translation\Translator;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 use Symfony\Component\Validator\Mapping\GetterMetadata;
 use Symfony\Component\Validator\Mapping\PropertyMetadata;
-use Symfony\Component\Validator\Validator;
+use Symfony\Component\Validator\ValidatorInterface;
 
 /**
  * This factory uses to parse a form to a tree of JsFormElement's
@@ -27,17 +27,17 @@ use Symfony\Component\Validator\Validator;
 class JsFormValidatorFactory
 {
     /**
-     * @var Validator
+     * @var ValidatorInterface
      */
     protected $validator;
 
     /**
-     * @var Translator
+     * @var TranslatorInterface
      */
     protected $translator;
 
     /**
-     * @var Router
+     * @var UrlGeneratorInterface
      */
     protected $router;
 
@@ -62,14 +62,19 @@ class JsFormValidatorFactory
     protected $transDomain;
 
     /**
-     * @param Validator  $validator
-     * @param Translator $translator
-     * @param Router     $router
-     * @param array      $config
-     * @param string     $domain
+     * @param ValidatorInterface    $validator
+     * @param TranslatorInterface   $translator
+     * @param UrlGeneratorInterface $router
+     * @param array                 $config
+     * @param string                $domain
      */
-    public function __construct(Validator $validator, $translator, Router $router, $config, $domain)
-    {
+    public function __construct(
+        ValidatorInterface $validator,
+        TranslatorInterface $translator,
+        UrlGeneratorInterface $router,
+        $config,
+        $domain
+    ) {
         $this->validator   = $validator;
         $this->translator  = $translator;
         $this->router      = $router;
@@ -105,6 +110,7 @@ class JsFormValidatorFactory
 
     /**
      * Generate an URL from the route
+     *
      * @param string $route
      *
      * @return string
@@ -143,7 +149,7 @@ class JsFormValidatorFactory
                 }
             }
         }
-        $model = new JsConfig;
+        $model          = new JsConfig;
         $model->routing = $result['routing'];
 
         return $model;
@@ -193,11 +199,13 @@ class JsFormValidatorFactory
 
         $conf = $form->getConfig();
         // If field is disabled or has no any validations
-        if (false === $conf->getOption('js_validation')) return null;
+        if (false === $conf->getOption('js_validation')) {
+            return null;
+        }
 
         $model                 = new JsFormElement;
         $model->id             = $this->getElementId($form);
-        $model->name           = $form->getName() ;
+        $model->name           = $form->getName();
         $model->type           = $conf->getType()->getInnerType()->getName();
         $model->invalidMessage = $conf->getOption('invalid_message');
         $model->transformers   = $this->parseTransformers($form->getConfig()->getViewTransformers());
@@ -286,7 +294,7 @@ class JsFormValidatorFactory
         // If has constraints in a form element
         $this->composeValidationData(
             $formData,
-            (array) $form->getConfig()->getOption('constraints'),
+            (array)$form->getConfig()->getOption('constraints'),
             array()
         );
 
@@ -295,15 +303,15 @@ class JsFormValidatorFactory
 
         if (!empty($parentData)) {
             $parentData['groups'] = $this->getValidationGroups($parent);
-            $result['parent'] = $parentData;
+            $result['parent']     = $parentData;
         }
         if (!empty($ownData)) {
             $ownData['groups'] = $groups;
-            $result['entity'] = $ownData;
+            $result['entity']  = $ownData;
         }
         if (!empty($formData)) {
             $formData['groups'] = $groups;
-            $result['form'] = $formData;
+            $result['form']     = $formData;
         }
 
         return $result;
