@@ -41,7 +41,7 @@ class BaseTestController extends  Controller {
             );
     }
 
-    protected function getNestedForm($cascade, $childGroups, $js)
+    protected function getNestedForm($cascade, $childGroups, $js, $bubbling = false)
     {
         return $this
             ->createForm(
@@ -57,7 +57,7 @@ class BaseTestController extends  Controller {
                 'email',
                 new TestSubFormType(),
                 array(
-                    'error_bubbling'    => false,
+                    'error_bubbling'    => $bubbling,
                     'constraints'       => array(
                         new Type(array(
                             'type'    => 'integer',

@@ -103,7 +103,7 @@ class FunctionalTestsController extends BaseTestController
                 );
                 break;
             case 'nested':
-                $form = $this->getNestedForm(true, array('groups_child'), (bool)$js);
+                $form = $this->getNestedForm(true, array('groups_child'), (bool)$js, true);
                 break;
             case 'nested_no_groups':
                 $form = $this->getNestedForm(true, array(), (bool)$js);

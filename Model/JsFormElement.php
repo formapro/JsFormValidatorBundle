@@ -37,6 +37,11 @@ class JsFormElement extends JsModelAbstract
     public $cascade = false;
 
     /**
+     * @var bool
+     */
+    public $bubbling = false;
+
+    /**
      * @var array
      */
     public $data = array();

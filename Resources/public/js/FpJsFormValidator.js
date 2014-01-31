@@ -3,7 +3,8 @@ function FpJsFormElement() {
     this.name = '';
     this.type = '';
     this.invalidMessage = '';
-    this.cascade = true;
+    this.cascade = false;
+    this.bubbling = false;
     this.transformers = [];
     this.data = {};
     this.children = {};
@@ -21,16 +22,17 @@ function FpJsFormElement() {
         var self = this;
         self.errors = [];
         FpJsFormValidator.validateElement(self);
-        var type = FpJsFormValidator.errorClass + '-' + this.name + '-main';
+        var type = FpJsFormValidator.errorClass + '-' + this.id + '-main';
+        var errorPath = FpJsFormValidator.getErrorPathElement(self);
 
         if (FpJsFormValidator.ajax.hasRequest(self)) {
             FpJsFormValidator.ajax.addCallback(self, function () {
-                self.showErrors.apply(self.domNode, [self.errors, type]);
-                self.postValidate.apply(self.domNode, [self.errors, type]);
+                errorPath.showErrors.apply(errorPath.domNode, [self.errors, type]);
+                errorPath.postValidate.apply(errorPath.domNode, [self.errors, type]);
             });
         } else {
-            self.showErrors.apply(self.domNode, [self.errors, type]);
-            self.postValidate.apply(self.domNode, [self.errors, type]);
+            errorPath.showErrors.apply(errorPath.domNode, [self.errors, type]);
+            errorPath.postValidate.apply(errorPath.domNode, [self.errors, type]);
         }
 
         return self.errors.length == 0;
@@ -621,6 +623,30 @@ var FpJsFormValidator = new function () {
             return null;
         } else {
             return ul;
+        }
+    };
+
+    /**
+     * Get related element to show error list
+     * @param {FpJsFormElement} element
+     */
+    this.getErrorPathElement = function (element) {
+        if (!element.bubbling) {
+            return element;
+        } else {
+            return this.getRootElement(element);
+        }
+    };
+
+    /**
+     * Find recursively for the root (from) element
+     * @param {FpJsFormElement} element
+     */
+    this.getRootElement = function (element) {
+        if (element.parent) {
+            return this.getRootElement(element.parent);
+        } else {
+            return element;
         }
     };
 }();
