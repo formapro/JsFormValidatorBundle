@@ -20,6 +20,7 @@ before_script:
   - sudo chmod 0777 Tests/app/cache Tests/app/logs
   - Tests/app/console assets:install Tests/app
   - ls -R | grep ":$" | sed -e 's/:$//' -e 's/[^-][^\/]*\//--/g' -e 's/^/   /' -e 's/-/|/'
+  - ls -la Tests/app/cache/test
 
   - sudo apt-get update > /dev/null
   - sudo apt-get install -y --force-yes apache2 libapache2-mod-php5 > /dev/null
