@@ -17,10 +17,10 @@ before_script:
   - php composer.phar require --no-update symfony/symfony=$SF_VERSION
   - php composer.phar install --dev
 
-  - sudo chmod 0777 Tests/app/cache
-  - sudo chmod 0777 Tests/app/logs
-
+  - sudo chmod 0777 Tests/app/cache Tests/app/logs
+  - Tests/app/console cache:warmup --env=test
   - Tests/app/console assets:install Tests/app
+  - sudo chmod 0777 Tests/app/cache Tests/app/logs
 
   - sudo apt-get update > /dev/null
   - sudo apt-get install -y --force-yes apache2 libapache2-mod-php5 > /dev/null
