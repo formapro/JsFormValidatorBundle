@@ -53,11 +53,26 @@ function FpJsFormElement() {
          */
         var domNode = this;
         var ul = FpJsFormValidator.getDefaultErrorContainerNode(domNode);
-        var len = ul.childNodes.length;
-        while (len--) {
-            if (type == ul.childNodes[len].className) {
-                ul.removeChild(ul.childNodes[len]);
+        if (ul) {
+            var len = ul.childNodes.length;
+            while (len--) {
+                if (type == ul.childNodes[len].className) {
+                    ul.removeChild(ul.childNodes[len]);
+                }
             }
+        }
+
+        if (!errors.length) {
+            if (ul && !ul.childNodes) {
+                ul.parentNode.removeChild(ul);
+            }
+            return;
+        }
+
+        if (!ul) {
+            ul = document.createElement('ul');
+            ul.className = FpJsFormValidator.errorClass;
+            domNode.parentNode.insertBefore(ul, domNode);
         }
 
         var li;
@@ -603,11 +618,9 @@ var FpJsFormValidator = new function () {
     this.getDefaultErrorContainerNode = function (htmlElement) {
         var ul = htmlElement.previousSibling;
         if (!ul || ul.className !== this.errorClass) {
-            ul = document.createElement('ul');
-            ul.className = FpJsFormValidator.errorClass;
-            htmlElement.parentNode.insertBefore(ul, htmlElement);
+            return null;
+        } else {
+            return ul;
         }
-
-        return ul;
     };
 }();

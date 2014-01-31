@@ -20,24 +20,12 @@ before_script:
   - Tests/app/console assets:install Tests/app
   - sudo chmod -R 0777 Tests/app/cache Tests/app/logs
   - ls -R | grep ":$" | sed -e 's/:$//' -e 's/[^-][^\/]*\//--/g' -e 's/^/   /' -e 's/-/|/'
-#  - ls -la Tests/app/cache/test
 
   - sudo apt-get update > /dev/null
   - sudo apt-get install -y --force-yes apache2 libapache2-mod-php5 > /dev/null
 
-  #- curl http://localhost
-  #- sudo cat /etc/apache2/sites-available/default
-  #- ls -la /var/www
-
-
   - sudo sed -i -e "s,/var/www,$(pwd)/Tests/app,g" /etc/apache2/sites-available/default
   - sudo /etc/init.d/apache2 restart
-
-  #- curl http://localhost
-  #- curl http://localhost/fp_js_form_validator/javascript_unit_test/levels
-  #- curl http://localhost/index.php/fp_js_form_validator/javascript_unit_test/levels
-  #- sudo cat /etc/apache2/sites-available/default
-  #- sudo cat /home/travis/build/yury-maltsev/FpJsFormValidatorBundle/Tests/app/index.php
 
   - curl http://selenium.googlecode.com/files/selenium-server-standalone-2.33.0.jar > selenium.jar
   - java -jar selenium.jar > selenium.log &
