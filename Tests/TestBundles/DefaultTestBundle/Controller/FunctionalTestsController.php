@@ -7,6 +7,7 @@ use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\UniqueEn
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\BasicConstraintsEntityType;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\UniqueType;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Validator\Constraints\Choice;
 use Symfony\Component\Validator\Constraints\Date;
 use Symfony\Component\Validator\Constraints\DateTime;
@@ -53,24 +54,16 @@ class FunctionalTestsController extends BaseTestController
         $domain,
         $js
     ) {
-        $builder = $this->createFormBuilder(null, array('js_validation' => (bool)$js));
-        $builder
-            ->add(
-                'name',
-                'text',
-                array(
-                    'constraints' => array(
-                        new NotBlank(array(
-                            'message' => 'blank.translation'
-                        ))
-                    )
-                )
-            );
+        $constraint = function($msg) {
+            return array('constraints' => array(new NotBlank(array('message' => $msg))));
+        };
 
-        $form = $builder->getForm();
-        if ($request->isMethod('post')) {
-            $form->submit($request);
-        }
+        $form = $this
+            ->createFormBuilder(null, array('js_validation' => (bool)$js))
+            ->add( 'name', 'text', $constraint('blank.translation'))
+            ->getForm();
+
+        $form->handleRequest($request);
 
         return $this->render(
             'DefaultTestBundle:FunctionalTests:index.html.twig',
@@ -378,30 +371,14 @@ class FunctionalTestsController extends BaseTestController
      */
     public function partOfFormAction(Request $request, $js)
     {
-        $builder = $this->createFormBuilder(null, array('js_validation' => (bool)$js));
-        $form    = $builder
-            ->add(
-                'name',
-                'text',
-                array(
-                    'constraints' => array(
-                        new NotBlank(array(
-                            'message' => 'name_value'
-                        ))
-                    )
-                )
-            )
-            ->add(
-                'email',
-                'text',
-                array(
-                    'constraints' => array(
-                        new NotBlank(array(
-                            'message' => '{{ value }}'
-                        ))
-                    )
-                )
-            )
+        $constraint = function($msg) {
+            return array('constraints' => array(new NotBlank(array('message' => $msg))));
+        };
+
+        $form = $this
+            ->createFormBuilder(null, array('js_validation' => (bool)$js))
+            ->add( 'name', 'text', $constraint('name_value'))
+            ->add( 'email', 'text', $constraint('{{ value }}'))
             ->getForm();
 
         $form->handleRequest($request);
@@ -472,6 +449,81 @@ class FunctionalTestsController extends BaseTestController
             'DefaultTestBundle:FunctionalTests:partOfForm.html.twig',
             array(
                 'form' => $form->createView(),
+            )
+        );
+    }
+
+    /**
+     * Check that fields can be disabled on the JS side
+     * /fp_js_form_validator/javascript_unit_test/disable/{type}/{js}
+     *
+     * @param Request $request
+     * @param string  $type
+     * @param         $js
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function disableValidationAction(Request $request, $type, $js)
+    {
+        $constraint = function($msg) {
+            return array('constraints' => array(new NotBlank(array('message' => $msg))));
+        };
+
+        $builder = $this
+            ->createFormBuilder(null, array('js_validation' => (bool)$js))
+            ->add('enabled', 'text', $constraint('enabled_field'));
+
+        switch ($type) {
+            case 'global':
+
+                break;
+            case 'field':
+                $builder->add('disabled', 'text', $constraint('disabled_field'));
+                break;
+            default:
+                break;
+        }
+
+        $form = $builder->getForm();
+        $form->handleRequest($request);
+
+        return $this->render(
+            'DefaultTestBundle:FunctionalTests:index.html.twig',
+            array(
+                'form'     => $form->createView(),
+                'extraMsg' => $request->isMethod('post') ? 'disabled_validation' : ''
+            )
+        );
+    }
+
+    public function requestWithSubRequestAction($js)
+    {
+        return $this->render(
+            'DefaultTestBundle:FunctionalTests:requestWithSubRequest.html.twig',
+            array(
+                'param_js' => $js,
+            )
+        );
+    }
+
+    public function subRequestAction(Request $request, $js)
+    {
+        $constraint = function($msg) {
+            return array('constraints' => array(new NotBlank(array('message' => $msg))));
+        };
+
+        $form = $this
+            ->createFormBuilder(null, array('js_validation' => (bool)$js))
+            ->add('name', 'text', $constraint('enabled_field'))
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        return $this->render(
+            'DefaultTestBundle:FunctionalTests:subRequest.html.twig',
+            array(
+                'form'     => $form->createView(),
+                'extraMsg' => $request->isMethod('post') ? 'disabled_validation' : '',
             )
         );
     }

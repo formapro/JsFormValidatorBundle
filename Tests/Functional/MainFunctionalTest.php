@@ -76,11 +76,11 @@ class MainFunctionalTest extends BaseMinkTestCase
     public function testBasicConstraints()
     {
         $sfErrors = $this->getAllErrorsOnPage('basic_constraints/1/0');
-        $fpErrors = $this->getAllErrorsOnPage( 'basic_constraints/1/1', '$("li.validate-callback").length > 0');
+        $fpErrors = $this->getAllErrorsOnPage('basic_constraints/1/1', '$("li.validate-callback").length > 0');
         $this->assertEmpty(array_diff($sfErrors, $fpErrors), 'All the basic constraints are valid.');
 
         $sfErrors = $this->getAllErrorsOnPage('basic_constraints/0/0');
-        $fpErrors = $this->getAllErrorsOnPage( 'basic_constraints/0/1', '$("li.validate-callback").length > 0');
+        $fpErrors = $this->getAllErrorsOnPage('basic_constraints/0/1', '$("li.validate-callback").length > 0');
         $this->assertEmpty(array_diff($sfErrors, $fpErrors), 'All the basic constraints have all the errors.');
     }
 
@@ -90,11 +90,11 @@ class MainFunctionalTest extends BaseMinkTestCase
     public function testDataTransformers()
     {
         $sfErrors = $this->getAllErrorsOnPage('transformers/1/0');
-        $fpErrors = $this->getAllErrorsOnPage( 'transformers/1/1');
+        $fpErrors = $this->getAllErrorsOnPage('transformers/1/1');
         $this->assertEmpty(array_diff($sfErrors, $fpErrors), 'All the transformers are valid.');
 
         $sfErrors = $this->getAllErrorsOnPage('transformers/0/0');
-        $fpErrors = $this->getAllErrorsOnPage( 'transformers/0/1');
+        $fpErrors = $this->getAllErrorsOnPage('transformers/0/1');
         $this->assertEmpty(array_diff($sfErrors, $fpErrors), 'All the transformers have all the errors.');
 
         // TODO: need to implement functionality and tests for all the %ToLocalized% data transformers
@@ -106,7 +106,7 @@ class MainFunctionalTest extends BaseMinkTestCase
     public function testPartOfForm()
     {
         $sfErrors = $this->getAllErrorsOnPage('part/0');
-        $fpErrors = $this->getAllErrorsOnPage( 'part/1');
+        $fpErrors = $this->getAllErrorsOnPage('part/1');
         $this->assertEmpty(array_diff($sfErrors, $fpErrors), 'A part of a form works fine.');
     }
 
@@ -117,7 +117,94 @@ class MainFunctionalTest extends BaseMinkTestCase
     public function testEmptyElements()
     {
         $sfErrors = $this->getAllErrorsOnPage('empty/0');
-        $fpErrors = $this->getAllErrorsOnPage( 'empty/1');
-        $this->assertEmpty(array_diff($sfErrors, $fpErrors), 'All the constraints work correctly for an empty element.');
+        $fpErrors = $this->getAllErrorsOnPage('empty/1');
+        $this->assertEmpty(
+            array_diff($sfErrors, $fpErrors),
+            'All the constraints work correctly for an empty element.'
+        );
+    }
+
+    /**
+     * Test that fields can be disabled on the JS side
+     */
+    public function testDisableValidation()
+    {
+        $sfErrors = $this->getAllErrorsOnPage('disable/global/0');
+        $this->assertEquals(
+            array('enabled_field'),
+            $sfErrors,
+            'Global disabling: form was validated on the server side'
+        );
+        $this->assertEquals(
+            'disabled_validation',
+            $this->find('#extra_msg')->getText(),
+            'Global disabling: marker form the server side exists'
+        );
+
+        $sfErrors = $this->getAllErrorsOnPage('disable/global/1');
+        $this->assertEquals(
+            array('enabled_field'),
+            $sfErrors,
+            'Global disabling: AGAIN form was validated on the server side'
+        );
+        $this->assertEquals(
+            'disabled_validation',
+            $this->find('#extra_msg')->getText(),
+            'Global disabling: AGAIN marker form the server side exists'
+        );
+
+        $sfErrors = $this->getAllErrorsOnPage('disable/field/0');
+        $this->assertEquals(
+            array('enabled_field', 'disabled_field'),
+            $sfErrors,
+            'Field disabling: whole form was validated on the server side'
+        );
+        $this->assertEquals(
+            'disabled_validation',
+            $this->find('#extra_msg')->getText(),
+            'Field disabling: marker form the server side exists'
+        );
+
+        $fpErrors = $this->getAllErrorsOnPage('disable/field/1');
+        $this->assertEquals(
+            array('enabled_field'),
+            $fpErrors,
+            'Field disabling: only one field was validated on the JS side'
+        );
+        $this->assertEquals(
+            '',
+            $this->find('#extra_msg')->getText(),
+            'Field disabling: marker form the server side does not exist'
+        );
+    }
+
+    /**
+     * Test that forms in sub-request work fine
+     */
+    public function testSubRequest()
+    {
+        $sfErrors = $this->getAllErrorsOnPage('sub_request/0');
+        $this->assertEquals(
+            array('enabled_field'),
+            $sfErrors,
+            'Sub request: a form was validated on the server side'
+        );
+        $this->assertEquals(
+            'disabled_validation',
+            $this->find('#extra_msg')->getText(),
+            'Sub request: marker form the server side exists'
+        );
+
+        $fpErrors = $this->getAllErrorsOnPage('sub_request/1');
+        $this->assertEquals(
+            array('enabled_field'),
+            $fpErrors,
+            'Sub request: a form was validated on the JS side'
+        );
+        $this->assertEquals(
+            '',
+            $this->find('#extra_msg')->getText(),
+            'Sub request: marker form the server side does not exist'
+        );
     }
 } 

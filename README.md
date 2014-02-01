@@ -4,9 +4,9 @@ This module enables validation of the Symfony2 forms on the JavaScript side.
 It converts form type constraints into JavaScript validation rules.
 
 
-## Installation
+## 1 Installation<a name="p_1"></a>
 
-### Step 1: Download FpJsFormValidatorBundle using composer
+### 1.1 Download FpJsFormValidatorBundle using composer<a name="p_1_1"></a>
 
 Add the next line to your ``composer.json`` file:
 ```json
@@ -20,7 +20,7 @@ Now run:
 ```bash
 $ php composer.phar update fp/jsformvalidator-bundle
 ```
-### Step 2: Enable the bundle
+### 1.2 Enable the bundle<a name="p_1_2"></a>
 
 Enable the bundle in the kernel:
 ```php
@@ -35,7 +35,7 @@ public function registerBundles()
 }
 ```
 
-### Step 3: Enable the javascript libraries
+### 1.3 Enable the javascript libraries<a name="p_1_3"></a>
 
 ```twig
 <html>
@@ -49,9 +49,9 @@ public function registerBundles()
 </html>
 ```
 
-### Step 4: Add routes
+### 1.4 Add routes<a name="p_1_4"></a>
 
-Include the next routes to your routing config:
+If you use check the uniqueness of entities, then you have to include the next part to your routing config:
 ```yaml
 //app/config/routing.yml
 # ...
@@ -59,29 +59,23 @@ fp_js_form_validator:
     resource: "@FpJsFormValidatorBundle/Resources/config/routing.xml"
     prefix: /fp_js_form_validator
 ```
+Make sure that your security settings do not prevent these routes.
 
-At the moment we use routes to send ajax-requests to check the uniqueness of entities.
-Pay attention that your security settings can prevent this action.
-So if you are going to use this functional, please check that the requests has necessary permissions.
-Or you can redefine this functional (see the Customization paragraph).
+## 2 Usage<a name="p_2"></a>
 
-## Usage
+After the previous steps the javascript validation will be enabled automatically for all your forms.
 
-There are three levels (app, form, field) and three statuses (default, true, false) of the validation.
+### 2.1 Disabling<a name="p_2_1"></a>
 
-### An application level:
-
-The validation can be switched on/off globally in your config:
+You can disable the validation in three ways:
+1) globally
 ```yaml
 //app/config/config.yml
 # ...
 fp_js_form_validator:
-    js_validation: true
+    js_validation: false
 ```
-
-### A form level:
-
-You can enable/disable the validation for a specified form in its own from builder:
+2) for the specified form:
 ```php
 namespace Acme\DemoBundle\Form;
 
@@ -90,60 +84,24 @@ class UserFormType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'js_validation' => true
+            'js_validation' => false
         ));
     }
 }
 ```
+3) for the specified [field]()
 
-or in a controller:
-```php
-class DefaultController extends Controller
-{
-    public function indexAction()
-    {
-        $form = $this->createForm(new UserType(), new User(), array(
-            'js_validation' => true
-        ));
+### 2.2 Issue with sub-requests<a name="p_2_2"></a>
 
-        return $this->render('AcmeDemoBundle:Default:index.html.twig',
-            array('form' => $form->createView())
-        );
-    }
-```
-
-### A field level:
-
-You can enable/disable the validation for specified fields only:
-```php
-public function buildForm(FormBuilderInterface $builder, array $options)
-{
-    $builder
-        ->add('name', 'text', array(
-            'js_validation' => true
-        ));
-}
-```
-
-### Statuses of the validation:
-
-1. Default (value is not set) - the validation is disabled.
-
-2. ```js_validation = true``` - the validation is enabled, but can be disabled for children levels. **Example:** if you set ```true``` for a form, you can disable it for a specified field.
-
-3. ```js_validation = false``` - the validation is disabled forcibly for this level and all the children levels. **Example:** if you set ```false``` in the config - that means the validation will be disabled for all the forms and form-elements regardless of their settings.
-
-### Issue with sub-requests
-
-Currently js-data for each your form is enabled inside of the template that you have included on the installation step 3.
-So if your form was rendered in sub-request:
+All the necessary data for validation forms are initialized in the included template (initializer) that was defined on the step [1.3](#p_1_3)
+So if your form was rendered in sub-request, e.g.:
 ```twig
 <div id="email">
     {{ render(controller('AcmeDemoBundle:Default:sendEmail')) }}
 </div>
 ```
-in this way the main template does not know anything about that form.
-To fix it, you have to add the initialization to that template manually:
+in this way the initializer does not know anything about that form.
+To fix it, you have to add the initialization to your sub-template manually:
 ```twig
 {# AcmeDemoBundle:Default:sendEmail.html.twig #}
 

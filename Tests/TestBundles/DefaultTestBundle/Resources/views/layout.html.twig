@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test: FpJsFormValidator</title>
+    {% javascripts '@DefaultTestBundle/Resources/public/js/jquery-1.9.1.js' %}
+    <script src="{{ asset_url }}"></script>
+    {% endjavascripts %}
+    {{ include('FpJsFormValidatorBundle::javascripts-dev.html.twig') }}
+</head>
+<body>
+{% block body %}{% endblock %}
+</body>
+</html>
+

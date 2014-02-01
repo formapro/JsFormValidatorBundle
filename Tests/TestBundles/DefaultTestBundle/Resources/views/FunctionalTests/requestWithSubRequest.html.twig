@@ -1,0 +1,11 @@
+{% extends 'DefaultTestBundle::layout.html.twig' %}
+
+{% block body %}
+    {{ render(controller(
+        'DefaultTestBundle:FunctionalTests:subRequest',
+        {
+            'js': param_js,
+            'request': app.request
+        }
+    )) }}
+{% endblock %}

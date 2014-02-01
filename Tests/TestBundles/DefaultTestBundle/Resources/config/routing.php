@@ -77,4 +77,24 @@ $collection->add(
     )
 );
 
+$collection->add(
+    'fp_js_form_validator_test_disable',
+    new Route(
+        '/fp_js_form_validator/javascript_unit_test/disable/{type}/{js}',
+        array(
+            '_controller' => $controllerClass . '::disableValidationAction',
+        )
+    )
+);
+
+$collection->add(
+    'fp_js_form_validator_test_sub_request',
+    new Route(
+        '/fp_js_form_validator/javascript_unit_test/sub_request/{js}',
+        array(
+            '_controller' => $controllerClass . '::requestWithSubRequestAction',
+        )
+    )
+);
+
 return $collection;

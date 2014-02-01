@@ -5,6 +5,7 @@ function FpJsFormElement() {
     this.invalidMessage = '';
     this.cascade = false;
     this.bubbling = false;
+    this.disabled = false;
     this.transformers = [];
     this.data = {};
     this.children = {};
@@ -19,6 +20,10 @@ function FpJsFormElement() {
     };
 
     this.validate = function () {
+        if (this.disabled) {
+            return true;
+        }
+
         var self = this;
         self.errors = [];
         FpJsFormValidator.validateElement(self);
@@ -1836,7 +1841,7 @@ function SymfonyComponentFormExtensionCoreDataTransformerDateTimeToArrayTransfor
             return typeof date[number] != 'undefined'
                 ? date[number]
                 : match
-                ;
+            ;
         });
     }
 }

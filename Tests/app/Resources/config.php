@@ -11,12 +11,20 @@ if (file_exists( __DIR__ . '/local_config.php')) {
     $defaults = array_merge($defaults, (array) $localConfig);
 }
 
+$bundleConfig = array();
+
 // This trick uses to test different translation domains
-if (!empty($_SERVER['REQUEST_URI'])) {
-    preg_match('/javascript_unit_test\/translations\/(\w+)\/\d/', $_SERVER['REQUEST_URI'], $testTranslationParameters);
-    if ($testTranslationParameters && 'default' != $testTranslationParameters[1]) {
-        $container->setParameter('validator.translation_domain', $testTranslationParameters[1]);
-    }
+$env = $container->getParameter('kernel.environment');
+switch ($env) {
+    case 'trans':
+        /** @var string $transDomain */
+        $container->setParameter('validator.translation_domain', 'test');
+        break;
+    case 'disable':
+        $bundleConfig['js_validation'] = false;
+        break;
+    default:
+        break;
 }
 
 
@@ -38,6 +46,9 @@ $container->loadFromExtension('framework', array(
 $container->loadFromExtension('twig', array(
     'debug' => true,
     'strict_variables' => true,
+    'form' => array(
+        'resources' => array('DefaultTestBundle::form_theme.html.twig')
+    ),
 ));
 $container->loadFromExtension('doctrine', array(
     'orm' => array(
@@ -53,3 +64,12 @@ $container->loadFromExtension(
         'selenium2' => array(),
     )
 );
+
+if (!empty($bundleConfig)) {
+    $container->loadFromExtension('fp_js_form_validator', $bundleConfig);
+}
+
+$container
+    ->register('fp_js_validator.test_extension', 'Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Twig\Extension\TestTwigExtension')
+    ->addArgument(new \Symfony\Component\DependencyInjection\Reference('kernel'))
+    ->addTag('twig.extension');

@@ -36,6 +36,7 @@ class BaseMinkTestCase extends  MinkTestCase
     {
         $session = $this->getMink()->getSession('selenium2');
         $session->visit($this->base . '/fp_js_form_validator/javascript_unit_test/' . $name);
+//        var_dump($session->getPage()->find('css', 'body form')->getHtml());
         $session->getPage()->findButton('form_submit')->click();
 
         if ($wait) {
@@ -49,5 +50,15 @@ class BaseMinkTestCase extends  MinkTestCase
         }
 
         return $errorsList;
+    }
+
+    /**
+     * @param $selector
+     *
+     * @return NodeElement|null
+     */
+    protected function find($selector)
+    {
+        return $this->getMink()->getSession('selenium2')->getPage()->find('css', $selector);
     }
 } 
