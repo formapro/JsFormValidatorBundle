@@ -112,6 +112,29 @@ To fix it, you have to add the initialization to your sub-template manually:
 
 ## Customization
 
+### Preface. Understanding the bundle
+
+This bundle finds related DOM elements for each element of a symfony form and attach to it a special object-validator, that contains list of properties and methods, which fully define the validation process for the related form element.
+
+To work with the customization you have to understand general principles how this bundle works:
+1) If you display a symfony form using the default twig function ```{{ form(form) }}```, then each element of this form has its own related DOM element in html.
+For example you have the next form structure:
+form_user:
+    name
+    email
+    address_sub_form:
+        number
+        street
+        city
+
+```html
+<form name="form" method="post" action="">
+    <div id="form">
+        <div>
+            <label for="form_name" class="required">Name</label>
+            <input type="text" id="form_name" name="form[name]" required="required"></div><div><label for="form_clear" class="required">Clear</label><input type="text" id="form_clear" name="form[clear]" required="required" maxlength="50"></div><div><label class="required">Email</label><div id="form_email"><div><label for="form_email_name" class="required">Name</label><input type="text" id="form_email_name" name="form[email][name]" required="required"></div></div></div><input type="hidden" id="form__token" name="form[_token]" value="9A_A0C6Phrvhitd4KsoWA4pS_qB_QpvILT8yb1UMVS0"></div></form>
+```
+
 ### Configure translations
 
 By default, this bundle uses (just like Symfony2 forms) the "validators" domain for message translation.

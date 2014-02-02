@@ -1,7 +1,7 @@
 {% extends 'DefaultTestBundle::layout.html.twig' %}
 
 {% block body %}
-    {{ form_start(form, { 'attr': {'novalidate': 'novalidate' }}) }}
+    <form novalidate="novalidate">
         <input type="submit" name="form_submit" id="form_submit"/>
         {{ form_row(form.name) }}
     </form>

@@ -1,0 +1,34 @@
+{% extends 'DefaultTestBundle::layout.html.twig' %}
+
+{% block body %}
+    <script type="text/javascript">
+        $(function(){
+            $('#form_disabled').jsFormValidator({
+                disabled: true
+            });
+
+            $('#form_showErrors').jsFormValidator({
+                showErrors: function(errors, type) {
+                    var list = $(this).prev('ul.form-errors');
+                    if (!list.length) {
+                        list = $('<ul class="form-errors"></ul>');
+                        $(this).before(list);
+                    }
+                    list.find('.' + type).remove();
+
+                    for (var i in errors) {
+                        var li = $('<li></li>', {
+                            'class': type,
+                            'text': 'custom_'+ errors[i]
+                        });
+                        list.append(li);
+                    }
+                }
+            });
+        })
+    </script>
+
+    {{ form_start(form, { 'attr': {'novalidate': 'novalidate' }}) }}
+    {{ form_rest(form) }}
+    {{ form_end(form) }}
+{% endblock %}

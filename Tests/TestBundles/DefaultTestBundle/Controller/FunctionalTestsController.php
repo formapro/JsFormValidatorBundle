@@ -3,11 +3,13 @@
 namespace Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Controller;
 
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\BasicConstraintsEntity;
+use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\CamelCaseEntity;
+use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\CustomizationEntity;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\UniqueEntity;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\BasicConstraintsEntityType;
+use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\CustomizationType;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\UniqueType;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Validator\Constraints\Choice;
 use Symfony\Component\Validator\Constraints\Date;
 use Symfony\Component\Validator\Constraints\DateTime;
@@ -39,6 +41,24 @@ use Symfony\Component\Validator\Constraints\Url;
 class FunctionalTestsController extends BaseTestController
 {
     /**
+     * @param Request $request
+     * @param         $controller
+     * @param         $type
+     * @param         $js
+     *
+     * @return mixed
+     * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+     */
+    public function baseAction(Request $request, $controller, $type, $js)
+    {
+        $method = $controller . 'Action';
+        if (method_exists($this, $method)) {
+            return $this->{$method}($request, $type, $js);
+        } else {
+            throw $this->createNotFoundException('Action not found');
+        }
+    }
+    /**
      * Check translation service
      * /fp_js_form_validator/javascript_unit_test/translations/{domain}/{js}
      *
@@ -48,7 +68,7 @@ class FunctionalTestsController extends BaseTestController
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function translationAction(
+    public function translationsAction(
         Request $request,
         /** @noinspection PhpUnusedParameterInspection */
         $domain,
@@ -127,7 +147,7 @@ class FunctionalTestsController extends BaseTestController
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function uniqueEntityAction(Request $request, $isValid, $js)
+    public function unique_entityAction(Request $request, $isValid, $js)
     {
         $entity = new UniqueEntity();
 
@@ -160,7 +180,7 @@ class FunctionalTestsController extends BaseTestController
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function basicConstraintsAction(Request $request, $isValid, $js)
+    public function basic_constraintsAction(Request $request, $isValid, $js)
     {
         $data = array(
             array(
@@ -362,15 +382,20 @@ class FunctionalTestsController extends BaseTestController
 
     /**
      * Set several elements, but show not all of them
-     * /fp_js_form_validator/javascript_unit_test/part/{js}
+     * /fp_js_form_validator/javascript_unit_test/part/default/{js}
      *
      * @param Request $request
+     * @param         $type
      * @param         $js
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function partOfFormAction(Request $request, $js)
-    {
+    public function partAction(
+        Request $request,
+        /** @noinspection PhpUnusedParameterInspection */
+        $type,
+        $js
+    ) {
         $constraint = function($msg) {
             return array('constraints' => array(new NotBlank(array('message' => $msg))));
         };
@@ -397,12 +422,17 @@ class FunctionalTestsController extends BaseTestController
      * /fp_js_form_validator/javascript_unit_test/empty/{js}
      *
      * @param Request $request
+     * @param         $type
      * @param         $js
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function emptyElementsAction(Request $request, $js)
-    {
+    public function emptyAction(
+        Request $request,
+        /** @noinspection PhpUnusedParameterInspection */
+        $type,
+        $js
+    ) {
         $builder = $this->createFormBuilder(null, array('js_validation' => (bool)$js));
         $form    = $builder
             ->add(
@@ -463,7 +493,7 @@ class FunctionalTestsController extends BaseTestController
      *
      * @return \Symfony\Component\HttpFoundation\Response
      */
-    public function disableValidationAction(Request $request, $type, $js)
+    public function disableAction(Request $request, $type, $js)
     {
         $constraint = function($msg) {
             return array('constraints' => array(new NotBlank(array('message' => $msg))));
@@ -475,7 +505,6 @@ class FunctionalTestsController extends BaseTestController
 
         switch ($type) {
             case 'global':
-
                 break;
             case 'field':
                 $builder->add('disabled', 'text', $constraint('disabled_field'));
@@ -496,8 +525,13 @@ class FunctionalTestsController extends BaseTestController
         );
     }
 
-    public function requestWithSubRequestAction($js)
-    {
+    public function sub_requestAction(
+        /** @noinspection PhpUnusedParameterInspection */
+        Request $request,
+        /** @noinspection PhpUnusedParameterInspection */
+        $type,
+        $js
+    ) {
         return $this->render(
             'DefaultTestBundle:FunctionalTests:requestWithSubRequest.html.twig',
             array(
@@ -506,7 +540,7 @@ class FunctionalTestsController extends BaseTestController
         );
     }
 
-    public function subRequestAction(Request $request, $js)
+    public function subRequestIncludedAction(Request $request, $js)
     {
         $constraint = function($msg) {
             return array('constraints' => array(new NotBlank(array('message' => $msg))));
@@ -524,6 +558,44 @@ class FunctionalTestsController extends BaseTestController
             array(
                 'form'     => $form->createView(),
                 'extraMsg' => $request->isMethod('post') ? 'disabled_validation' : '',
+            )
+        );
+    }
+
+    public function camelcaseAction(
+        Request $request,
+        /** @noinspection PhpUnusedParameterInspection */
+        $type,
+        $js
+    ) {
+        $entity = new CamelCaseEntity();
+        $form = $this->createFormBuilder($entity, array('js_validation' => (bool)$js))
+            ->add('camel_case_field')
+            ->add('camelCaseField')
+            ->add('submit', 'submit')
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        return $this->render(
+            'DefaultTestBundle:FunctionalTests:index.html.twig',
+            array(
+                'form' => $form->createView(),
+            )
+        );
+    }
+
+    public function customizationAction(Request $request)
+    {
+        $entity = new CustomizationEntity();
+        $form = $this->createForm(new CustomizationType(), $entity);
+
+        $form->handleRequest($request);
+
+        return $this->render(
+            'DefaultTestBundle:FunctionalTests:customization.html.twig',
+            array(
+                'form' => $form->createView(),
             )
         );
     }

@@ -10,12 +10,12 @@ set_error_handler(
 $env = 'dev';
 if (!empty($_SERVER['REQUEST_URI'])) {
     // This trick uses to test different translation domains
-    preg_match('/javascript_unit_test\/translations\/(\w+)\/\d/', $_SERVER['REQUEST_URI'], $requestParts);
+    preg_match('/test\/translations\/(\w+)\/\d/', $_SERVER['REQUEST_URI'], $requestParts);
     if ($requestParts && 'test' == $requestParts[1]) {
         $env = 'trans';
     }
     // This trick uses to test disabled validation
-    preg_match('/javascript_unit_test\/disable\/(\w+)\/\d/', $_SERVER['REQUEST_URI'], $requestParts);
+    preg_match('/test\/disable\/(\w+)\/\d/', $_SERVER['REQUEST_URI'], $requestParts);
     if ($requestParts && 'global' == $requestParts[1]) {
         $env = 'disable';
     }

@@ -27,7 +27,7 @@ function FpJsFormElement() {
         var self = this;
         self.errors = [];
         FpJsFormValidator.validateElement(self);
-        var type = FpJsFormValidator.errorClass + '-' + this.id + '-main';
+        var type = 'form-error-' + String(this.id).replace('_', '-');
         var errorPath = FpJsFormValidator.getErrorPathElement(self);
 
         if (FpJsFormValidator.ajax.hasRequest(self)) {
@@ -237,6 +237,7 @@ var FpJsFormValidator = new function () {
     this.initModel = function (model) {
         var element = this.createElement(model);
         var form = this.findFormElement(element);
+        element.domNode = form;
         if (form) {
             this.attachDefaultEvent(element, form);
         }
@@ -572,7 +573,7 @@ var FpJsFormValidator = new function () {
      */
     this.findFormElement = function (element) {
         var form = null;
-        if ('form' == element.domNode.tagName.toLowerCase()) {
+        if (element.domNode && 'form' == element.domNode.tagName.toLowerCase()) {
             form = element.domNode;
         } else {
             var realChild = this.findRealChildElement(element);

@@ -35,7 +35,7 @@ class BaseMinkTestCase extends  MinkTestCase
     protected function getAllErrorsOnPage($name, $wait = null)
     {
         $session = $this->getMink()->getSession('selenium2');
-        $session->visit($this->base . '/fp_js_form_validator/javascript_unit_test/' . $name);
+        $session->visit($this->base . '/fp_js_form_validator/test/' . $name);
 //        var_dump($session->getPage()->find('css', 'body form')->getHtml());
         $session->getPage()->findButton('form_submit')->click();
 

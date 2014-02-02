@@ -105,8 +105,8 @@ class MainFunctionalTest extends BaseMinkTestCase
      */
     public function testPartOfForm()
     {
-        $sfErrors = $this->getAllErrorsOnPage('part/0');
-        $fpErrors = $this->getAllErrorsOnPage('part/1');
+        $sfErrors = $this->getAllErrorsOnPage('part/-/0');
+        $fpErrors = $this->getAllErrorsOnPage('part/-/1');
         $this->assertEmpty(array_diff($sfErrors, $fpErrors), 'A part of a form works fine.');
     }
 
@@ -116,8 +116,8 @@ class MainFunctionalTest extends BaseMinkTestCase
      */
     public function testEmptyElements()
     {
-        $sfErrors = $this->getAllErrorsOnPage('empty/0');
-        $fpErrors = $this->getAllErrorsOnPage('empty/1');
+        $sfErrors = $this->getAllErrorsOnPage('empty/-/0');
+        $fpErrors = $this->getAllErrorsOnPage('empty/-/1');
         $this->assertEmpty(
             array_diff($sfErrors, $fpErrors),
             'All the constraints work correctly for an empty element.'
@@ -183,7 +183,7 @@ class MainFunctionalTest extends BaseMinkTestCase
      */
     public function testSubRequest()
     {
-        $sfErrors = $this->getAllErrorsOnPage('sub_request/0');
+        $sfErrors = $this->getAllErrorsOnPage('sub_request/-/0');
         $this->assertEquals(
             array('enabled_field'),
             $sfErrors,
@@ -195,7 +195,7 @@ class MainFunctionalTest extends BaseMinkTestCase
             'Sub request: marker form the server side exists'
         );
 
-        $fpErrors = $this->getAllErrorsOnPage('sub_request/1');
+        $fpErrors = $this->getAllErrorsOnPage('sub_request/-/1');
         $this->assertEquals(
             array('enabled_field'),
             $fpErrors,
@@ -207,4 +207,30 @@ class MainFunctionalTest extends BaseMinkTestCase
             'Sub request: marker form the server side does not exist'
         );
     }
-} 
+
+    /**
+     * Test the camelcase issue for the symfony forms
+     * https://github.com/symfony/symfony/issues/10176
+     */
+    public function testCamelCase()
+    {
+        $sfErrors = $this->getAllErrorsOnPage('camelcase/-/0');
+        $fpErrors = $this->getAllErrorsOnPage('camelcase/-/1');
+        $this->assertEmpty(array_diff($sfErrors, $fpErrors), 'The camelcase issue is still equal.');
+    }
+
+    /**
+     * Test the customization functions
+     */
+    public function testCustomization()
+    {
+        $fpErrors = $this->getAllErrorsOnPage('customization/-/-');
+        $this->assertEquals(
+            array(
+                'custom_show_errors_message'
+            ),
+            $fpErrors,
+            'All the customizations were applied'
+        );
+    }
+}
