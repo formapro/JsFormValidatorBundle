@@ -67,6 +67,7 @@ After the previous steps the javascript validation will be enabled automatically
 ### 2.1 Disabling<a name="p_2_1"></a>
 
 You can disable the validation in three ways:
+
 1) globally
 ```yaml
 //app/config/config.yml
@@ -114,7 +115,7 @@ To fix it, you have to add the initialization to your sub-template manually:
 ### 3.1 Preface<a name="p_3_1"></a>
 
 This bundle finds related DOM elements for each element of a symfony form and attach to it a special object-validator.
-That object contains list of properties and methods which fully define the validation process for the related form element.
+This object contains list of properties and methods which fully define the validation process for the related form element.
 And some of those properties and methods can be changed to customize the validation process.
 
 ### 3.2 Disable the validation for a specified field<a name="p_3_2"></a>
@@ -137,10 +138,12 @@ FpJsFormValidator.customize(field, {
 ### 3.3 Error display<a name="p_3_3"></a>
 
 The example below shows errors in the same way as the default functional of this bundle.
+
 Each field can contain not only its own errors, but also errors that have come from other sources of validation.
 For example, this field (user_email) may contain the Email constraint, and its own form may contain the UniqueEntity constraint by this field.
 Both of these errors should be displayed for the email field.
 The similar situations may occur when you use the Callback constraint.
+
 So, to prevent any confusion between the field's errors and other the errors which have come from other sources, we've added the 'sourceClass' variable that shows you a unique id of the source of errors.
 By default we use this variable to add it as a class name to 'li' tags, and then we use it to remove the errors by this class name.
 You can see that in the example below:
