@@ -50,7 +50,7 @@ public function registerBundles()
 
 ### 1.4 Add routes<a name="p_1_4"></a>
 
-If you use check the uniqueness of entities, then you have to include the next part to your routing config:
+If you use the UniqueEntity constraint, then you have to include the next part to your routing config:
 ```yaml
 //app/config/routing.yml
 # ...
