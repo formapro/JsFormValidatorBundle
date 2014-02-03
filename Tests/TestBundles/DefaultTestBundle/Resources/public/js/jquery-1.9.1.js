@@ -267,7 +267,7 @@ jQuery.fn = jQuery.prototype = {
 	// (You can seed the arguments with an array of args, but this is
 	// only used internally.)
 	each: function( callback, args ) {
-		return jQuery.each( this, callback, args );
+		return jQuery.each(this, callback, false);
 	},
 
 	ready: function( fn ) {

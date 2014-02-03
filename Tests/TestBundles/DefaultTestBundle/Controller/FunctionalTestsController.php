@@ -585,18 +585,15 @@ class FunctionalTestsController extends BaseTestController
         );
     }
 
-    public function customizationAction(Request $request)
+    public function customizationAction(Request $request, $type)
     {
         $entity = new CustomizationEntity();
         $form = $this->createForm(new CustomizationType(), $entity);
 
         $form->handleRequest($request);
 
-        return $this->render(
-            'DefaultTestBundle:FunctionalTests:customization.html.twig',
-            array(
-                'form' => $form->createView(),
-            )
-        );
+        $tpl = "DefaultTestBundle:FunctionalTests:customization_{$type}.html.twig";
+
+        return $this->render($tpl, array('form' => $form->createView()));
     }
 }

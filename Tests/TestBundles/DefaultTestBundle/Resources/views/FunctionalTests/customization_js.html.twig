@@ -1,0 +1,60 @@
+{% extends 'DefaultTestBundle::layout.html.twig' %}
+
+{% block jquery %}{% endblock %}
+
+{% block body %}
+    {{ form_start(form, { 'attr': {'novalidate': 'novalidate' }}) }}
+    {{ form_rest(form) }}
+    {{ form_end(form) }}
+
+    <script type="text/javascript">
+        var field = document.getElementById('form_disabled');
+        FpJsFormValidator.customize(field, {
+            disabled: true
+        });
+
+        field = document.getElementById('form_showErrors');
+        FpJsFormValidator.customize(field, {
+            showErrors: function(errors, type) {
+                if (!(this instanceof HTMLElement)) {
+                    return;
+                }
+                //noinspection JSValidateTypes
+                /**
+                 * @type {HTMLElement}
+                 */
+                var domNode = this;
+                var ul = FpJsFormValidator.getDefaultErrorContainerNode(domNode);
+                if (ul) {
+                    var len = ul.childNodes.length;
+                    while (len--) {
+                        if (type == ul.childNodes[len].className) {
+                            ul.removeChild(ul.childNodes[len]);
+                        }
+                    }
+                }
+
+                if (!errors.length) {
+                    if (ul && !ul.childNodes) {
+                        ul.parentNode.removeChild(ul);
+                    }
+                    return;
+                }
+
+                if (!ul) {
+                    ul = document.createElement('ul');
+                    ul.className = FpJsFormValidator.errorClass;
+                    domNode.parentNode.insertBefore(ul, domNode);
+                }
+
+                var li;
+                for (var i in errors) {
+                    li = document.createElement('li');
+                    li.className = type;
+                    li.innerHTML = 'custom_' + errors[i];
+                    ul.appendChild(li);
+                }
+            }
+        });
+    </script>
+{% endblock %}

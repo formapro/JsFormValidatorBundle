@@ -2,9 +2,12 @@
 <html>
 <head>
     <title>Test: FpJsFormValidator</title>
-    {% javascripts '@DefaultTestBundle/Resources/public/js/jquery-1.9.1.js' %}
-    <script src="{{ asset_url }}"></script>
-    {% endjavascripts %}
+    {% block jquery %}
+        {% javascripts '@DefaultTestBundle/Resources/public/js/jquery-1.9.1.js' %}
+        <script src="{{ asset_url }}"></script>
+        {% endjavascripts %}
+    {% endblock %}
+
     {{ include('FpJsFormValidatorBundle::javascripts-dev.html.twig') }}
 </head>
 <body>

@@ -224,13 +224,22 @@ class MainFunctionalTest extends BaseMinkTestCase
      */
     public function testCustomization()
     {
-        $fpErrors = $this->getAllErrorsOnPage('customization/-/-');
+        $jqErrors = $this->getAllErrorsOnPage('customization/jq/-');
         $this->assertEquals(
             array(
                 'custom_show_errors_message'
             ),
-            $fpErrors,
-            'All the customizations were applied'
+            $jqErrors,
+            'All the jQuery customizations were applied'
+        );
+
+        $jsErrors = $this->getAllErrorsOnPage('customization/js/-');
+        $this->assertEquals(
+            array(
+                'custom_show_errors_message'
+            ),
+            $jsErrors,
+            'All the Javascript customizations were applied'
         );
     }
 }

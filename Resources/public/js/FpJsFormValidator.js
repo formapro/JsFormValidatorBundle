@@ -95,7 +95,7 @@ function FpJsFormElement() {
     };
 }
 
-function AjaxRequest() {
+function FpJsAjaxRequest() {
     this.queue = {};
 
     this.hasRequest = function (element) {
@@ -205,11 +205,68 @@ function AjaxRequest() {
     };
 }
 
+function FpJsCustomizeMethods () {
+
+
+    this.init = function(options) {
+        FpJsFormValidator.each(this, function(item){
+            if (!item.jsFormValidator) {
+                item.jsFormValidator = {};
+            }
+
+            for (var optName in options) {
+                switch (optName) {
+                    case 'customEvents':
+                        options[optName].apply(item);
+                        break;
+                    default:
+                        item.jsFormValidator[optName] = options[optName];
+                        break;
+                }
+            }
+        }, false);
+    };
+
+    this.validate = function(opts) {
+        var isValid = true;
+        //noinspection JSCheckFunctionSignatures
+        FpJsFormValidator.each(this, function(item){
+            var method = (true === opts['recursive'])
+                ? 'validateRecursively'
+                : 'validate';
+
+            if (item.jsFormValidator[method]()) {
+                isValid = false;
+            }
+        });
+
+        return isValid;
+    };
+
+    this.showErrors = function(opts) {
+        //noinspection JSCheckFunctionSignatures
+        FpJsFormValidator.each(this, function(item){
+            item.jsFormValidator.showErrors.apply(item, [opts['errors'], opts['type']]);
+        });
+    };
+
+    this.get = function() {
+        var elements = [];
+        //noinspection JSCheckFunctionSignatures
+        FpJsFormValidator.each(this, function(item){
+            elements.push(item.jsFormValidator);
+        });
+
+        return elements;
+    };
+}
+
 var FpJsFormValidator = new function () {
     this.forms = {};
     this.errorClass = 'form-errors';
     this.config = {};
-    this.ajax = new AjaxRequest();
+    this.ajax = new FpJsAjaxRequest();
+    this.customizeMethods = new FpJsCustomizeMethods();
 
     //noinspection JSUnusedGlobalSymbols
     this.addModel = function (model) {
@@ -653,6 +710,48 @@ var FpJsFormValidator = new function () {
             return this.getRootElement(element.parent);
         } else {
             return element;
+        }
+    };
+
+    /**
+     * Applies customizing for the specified elements
+     *
+     * @param items
+     * @param method
+     * @returns {*}
+     */
+    this.customize = function(items, method) {
+        if (!Array.isArray(items)) {
+            items = [items];
+        }
+
+        if (!method) {
+            return this.customizeMethods.get.apply(items, Array.prototype.slice.call(arguments, 1));
+        } else if (typeof method === 'object') {
+            return this.customizeMethods.init.apply(items, Array.prototype.slice.call(arguments, 1));
+        } else if (this.customizeMethods[method]) {
+            return this.customizeMethods[method].apply(items, Array.prototype.slice.call(arguments, 2));
+        } else {
+            $.error('Method ' + method + ' does not exist');
+            return this;
+        }
+    };
+
+    /**
+     * Loop an array of elements
+     *
+     * @param list
+     * @param callback
+     * @param skipEmpty
+     */
+    this.each = function (list, callback, skipEmpty) {
+        skipEmpty = (undefined == skipEmpty) ? true : skipEmpty;
+        var len = list.length;
+        while (len--) {
+            if (skipEmpty && (!list[len] || !list[len].jsFormValidator)) {
+                continue;
+            }
+            callback(list[len]);
         }
     };
 }();
