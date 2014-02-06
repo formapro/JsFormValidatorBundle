@@ -133,7 +133,6 @@ The showErrors function should delete previous errors and display new ones.
 The example below shows you how it works in our default implementation.
 The ```sourceId``` variable is an identifier of validation source.
 It can be used to prevent any confusion between the field's errors and other errors which have come from other sources.
-
 For example, this field (user_email) may contain the Email constraint, and its own parent may contain the UniqueEntity constraint by this field.
 Both of these errors should be displayed for the email field, but the first one will be displayed/deleted by the 'user_email' validator and the second one - by the parent.
 By default we use this variable to add it as a class name to 'li' tags, and then we use it to remove the errors by this class name:
@@ -392,6 +391,7 @@ then you can define it on the JS side like:
 
 ### 3.7 The Choice constraint. How to get the choices list from a callback<a name="p_3_7"></a>
 
+In general, it works in the same way as the previous step.
 In case if you have:
 ```php
 namespace Acme\DemoBundle\Entity;
@@ -422,8 +422,10 @@ Then:
 ```js
 $('form#user').jsFormValidator({
     callbacks: {
-        'getGenders': function() {
-            return ['male', 'female'];
+        'Acme\\DemoBundle\\Entity\\Util': {
+            'getGenders': function() {
+                return ['male', 'female'];
+            }
         }
     }
 });
@@ -434,8 +436,10 @@ Pure Javascript:
 var field = document.getElementById('user');
 FpJsFormValidator.customize(field, {
     callbacks: {
-        'getGenders': function() {
-            return ['male', 'female'];
+        'Acme\\DemoBundle\\Entity\\Util': {
+            'getGenders': function() {
+                return ['male', 'female'];
+            }
         }
     }
 });
