@@ -224,22 +224,30 @@ class MainFunctionalTest extends BaseMinkTestCase
      */
     public function testCustomization()
     {
-        $jqErrors = $this->getAllErrorsOnPage('customization/jq/-');
-        $this->assertEquals(
-            array(
-                'custom_show_errors_message'
-            ),
-            $jqErrors,
-            'All the jQuery customizations were applied'
+        $expected = array(
+            'getter_message',
+            'callback_choices_list',
+            'custom_show_errors_message',
+            'groups_callback_message',
+            'own_callback_email_custom',
+            'static_callback_email_custom',
+            'direct_static_callback_email_custom',
+            'validate_callback_email_custom'
         );
 
-        $jsErrors = $this->getAllErrorsOnPage('customization/js/-');
-        $this->assertEquals(
-            array(
-                'custom_show_errors_message'
-            ),
-            $jsErrors,
-            'All the Javascript customizations were applied'
-        );
+        $jqErrors = $this->getAllErrorsOnPage('customization/jq/1');
+        $this->assertEmpty(array_diff($expected, $jqErrors), 'All the jQuery customizations were applied');
+
+        $jsErrors = $this->getAllErrorsOnPage('customization/js/1');
+        $this->assertEmpty(array_diff($expected, $jsErrors), 'All the Javascript customizations were applied');
+    }
+
+    /**
+     * Set custom controller to check the UniqueEntity constraint
+     */
+    public function testCustomUniqueEntityController()
+    {
+        $sfErrors = $this->getAllErrorsOnPage('customUniqueEntityController/-/-');
+        $this->assertEmpty(array_diff(array('not_blank_value'), $sfErrors), 'The custom UniqueConstraint controller works fine.');
     }
 }

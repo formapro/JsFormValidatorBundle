@@ -4,6 +4,7 @@
 
 {% block body %}
     {{ form_start(form, { 'attr': {'novalidate': 'novalidate' }}) }}
+    {{ form_errors(form) }}
     {{ form_rest(form) }}
     {{ form_end(form) }}
 
@@ -53,6 +54,42 @@
                     li.className = type;
                     li.innerHTML = 'custom_' + errors[i];
                     ul.appendChild(li);
+                }
+            }
+        });
+
+        field = document.getElementsByName('form')[0];
+        FpJsFormValidator.customize(field, {
+            groups: function () {
+                return ['groups_callback'];
+            },
+            callbacks: {
+                'isPasswordLegal': function() {
+                    return false;
+                },
+                'validateCallback': function() {
+                    var email = document.getElementById('form_email');
+                    email.jsFormValidator.showErrors.apply(email, [['validate_callback_email_custom'], 'validate-callback']);
+                },
+                'ownCallback': function() {
+                    var email = document.getElementById('form_email');
+                    email.jsFormValidator.showErrors.apply(email, [['own_callback_email_custom'], 'validate-callback-own']);
+                },
+                'Fp\\JsFormValidatorBundle\\Tests\\TestBundles\\DefaultTestBundle\\Validator\\ExternalValidator': {
+                    validateStaticCallback: function () {
+                        var email = document.getElementById('form_email');
+                        email.jsFormValidator.showErrors.apply(email, [['static_callback_email_custom'], 'static-validate-callback']);
+                    }
+                },
+                'validateDirectStaticCallback': function() {
+                    var email = document.getElementById('form_email');
+                    email.jsFormValidator.showErrors.apply(email, [['direct_static_callback_email_custom'], 'direct-static-validate-callback']);
+                },
+                'isValidChoicesList': function () {
+                    return 'September';
+                },
+                'getChoicesList': function () {
+                    return ['June', 'July', 'August'];
                 }
             }
         });

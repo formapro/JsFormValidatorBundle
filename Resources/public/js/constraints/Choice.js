@@ -77,8 +77,9 @@ function SymfonyComponentValidatorConstraintsChoice() {
     this.getChoicesList = function (element) {
         var choices = null;
         if (this.callback) {
-            if (typeof element.callbacks[this.callback] == "function") {
-                choices = element.callbacks[this.callback].apply(element);
+            var callback = FpJsFormValidator.getRealCallback(element, this.callback);
+            if (null !== callback) {
+                choices = callback.apply(element.domNode);
             } else {
                 throw new Error('Can not find a "' + this.callback + '" callback for the element id="' + element.id + '" to get a choices list.');
             }

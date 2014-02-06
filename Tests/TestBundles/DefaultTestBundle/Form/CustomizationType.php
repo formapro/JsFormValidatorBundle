@@ -5,7 +5,6 @@ namespace Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
-use Symfony\Component\Validator\Constraints\NotBlank;
 
 /**
  * Class TestFormType
@@ -23,6 +22,8 @@ class CustomizationType extends AbstractType
         $builder
             ->add('disabled')
             ->add('showErrors')
+            ->add('callbackGroups')
+            ->add('email')
             ->add('submit', 'submit');
     }
 
@@ -31,9 +32,14 @@ class CustomizationType extends AbstractType
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        $resolver->setDefaults(array(
-            'data_class' => 'Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\CustomizationEntity',
-        ));
+        $resolver->setDefaults(
+            array(
+                'data_class'        => 'Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\CustomizationEntity',
+                'validation_groups' => function () {
+                        return array('groups_callback');
+                    }
+            )
+        );
     }
 
     /**

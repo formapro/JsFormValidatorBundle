@@ -2,8 +2,6 @@
 
 namespace Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Twig\Extension;
 
-use Fp\JsFormValidatorBundle\Factory\JsFormValidatorFactory;
-use Symfony\Bundle\FrameworkBundle\Templating\GlobalVariables;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Kernel;
 

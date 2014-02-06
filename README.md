@@ -8,21 +8,13 @@ It converts form type constraints into JavaScript validation rules.
 
 ### 1.1 Download FpJsFormValidatorBundle using composer<a name="p_1_1"></a>
 
-Add the next line to your ``composer.json`` file:
-```json
-"require": {
-    ...
-    "fp/jsformvalidator-bundle": "dev-master"
-}
-```
-
-Now run:
+Run in terminal:
 ```bash
-$ php composer.phar update fp/jsformvalidator-bundle
+$ php composer.phar require "fp/jsformvalidator-bundle":"dev-master"
 ```
 ### 1.2 Enable the bundle<a name="p_1_2"></a>
 
-Enable the bundle in the kernel:
+Enable the bundle:
 ```php
 // app/AppKernel.php
 
@@ -35,7 +27,7 @@ public function registerBundles()
 }
 ```
 
-### 1.3 Enable the javascript libraries<a name="p_1_3"></a>
+### 1.3 Enable javascript libraries<a name="p_1_3"></a>
 
 ```twig
 <html>
@@ -127,7 +119,7 @@ $('#user_email').jsFormValidator({
 });
 ```
 
-Native Javascript:
+Pure Javascript:
 ```js
 var field = document.getElementById('user_email');
 FpJsFormValidator.customize(field, {
@@ -137,30 +129,28 @@ FpJsFormValidator.customize(field, {
 
 ### 3.3 Error display<a name="p_3_3"></a>
 
-The example below shows errors in the same way as the default functional of this bundle.
+The showErrors function should delete previous errors and display new ones.
+The example below shows you how it works in our default implementation.
+The ```sourceId``` variable is an identifier of validation source.
+It can be used to prevent any confusion between the field's errors and other errors which have come from other sources.
 
-Each field can contain not only its own errors, but also errors that have come from other sources of validation.
-For example, this field (user_email) may contain the Email constraint, and its own form may contain the UniqueEntity constraint by this field.
-Both of these errors should be displayed for the email field.
-The similar situations may occur when you use the Callback constraint.
-
-So, to prevent any confusion between the field's errors and other the errors which have come from other sources, we've added the 'sourceClass' variable that shows you a unique id of the source of errors.
-By default we use this variable to add it as a class name to 'li' tags, and then we use it to remove the errors by this class name.
-You can see that in the example below:
+For example, this field (user_email) may contain the Email constraint, and its own parent may contain the UniqueEntity constraint by this field.
+Both of these errors should be displayed for the email field, but the first one will be displayed/deleted by the 'user_email' validator and the second one - by the parent.
+By default we use this variable to add it as a class name to 'li' tags, and then we use it to remove the errors by this class name:
 
 ```js
 $('#user_email').jsFormValidator({
-    showErrors: function(errors, sourceClass) {
+    showErrors: function(errors, sourceId) {
         var list = $(this).prev('ul.form-errors');
         if (!list.length) {
             list = $('<ul class="form-errors"></ul>');
             $(this).before(list);
         }
-        list.find('.' + sourceClass).remove();
+        list.find('.' + sourceId).remove();
 
         for (var i in errors) {
             var li = $('<li></li>', {
-                'class': sourceClass,
+                'class': sourceId,
                 'text': 'custom_'+ errors[i]
             });
             list.append(li);
@@ -169,11 +159,11 @@ $('#user_email').jsFormValidator({
 });
 ```
 
-Native Javascript:
+Pure Javascript:
 ```js
 var field = document.getElementById('user_email');
 FpJsFormValidator.customize(field, {
-    showErrors: function(errors, sourceClass) {
+    showErrors: function(errors, sourceId) {
         for (var i in errors) {
             // do something with each error
         }
@@ -183,19 +173,281 @@ FpJsFormValidator.customize(field, {
 
 ### 3.4 Get validation groups from a closure<a name="p_3_4"></a>
 
-**In progress**
+If you have defined validation groups as a callback:
+
+```php
+namespace Acme\DemoBundle\Form;
+
+class UserType extends AbstractType
+{
+    // ...
+
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    {
+        $resolver->setDefaults(
+            array(
+                'data_class'        => 'Acme\DemoBundle\Entity\User',
+                'validation_groups' => function () {
+                        if (...) {
+                            return array(...);
+                        } else {
+                            return array(...);
+                        }
+                    }
+            )
+        );
+    }
+}
+```
+
+Then you have to implement it on the JS side:
+```js
+$('form#user').jsFormValidator({
+    groups: function () {
+        if (...) {
+            return [...];
+        } else {
+            return [...];
+        }
+    }
+});
+```
+
+Pure Javascript:
+```js
+var field = document.getElementById('user');
+FpJsFormValidator.customize(field, {
+    groups: function () {
+        if (...) {
+            return [...];
+        } else {
+            return [...];
+        }
+    }
+});
+```
 
 ### 3.5 Getters validation<a name="p_3_5"></a>
 
-**In progress**
+If you have getters validation:
+```php
+namespace Acme\DemoBundle\Entity;
+class User
+{
+    // ...
+
+    /**
+     * @return bool
+     *
+     * @Assert\True(message="The password cannot match your first name")
+     */
+    public function isPasswordLegal()
+    {
+        return $this->firstName != $this->password;
+    }
+}
+```
+
+then you have to create a callback:
+
+Then you have to implement it on the JS side:
+```js
+$('form#user').jsFormValidator({
+    callbacks: {
+        'isPasswordLegal': function() {
+            var firstName = $('#user_firstName').val();
+            var password = $('#user_password').val();
+            return firstName != password;
+        }
+    }
+});
+```
+
+Pure Javascript:
+```js
+var field = document.getElementById('user');
+FpJsFormValidator.customize(field, {
+    callbacks: {
+        'isPasswordLegal': function() {
+            var firstName = document.getElementById('user_firstName').value;
+            var password = document.getElementById('user_password').value;
+            return firstName != password;
+        }
+    }
+});
+```
 
 ### 3.6 The Callback constraint<a name="p_3_6"></a>
 
-**In progress**
+#### 3.6.1 Callback by a method name<a name="p_3_6_1"></a>
+
+For the next cases:
+
+```php
+namespace Acme\DemoBundle\Entity;
+
+use Symfony\Component\Validator\Constraints as Assert;
+
+/**
+ * @Assert\Callback("checkEmail")
+ * or
+ * @Assert\Callback({"checkEmail"})
+ */
+class User
+{
+    // ...
+
+    public function checkEmail()
+    {
+        if (...) {
+            $context->addViolationAt('email', 'Email is not valid');
+        }
+    }
+}
+```
+or
+```php
+/**
+ * @Assert\Callback
+ */
+public function checkEmail()
+{
+    if (...) {
+        $context->addViolationAt('email', 'Email is not valid');
+    }
+}
+```
+
+You have to create the next callback (pay attention that here you should pass the [sourceId](#p_3_3) parameter):
+```js
+$('form#user').jsFormValidator({
+    callbacks: {
+        'checkEmail': function() {
+            var errors = [];
+            if (...) {
+                errors.push('Email is not valid');
+            }
+            $('#form_email').jsFormValidator('showErrors', {
+                errors: errors,
+                sourceId: 'check-email-callback'
+            });
+        }
+    }
+});
+```
+
+Pure Javascript:
+```js
+var field = document.getElementById('user');
+FpJsFormValidator.customize(field, {
+    callbacks: {
+        'checkEmail': function() {
+            var errors = [];
+            if (...) {
+                errors.push('Email is not valid');
+            }
+            var email = document.getElementById('user_email');
+            email.jsFormValidator.showErrors.apply(email, [errors, 'check-email-callback'])
+        }
+    }
+});
+```
+
+#### 3.6.2 Callback by class and method names<a name="p_3_6_2"></a>
+
+In case if you have defined a callback like this:
+```php
+namespace Acme\DemoBundle\Entity;
+
+/**
+ * @Assert\Callback({"Acme\DemoBundle\Validator\ExternalValidator", "checkEmail"})
+ */
+class User
+{
+    // ...
+}
+```
+
+then you can define it on the JS side like:
+```js
+// ...
+    callbacks: {
+        'Acme\\DemoBundle\\Validator\\ExternalValidator': {
+            'checkEmail': function () {
+                // ...
+            }
+        }
+    }
+```
+
+<a name="p_3_6_2_1"></a>or you can also define it without nesting (like in the [3.6.1](#p_3_6_1) paragraph), but only if the method name is unique:
+```js
+// ...
+    callbacks: {
+        'checkEmail': function () {
+            // ...
+        }
+    }
+```
+
+### 3.7 The Choice constraint. How to get the choices list from a callback<a name="p_3_7"></a>
+
+In case if you have:
+```php
+namespace Acme\DemoBundle\Entity;
+
+use Symfony\Component\Validator\Constraints as Assert;
+
+class User
+{
+    /**
+     * @Assert\Choice(callback = {"Acme\DemoBundle\Entity\Util", "getGenders"})
+     */
+    protected $gender;
+}
+```
+```php
+namespace Acme\DemoBundle\Entity;
+
+class Util
+{
+    public static function getGenders()
+    {
+        return array('male', 'female');
+    }
+}
+```
+
+Then:
+```js
+$('form#user').jsFormValidator({
+    callbacks: {
+        'getGenders': function() {
+            return ['male', 'female'];
+        }
+    }
+});
+```
+
+Pure Javascript:
+```js
+var field = document.getElementById('user');
+FpJsFormValidator.customize(field, {
+    callbacks: {
+        'getGenders': function() {
+            return ['male', 'female'];
+        }
+    }
+});
+```
+
+also, you can simplify it as it was described [here](#p_3_6_2_1)
 
 ### 3.7 Custom constraints<a name="p_3_7"></a>
 
-If you have your own constraint, you can do the same as on the prev. steps:
+If you have your own constraint, you have to implement it on the JS side too.
+Just add a JS class with a name, similar to the full class name of the related constraint (but without slashes).
+For example, you have created the next constraint:
 
 ```php
 // src/Acme/DemoBundle/Validator/Constraints/ContainsAlphanumeric.php
@@ -283,4 +535,50 @@ If you already have a custom composite field with the custom Acme\DemoBundle\For
 
 ### 3.9 Checking the uniqueness of entities<a name="p_3_9"></a>
 
-**In progress**
+If you want to customize validation of the UniqueEntity constraint on the server side, then you can create your own controller and route, and change it in the config:
+```yaml
+//app/config/config.yml
+# ...
+fp_js_form_validator:
+    routing:
+        check_unique_entity: custom_unique_controller
+```
+```yaml
+//app/config/routing.yml
+# ...
+custom_unique_controller:
+    pattern:  /custom_unique_controller
+    defaults: { _controller: "AcmeDemoBundle:CustomUnique:index" }
+```
+```php
+namespace Acme\DemoBundle\Controller;
+
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
+
+class CustomUniqueController extends  Controller
+{
+    public function indexAction(Request $request)
+    {
+        $data = $request->request->all();
+        // ...
+    }
+}
+```
+Here you can see what kind of data you will receive in the request:
+```php
+$data = array (
+  'message'          => 'This value is already used.',
+  'service'          => 'doctrine.orm.validator.unique',
+  'repositoryMethod' => 'findBy',
+  'fields'           => array ('email'),
+  'ignoreNull'       => '1',
+  'groups'           => array ('Default', 'User'),
+  'entityName'       => 'Acme\DemoBundle\Entity\User',
+  'data'             => array (
+      'email' => 'john_doe@example.com',
+  )
+)
+```
+
+Now, you can create your own logic to check the uniqueness using this input data

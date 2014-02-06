@@ -8,5 +8,5 @@
     {{ form_start(form, { 'attr': {'novalidate': 'novalidate' }}) }}
     <input type="submit" name="form_submit" id="form_submit"/>
     {{ form_row(form.name) }}
-    </form>
+    {{ form_end(form) }}
 {% endblock %}

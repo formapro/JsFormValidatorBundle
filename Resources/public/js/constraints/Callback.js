@@ -11,34 +11,18 @@ function SymfonyComponentValidatorConstraintsCallback () {
         if (!this.callback) {
             this.callback = [];
         }
-        if (typeof this.callback == "string") {
-            this.callback = [this.callback];
-        }
         if (!this.methods) {
             this.methods = [this.callback];
         }
 
-        for (var pairId in this.methods) {
-            var className  = (1 == this.methods[pairId].length)
-                ? null
-                : this.methods[pairId][0];
-
-            var methodName = (1 == this.methods[pairId].length)
-                ? this.methods[pairId][0]
-                : this.methods[pairId][1];
-
-            var method = function(){};
-
-            if (!element.callbacks[className] && typeof element.callbacks[methodName] == "function") {
-                method = element.callbacks[methodName];
-            } else if (element.callbacks[className] && typeof element.callbacks[className][methodName] == "function") {
-                method = element.callbacks[className][methodName];
-            } else if (typeof element.callbacks[methodName] == "function") {
-                method = element.callbacks[methodName];
+        for (var i in this.methods) {
+            var method = FpJsFormValidator.getRealCallback(element, this.methods[i]);
+            if (null !== method) {
+                method.apply(element.domNode);
+            } else {
+                throw new Error('Can not find a "' + this.callback + '" callback for the element id="' + element.id + '" to validate the Callback constraint.');
             }
         }
-
-        method.apply(element.domNode);
 
         return [];
     }

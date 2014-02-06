@@ -19,6 +19,11 @@ if (!empty($_SERVER['REQUEST_URI'])) {
     if ($requestParts && 'global' == $requestParts[1]) {
         $env = 'disable';
     }
+    // This trick uses to test custom unique entity controller
+    preg_match('/test\/customUniqueEntityController\/-\/-/', $_SERVER['REQUEST_URI'], $requestParts);
+    if ($requestParts) {
+        $env = 'unique';
+    }
 }
 
 $loader = require_once __DIR__ . '/bootstrap.php';

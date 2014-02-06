@@ -27,17 +27,17 @@ function FpJsFormElement() {
         var self = this;
         self.errors = [];
         FpJsFormValidator.validateElement(self);
-        var type = 'form-error-' + String(this.id).replace('_', '-');
+        var sourceId = 'form-error-' + String(this.id).replace('_', '-');
         var errorPath = FpJsFormValidator.getErrorPathElement(self);
 
         if (FpJsFormValidator.ajax.hasRequest(self)) {
             FpJsFormValidator.ajax.addCallback(self, function () {
-                errorPath.showErrors.apply(errorPath.domNode, [self.errors, type]);
-                errorPath.postValidate.apply(errorPath.domNode, [self.errors, type]);
+                errorPath.showErrors.apply(errorPath.domNode, [self.errors, sourceId]);
+                errorPath.postValidate.apply(errorPath.domNode, [self.errors, sourceId]);
             });
         } else {
-            errorPath.showErrors.apply(errorPath.domNode, [self.errors, type]);
-            errorPath.postValidate.apply(errorPath.domNode, [self.errors, type]);
+            errorPath.showErrors.apply(errorPath.domNode, [self.errors, sourceId]);
+            errorPath.postValidate.apply(errorPath.domNode, [self.errors, sourceId]);
         }
 
         return self.errors.length == 0;
@@ -50,7 +50,7 @@ function FpJsFormElement() {
         }
     };
 
-    this.showErrors = function (errors, type) {
+    this.showErrors = function (errors, sourceId) {
         if (!(this instanceof HTMLElement)) {
             return;
         }
@@ -63,7 +63,7 @@ function FpJsFormElement() {
         if (ul) {
             var len = ul.childNodes.length;
             while (len--) {
-                if (type == ul.childNodes[len].className) {
+                if (sourceId == ul.childNodes[len].className) {
                     ul.removeChild(ul.childNodes[len]);
                 }
             }
@@ -85,13 +85,13 @@ function FpJsFormElement() {
         var li;
         for (var i in errors) {
             li = document.createElement('li');
-            li.className = type;
+            li.className = sourceId;
             li.innerHTML = errors[i];
             ul.appendChild(li);
         }
     };
 
-    this.postValidate = function (errors, type) {
+    this.postValidate = function (errors, sourceId) {
     };
 }
 
@@ -246,7 +246,7 @@ function FpJsCustomizeMethods () {
     this.showErrors = function(opts) {
         //noinspection JSCheckFunctionSignatures
         FpJsFormValidator.each(this, function(item){
-            item.jsFormValidator.showErrors.apply(item, [opts['errors'], opts['type']]);
+            item.jsFormValidator.showErrors.apply(item, [opts['errors'], opts['sourceId']]);
         });
     };
 
@@ -753,5 +753,39 @@ var FpJsFormValidator = new function () {
             }
             callback(list[len]);
         }
+    };
+
+    /**
+     * Looks for the callback in a specified element by string or array
+     *
+     * @param {FpJsFormElement} element
+     * @param {Array|String} data
+     * @returns {Function|null}
+     */
+    this.getRealCallback = function (element, data) {
+        var className  = null;
+        var methodName = null;
+        if (typeof data == "string") {
+            methodName = data;
+        } else if (Array.isArray(data)) {
+            if (1 == data.length) {
+                methodName = data[0];
+            } else {
+                className = data[0];
+                methodName = data[1];
+            }
+        }
+
+        var callback = null;
+
+        if (!element.callbacks[className] && typeof element.callbacks[methodName] == "function") {
+            callback = element.callbacks[methodName];
+        } else if (element.callbacks[className] && typeof element.callbacks[className][methodName] == "function") {
+            callback = element.callbacks[className][methodName];
+        } else if (typeof element.callbacks[methodName] == "function") {
+            callback = element.callbacks[methodName];
+        }
+
+        return callback;
     };
 }();

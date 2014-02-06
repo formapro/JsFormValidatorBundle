@@ -23,6 +23,11 @@ switch ($env) {
     case 'disable':
         $bundleConfig['js_validation'] = false;
         break;
+    case 'unique':
+        $bundleConfig['routing'] = array(
+            'check_unique_entity' => 'fp_js_form_validator_unique_entity_controller'
+        );
+        break;
     default:
         break;
 }

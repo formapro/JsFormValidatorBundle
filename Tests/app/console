@@ -11,9 +11,11 @@ require_once __DIR__.'/bootstrap.php';
 require_once __DIR__.'/AppKernel.php';
 
 use Symfony\Bundle\FrameworkBundle\Console\Application;
-use Symfony\Component\Console\Input\ArgvInput;
+use /** @noinspection PhpUndefinedClassInspection */
+    Symfony\Component\Console\Input\ArgvInput;
 use Symfony\Component\Debug\Debug;
 
+/** @noinspection PhpUndefinedClassInspection */
 $input = new ArgvInput();
 $env = $input->getParameterOption(array('--env', '-e'), getenv('SYMFONY_ENV') ?: 'dev');
 $debug = getenv('SYMFONY_DEBUG') !== '0' && !$input->hasParameterOption(array('--no-debug', '')) && $env !== 'prod';
@@ -22,6 +24,7 @@ if ($debug) {
     Debug::enable();
 }
 
+/** @noinspection PhpUndefinedClassInspection */
 $kernel = new AppKernel($env, $debug);
 $application = new Application($kernel);
 $application->run($input);
