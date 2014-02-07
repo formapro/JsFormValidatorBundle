@@ -600,4 +600,4 @@ If you want to run tests for this bundle on your project, you have to:
 This shell script will make all the necessary settings to run the tests. This will require sudo.
 If you do not trust this script - read it and do everything yourself step by step.
 
-- do not forget to remove extra bundles from your composer.json
+- do not forget to remove extra bundles from your composer.json after the testing
