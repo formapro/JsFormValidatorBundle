@@ -8,7 +8,9 @@ $defaults = array(
 
 if (file_exists( __DIR__ . '/local_config.php')) {
     $localConfig = include_once __DIR__ . '/local_config.php';
-    $defaults = array_merge($defaults, (array) $localConfig);
+    foreach ($localConfig as $name => $opts) {
+        $defaults[$name] = array_merge($defaults[$name], $localConfig[$name]);
+    }
 }
 
 $bundleConfig = array();

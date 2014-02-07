@@ -2,8 +2,17 @@
 
 use Doctrine\Common\Annotations\AnnotationRegistry;
 
-/** @noinspection PhpIncludeInspection */
-$loader = require __DIR__.'/../../vendor/autoload.php';
+$files = array(
+    'local'  => __DIR__ . '/../../vendor/autoload.php',
+    'global' => __DIR__ . '/../../../../../../autoload.php',
+);
+foreach ($files as $file) {
+    if (file_exists($file)) {
+        /** @noinspection PhpIncludeInspection */
+        $loader = include $file;
+        break;
+    }
+}
 
 AnnotationRegistry::registerLoader(array($loader, 'loadClass'));
 

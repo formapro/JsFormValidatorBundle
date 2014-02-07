@@ -589,3 +589,15 @@ $data = array (
 ```
 
 Now, you can create your own logic to check the uniqueness using this input data
+
+## 4 Run tests<a name="p_4"></a>
+
+If you want to run tests for this bundle on your project, you have to:
+- copy all the dev requirements from [here](https://github.com/formapro/JsFormValidatorBundle/blob/master/composer.json) to your main composer.json, which are not added yet.
+- run ```php composer.phar update```
+- navigate to the vendor/fp/jsformvalidator-bundle/Fp/JsFormValidatorBundle folder
+- run in terminal ```sh run_tests.sh```
+This shell script will make all the necessary settings to run the tests. This will require sudo.
+If you do not trust this script - read it and do everything yourself step by step.
+
+- do not forget to remove extra bundles from your composer.json
