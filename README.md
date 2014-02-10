@@ -349,7 +349,10 @@ FpJsFormValidator.customize(field, {
                 errors.push('Email is not valid');
             }
             var email = document.getElementById('user_email');
-            email.jsFormValidator.showErrors.apply(email, [errors, 'check-email-callback'])
+            FpJsFormValidator.customize(email, 'showErrors', {
+                errors: errors,
+                sourceId: 'check-email-callback'
+            });
         }
     }
 });

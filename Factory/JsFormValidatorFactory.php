@@ -168,6 +168,18 @@ class JsFormValidatorFactory
     }
 
     /**
+     * Check if form is already in queue
+     *
+     * @param Form $form
+     *
+     * @return bool
+     */
+    public function inQueue(Form $form)
+    {
+        return isset($this->queue[$form->getName()]);
+    }
+
+    /**
      * @return JsFormElement[]
      */
     public function processQueue()

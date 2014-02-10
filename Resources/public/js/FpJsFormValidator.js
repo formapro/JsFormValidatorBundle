@@ -13,7 +13,7 @@ function FpJsFormElement() {
     this.domNode = null;
 
     this.callbacks = {};
-    this.errors = [];
+    this.errors = {};
 
     this.groups = function () {
         return ['Default'];
@@ -25,22 +25,14 @@ function FpJsFormElement() {
         }
 
         var self = this;
-        self.errors = [];
-        FpJsFormValidator.validateElement(self);
         var sourceId = 'form-error-' + String(this.id).replace('_', '-');
+        self.errors[sourceId] = FpJsFormValidator.validateElement(self);
+
         var errorPath = FpJsFormValidator.getErrorPathElement(self);
+        errorPath.showErrors.apply(errorPath.domNode, [self.errors[sourceId], sourceId]);
+        errorPath.postValidate.apply(errorPath.domNode);
 
-        if (FpJsFormValidator.ajax.hasRequest(self)) {
-            FpJsFormValidator.ajax.addCallback(self, function () {
-                errorPath.showErrors.apply(errorPath.domNode, [self.errors, sourceId]);
-                errorPath.postValidate.apply(errorPath.domNode, [self.errors, sourceId]);
-            });
-        } else {
-            errorPath.showErrors.apply(errorPath.domNode, [self.errors, sourceId]);
-            errorPath.postValidate.apply(errorPath.domNode, [self.errors, sourceId]);
-        }
-
-        return self.errors.length == 0;
+        return self.errors[sourceId].length == 0;
     };
 
     this.validateRecursively = function () {
@@ -48,6 +40,22 @@ function FpJsFormElement() {
         for (var childName in this.children) {
             this.children[childName].validateRecursively();
         }
+    };
+
+    this.isValid = function () {
+        for (var id in this.errors) {
+            if (this.errors[id].length > 0) {
+                return false;
+            }
+        }
+
+        for (var childName in this.children) {
+            if (!this.children[childName].isValid()) {
+                return false;
+            }
+        }
+
+        return true;
     };
 
     this.showErrors = function (errors, sourceId) {
@@ -96,23 +104,10 @@ function FpJsFormElement() {
 }
 
 function FpJsAjaxRequest() {
-    this.queue = {};
+    this.queue = 0;
+    this.callbacks = [];
 
-    this.hasRequest = function (element) {
-        return this.queue[element.id] && this.queue[element.id]['count'] > 0;
-    };
-
-    this.addCallback = function (element, callback) {
-        if (!this.queue[element.id]) {
-            this.queue[element.id] = {
-                'count': 0,
-                'callbacks': []
-            };
-        }
-        this.queue[element.id]['callbacks'].push(callback);
-    };
-
-    this.sendRequest = function (path, data, callback, owner) {
+    this.sendRequest = function (path, data, callback) {
         var self = this;
         var request = this.createRequest();
 
@@ -121,35 +116,23 @@ function FpJsAjaxRequest() {
             request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
             request.onreadystatechange = function () {
                 if (4 == request.readyState && 200 == request.status) {
-                    callback(request.responseText, owner);
-                    self.decreaseQueue(owner);
+                    callback(request.responseText);
+                    self.queue--;
+                    self.checkQueue();
                 }
             };
 
             request.send(this.serializeData(data, null));
-            self.increaseQueue(owner);
+            self.queue++;
         } catch (e) {
             console.log(e.message);
         }
     };
 
-    this.increaseQueue = function (owner) {
-        if (!this.queue[owner.id]) {
-            this.queue[owner.id] = {
-                'count': 0,
-                'callbacks': []
-            };
-        }
-        this.queue[owner.id].count++;
-    };
-
-    this.decreaseQueue = function (owner) {
-        if (undefined != this.queue[owner.id]) {
-            this.queue[owner.id].count--;
-            if (0 == this.queue[owner.id].count) {
-                for (var i in this.queue[owner.id].callbacks) {
-                    this.queue[owner.id].callbacks[i](owner);
-                }
+    this.checkQueue = function () {
+        if (0 == this.queue) {
+            for (var i in this.callbacks) {
+                this.callbacks[i]();
             }
         }
     };
@@ -205,11 +188,11 @@ function FpJsAjaxRequest() {
     };
 }
 
-function FpJsCustomizeMethods () {
+function FpJsCustomizeMethods() {
 
 
-    this.init = function(options) {
-        FpJsFormValidator.each(this, function(item){
+    this.init = function (options) {
+        FpJsFormValidator.each(this, function (item) {
             if (!item.jsFormValidator) {
                 item.jsFormValidator = {};
             }
@@ -227,13 +210,27 @@ function FpJsCustomizeMethods () {
         }, false);
     };
 
-    this.validate = function(opts) {
+    this.validate = function (opts) {
         var isValid = true;
         //noinspection JSCheckFunctionSignatures
-        FpJsFormValidator.each(this, function(item){
-            var method = (true === opts['recursive'])
+        FpJsFormValidator.each(this, function (item) {
+            var method = (opts && true === opts['recursive'])
                 ? 'validateRecursively'
                 : 'validate';
+
+            var validateUnique = (!opts || false !== opts['findUniqueContsraint']);
+            if (validateUnique && item.jsFormValidator.parent) {
+                var data = item.jsFormValidator.parent.data;
+                if (data['entity'] && data['entity']['constraints']) {
+                    for (var i in data['entity']['constraints']) {
+                        var constraint = data['entity']['constraints'][i];
+                        if (constraint instanceof FpJsFormValidatorBundleFormConstraintUniqueEntity && constraint.fields.indexOf(item.name)) {
+                            var owner = item.jsFormValidator.parent;
+                            constraint.validate(null, owner);
+                        }
+                    }
+                }
+            }
 
             if (item.jsFormValidator[method]()) {
                 isValid = false;
@@ -243,17 +240,18 @@ function FpJsCustomizeMethods () {
         return isValid;
     };
 
-    this.showErrors = function(opts) {
+    this.showErrors = function (opts) {
         //noinspection JSCheckFunctionSignatures
-        FpJsFormValidator.each(this, function(item){
+        FpJsFormValidator.each(this, function (item) {
+            item.jsFormValidator.errors[opts['sourceId']] = opts['errors'];
             item.jsFormValidator.showErrors.apply(item, [opts['errors'], opts['sourceId']]);
         });
     };
 
-    this.get = function() {
+    this.get = function () {
         var elements = [];
         //noinspection JSCheckFunctionSignatures
-        FpJsFormValidator.each(this, function(item){
+        FpJsFormValidator.each(this, function (item) {
             elements.push(item.jsFormValidator);
         });
 
@@ -261,12 +259,34 @@ function FpJsCustomizeMethods () {
     };
 }
 
+var FpJsBaseConstraint = {
+    prepareMessage: function (message, params, plural) {
+        var realMsg = message;
+        var listMsg = message.split('|');
+        if (listMsg.length > 1) {
+            if (plural == 1) {
+                realMsg = listMsg[0];
+            } else {
+                realMsg = listMsg[1];
+            }
+        }
+
+        for (var paramName in params) {
+            var regex = new RegExp(paramName, 'g');
+            realMsg = realMsg.replace(regex, params[paramName]);
+        }
+
+        return realMsg;
+    }
+};
+
 var FpJsFormValidator = new function () {
     this.forms = {};
     this.errorClass = 'form-errors';
     this.config = {};
     this.ajax = new FpJsAjaxRequest();
     this.customizeMethods = new FpJsCustomizeMethods();
+    this.constraintsCounter = 0;
 
     //noinspection JSUnusedGlobalSymbols
     this.addModel = function (model) {
@@ -350,7 +370,7 @@ var FpJsFormValidator = new function () {
      */
     this.validateElement = function (element) {
         var errors = [];
-        var value  = this.getElementValue(element);
+        var value = this.getElementValue(element);
         for (var type in element.data) {
 
             if (!this.checkParentCascadeOption(element) && 'entity' == type) {
@@ -387,10 +407,10 @@ var FpJsFormValidator = new function () {
             }
         }
 
-        element.errors = errors;
+        return errors;
     };
 
-    this.checkParentCascadeOption = function(element) {
+    this.checkParentCascadeOption = function (element) {
         var result = true;
         if (element.parent && !element.parent.cascade) {
             result = false;
@@ -515,6 +535,8 @@ var FpJsFormValidator = new function () {
                     for (var param in list[name][i]) {
                         constraint[param] = list[name][i][param];
                     }
+                    constraint.uniqueId = this.constraintsCounter;
+                    this.constraintsCounter++;
                     if (typeof constraint.onCreate === 'function') {
                         constraint.onCreate();
                     }
@@ -530,7 +552,7 @@ var FpJsFormValidator = new function () {
      * @param list
      * @returns {Array}
      */
-    this.parseTransformers = function(list) {
+    this.parseTransformers = function (list) {
         var transformers = [];
         var i = list.length;
         while (i--) {
@@ -588,22 +610,19 @@ var FpJsFormValidator = new function () {
     this.attachDefaultEvent = function (element, form) {
         var self = this;
         form.addEventListener('submit', function (event) {
-            if (!element.validate()) {
+            element.validateRecursively();
+            if (!element.isValid()) {
                 event.preventDefault();
             }
-            if (self.ajax.hasRequest(element)) {
+            if (self.ajax.queue) {
                 event.preventDefault();
-                self.ajax.addCallback(element, function (owner) {
-                    if (!owner.errors.length) {
+                self.ajax.callbacks.push(function () {
+                    if (element.isValid()) {
                         form.submit();
                     }
-                })
+                });
             }
         });
-
-        for (var childName in element.children) {
-            this.attachDefaultEvent(element.children[childName], form);
-        }
     };
 
     /**
@@ -720,7 +739,7 @@ var FpJsFormValidator = new function () {
      * @param method
      * @returns {*}
      */
-    this.customize = function(items, method) {
+    this.customize = function (items, method) {
         if (!Array.isArray(items)) {
             items = [items];
         }
@@ -763,7 +782,7 @@ var FpJsFormValidator = new function () {
      * @returns {Function|null}
      */
     this.getRealCallback = function (element, data) {
-        var className  = null;
+        var className = null;
         var methodName = null;
         if (typeof data == "string") {
             methodName = data;

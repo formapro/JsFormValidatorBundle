@@ -458,19 +458,19 @@ class BasicConstraintsEntity
      * @return string
      * @Assert\Length(
      *     min=6,
-     *     minMessage="{{ value }}_minLength_{{ limit }}"
+     *     minMessage="value_minLength_singular_{{ limit }}|value_minLength_plural_{{ limit }}"
      * )
      */
     public function isLengthMin()
     {
-        return $this->_t_get('long_pass', '');
+        return $this->_t_get('long_pass', 'a');
     }
 
     /**
      * @return string
      * @Assert\Length(
      *     max=1,
-     *     maxMessage="{{ value }}_maxLength_{{ limit }}"
+     *     maxMessage="value_maxLength_singular_{{ limit }}|value_maxLength_plural_{{ limit }}"
      * )
      */
     public function isLengthMax()
@@ -483,7 +483,7 @@ class BasicConstraintsEntity
      * @Assert\Length(
      *     min=1,
      *     max=1,
-     *     exactMessage="{{ value }}_exactLength_{{ limit }}"
+     *     exactMessage="value_exactLength_singular_{{ limit }}|value_exactLength_plural_{{ limit }}"
      * )
      */
     public function isLengthExact()
@@ -494,20 +494,20 @@ class BasicConstraintsEntity
     /**
      * @return array
      * @Assert\Count(
-     *     min=1,
-     *     minMessage="value_minCount_{{ limit }}"
+     *     min=3,
+     *     minMessage="value_minCount_singular_{{ limit }}|value_minCount_plural_{{ limit }}"
      * )
      */
     public function isCountMin()
     {
-        return $this->_t_get(array('a'), array());
+        return $this->_t_get(array('a', 'b', 'c', 'd'), array());
     }
 
     /**
      * @return array
      * @Assert\Count(
      *     max=1,
-     *     maxMessage="value_maxCount_{{ limit }}"
+     *     maxMessage="value_maxCount_singular_{{ limit }}|value_maxCount_plural_{{ limit }}"
      * )
      */
     public function isCountMax()
@@ -520,7 +520,7 @@ class BasicConstraintsEntity
      * @Assert\Count(
      *     min=1,
      *     max=1,
-     *     exactMessage="value_exactCount_{{ limit }}"
+     *     exactMessage="value_exactCount_singular_{{ limit }}|value_exactCount_plural_{{ limit }}"
      * )
      */
     public function isCountExact()
@@ -532,7 +532,7 @@ class BasicConstraintsEntity
      * @return int
      * @Assert\Range(
      *     min=1,
-     *     minMessage="{{ value }}_minRange_{{ limit }}"
+     *     minMessage="value_minRange_{{ limit }}"
      * )
      */
     public function isRangeMin()
@@ -544,7 +544,7 @@ class BasicConstraintsEntity
      * @return int
      * @Assert\Range(
      *     max=1,
-     *     maxMessage="{{ value }}_maxRange_{{ limit }}"
+     *     maxMessage="value_maxRange_{{ limit }}"
      * )
      */
     public function isRangeMax()
@@ -557,7 +557,7 @@ class BasicConstraintsEntity
      * @Assert\Range(
      *     min=1,
      *     min=1,
-     *     invalidMessage="{{ value }}_invalidRangeValue"
+     *     invalidMessage="value_invalidRangeValue"
      * )
      */
     public function isRangeValueValid()
@@ -716,7 +716,7 @@ class BasicConstraintsEntity
      *     callback="getChoicesList",
      *     multiple=true,
      *     min=2,
-     *     minMessage="minChoice_value"
+     *     minMessage="minChoice_value_singular_{{ limit }}|minChoice_value_plural_{{ limit }}"
      * )
      */
     public function isMinMultipleChoice()
@@ -730,7 +730,7 @@ class BasicConstraintsEntity
      *     callback="getChoicesList",
      *     multiple=true,
      *     max=1,
-     *     maxMessage="maxChoice_value"
+     *     maxMessage="maxChoice_value_singular_{{ limit }}|maxChoice_value_plural_{{ limit }}"
      * )
      */
     public function isMaxMultipleChoice()

@@ -6,6 +6,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 
 /**
  * Class FormSubscriber
@@ -44,11 +45,27 @@ class SubscriberToQueue implements EventSubscriberInterface
         $form         = $event->getForm();
         $globalSwitch = $this->factory->getConfig('js_validation');
         $localSwitch  = $form->getConfig()->getOption('js_validation');
-        $isForm       = 'form' == $form->getConfig()->getType()->getInnerType()->getName();
 
         // Add only parent forms which are not disabled
-        if (!$form->getParent() && $globalSwitch && $localSwitch && $isForm) {
-            $this->factory->addToQueue($form);
+        if ($globalSwitch && $localSwitch) {
+            $parent = $this->getParent($form);
+            if (!$this->factory->inQueue($parent)) {
+                $this->factory->addToQueue($this->getParent($form));
+            }
+        }
+    }
+
+    /**
+     * @param Form|FormInterface $element
+     *
+     * @return \Symfony\Component\Form\Form
+     */
+    protected function getParent($element)
+    {
+        if (!$element->getParent()) {
+            return $element;
+        } else {
+            return $this->getParent($element->getParent());
         }
     }
 } 

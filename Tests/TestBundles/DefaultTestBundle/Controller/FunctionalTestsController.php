@@ -58,6 +58,7 @@ class FunctionalTestsController extends BaseTestController
             throw $this->createNotFoundException('Action not found');
         }
     }
+
     /**
      * Check translation service
      * /fp_js_form_validator/javascript_unit_test/translations/{domain}/{js}
@@ -74,13 +75,13 @@ class FunctionalTestsController extends BaseTestController
         $domain,
         $js
     ) {
-        $constraint = function($msg) {
+        $constraint = function ($msg) {
             return array('constraints' => array(new NotBlank(array('message' => $msg))));
         };
 
         $form = $this
             ->createFormBuilder(null, array('js_validation' => (bool)$js))
-            ->add( 'name', 'text', $constraint('blank.translation'))
+            ->add('name', 'text', $constraint('blank.translation'))
             ->getForm();
 
         $form->handleRequest($request);
@@ -164,7 +165,7 @@ class FunctionalTestsController extends BaseTestController
         return $this->render(
             'DefaultTestBundle:FunctionalTests:index.html.twig',
             array(
-                'form'           => $form->createView(),
+                'form'     => $form->createView(),
                 'extraMsg' => $form->isValid() ? 'unique_entity_valid' : ''
             )
         );
@@ -396,14 +397,14 @@ class FunctionalTestsController extends BaseTestController
         $type,
         $js
     ) {
-        $constraint = function($msg) {
+        $constraint = function ($msg) {
             return array('constraints' => array(new NotBlank(array('message' => $msg))));
         };
 
         $form = $this
             ->createFormBuilder(null, array('js_validation' => (bool)$js))
-            ->add( 'name', 'text', $constraint('name_value'))
-            ->add( 'email', 'text', $constraint('{{ value }}'))
+            ->add('name', 'text', $constraint('name_value'))
+            ->add('email', 'text', $constraint('{{ value }}'))
             ->getForm();
 
         $form->handleRequest($request);
@@ -419,7 +420,7 @@ class FunctionalTestsController extends BaseTestController
     /**
      * Contains an element with no constrains
      * Also checks some constrains to ignore empty value
-     * /fp_js_form_validator/javascript_unit_test/empty/{js}
+     * /fp_js_form_validator/javascript_unit_test/empty/-/{js}
      *
      * @param Request $request
      * @param         $type
@@ -495,7 +496,7 @@ class FunctionalTestsController extends BaseTestController
      */
     public function disableAction(Request $request, $type, $js)
     {
-        $constraint = function($msg) {
+        $constraint = function ($msg) {
             return array('constraints' => array(new NotBlank(array('message' => $msg))));
         };
 
@@ -542,7 +543,7 @@ class FunctionalTestsController extends BaseTestController
 
     public function subRequestIncludedAction(Request $request, $js)
     {
-        $constraint = function($msg) {
+        $constraint = function ($msg) {
             return array('constraints' => array(new NotBlank(array('message' => $msg))));
         };
 
@@ -569,7 +570,7 @@ class FunctionalTestsController extends BaseTestController
         $js
     ) {
         $entity = new CamelCaseEntity();
-        $form = $this->createFormBuilder($entity, array('js_validation' => (bool)$js))
+        $form   = $this->createFormBuilder($entity, array('js_validation' => (bool)$js))
             ->add('camel_case_field')
             ->add('camelCaseField')
             ->add('submit', 'submit')
@@ -588,7 +589,7 @@ class FunctionalTestsController extends BaseTestController
     public function customizationAction(Request $request, $type, $js)
     {
         $entity = new CustomizationEntity();
-        $form = $this->createForm(new CustomizationType(), $entity, array('js_validation' => (bool) $js));
+        $form   = $this->createForm(new CustomizationType(), $entity, array('js_validation' => (bool)$js));
 
         $form->handleRequest($request);
 

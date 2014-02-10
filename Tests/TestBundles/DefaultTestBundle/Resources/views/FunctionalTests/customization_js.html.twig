@@ -69,21 +69,33 @@
                 },
                 'validateCallback': function() {
                     var email = document.getElementById('form_email');
-                    email.jsFormValidator.showErrors.apply(email, [['validate_callback_email_custom'], 'validate-callback']);
+                    FpJsFormValidator.customize(email, 'showErrors', {
+                        errors: ['validate_callback_email_custom'],
+                        sourceId: 'validate-callback'
+                    });
                 },
                 'ownCallback': function() {
                     var email = document.getElementById('form_email');
-                    email.jsFormValidator.showErrors.apply(email, [['own_callback_email_custom'], 'validate-callback-own']);
+                    FpJsFormValidator.customize(email, 'showErrors', {
+                        errors: ['own_callback_email_custom'],
+                        sourceId: 'validate-callback-own'
+                    });
                 },
                 'Fp\\JsFormValidatorBundle\\Tests\\TestBundles\\DefaultTestBundle\\Validator\\ExternalValidator': {
                     validateStaticCallback: function () {
                         var email = document.getElementById('form_email');
-                        email.jsFormValidator.showErrors.apply(email, [['static_callback_email_custom'], 'static-validate-callback']);
+                        FpJsFormValidator.customize(email, 'showErrors', {
+                            errors: ['static_callback_email_custom'],
+                            sourceId: 'static-validate-callback'
+                        });
                     }
                 },
                 'validateDirectStaticCallback': function() {
                     var email = document.getElementById('form_email');
-                    email.jsFormValidator.showErrors.apply(email, [['direct_static_callback_email_custom'], 'direct-static-validate-callback']);
+                    FpJsFormValidator.customize(email, 'showErrors', {
+                        errors: ['direct_static_callback_email_custom'],
+                        sourceId: 'direct-static-validate-callback'
+                    });
                 },
                 'isValidChoicesList': function () {
                     return 'September';

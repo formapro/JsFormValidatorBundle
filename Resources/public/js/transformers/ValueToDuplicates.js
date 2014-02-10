@@ -21,7 +21,10 @@ function SymfonyComponentFormExtensionCoreDataTransformerValueToDuplicatesTransf
                 break;
             }
         }
-        child.showErrors.apply(child.domNode, [errors, 'value-to-duplicates-' + child.id]);
+        FpJsFormValidator.customize(child.domNode, 'showErrors', {
+            errors: errors,
+            sourceId: 'value-to-duplicates-' + child.id
+        });
 
         return initialValue;
     }

@@ -49,11 +49,15 @@ function FpJsFormValidatorBundleFormConstraintUniqueEntity() {
             },
             function(response){
                 response = JSON.parse(response);
+                var errors = [];
                 if (false === response) {
-                    errorPath.errors.push(self.message);
+                    errors.push(self.message);
                 }
-            },
-            errorPath
+                FpJsFormValidator.customize(errorPath.domNode, 'showErrors', {
+                    errors: errors,
+                    sourceId: 'unique-entity-' + self.uniqueId
+                });
+            }
         );
 
         return [];
