@@ -16,9 +16,17 @@ abstract class JsModelAbstract
      *
      * @return string
      */
-    public function __toString()
+    public function toJsString()
     {
         return self::phpValueToJs($this->toArray());
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->toJsString();
     }
 
     /**
@@ -31,8 +39,12 @@ abstract class JsModelAbstract
     public static function phpValueToJs($value)
     {
         // For object which has own __toString method
-        if (is_object($value) && method_exists($value, '__toString')) {
-            return $value->__toString();
+        if ($value instanceof JsModelAbstract) {
+            return $value->toJsString();
+        }
+        // For object which has own __toString method
+        elseif (is_object($value) && method_exists($value, '__toString')) {
+            return self::phpValueToJs($value->__toString());
         }
         // For an object or associative array
         elseif (is_object($value) || (is_array($value) && array_values($value) !== $value)) {

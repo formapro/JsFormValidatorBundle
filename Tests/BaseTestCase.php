@@ -2,14 +2,14 @@
 
 namespace Fp\JsFormValidatorBundle\Tests;
 
-use Behat\MinkBundle\Test\MinkTestCase;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 /**
  * Class BaseTestCase
  *
  * @package Fp\JsFormValidatorBundle\Tests
  */
-class BaseTestCase extends  MinkTestCase
+class BaseTestCase extends WebTestCase
 {
     /**
      * Open no public methods
