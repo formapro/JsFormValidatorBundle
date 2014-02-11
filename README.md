@@ -593,6 +593,24 @@ $data = array (
 
 Now, you can create your own logic to check the uniqueness using this input data
 
+### 3.10 Form submit by Javasrcipt<a name="p_3_10"></a>
+
+If you want to submit your form by click on link or by another Javascript action:
+```js
+$('a#link_submit').click(function(){
+    $('form#user').jsFormValidator('submitForm');
+});
+```
+
+Pure Javascript:
+```js
+var link = document.getElementById('link_submit');
+link.addEventListener('click', function () {
+    var form = document.getElementById('user');
+    FpJsFormValidator.customize(form, 'submitForm');
+});
+```
+
 ## 4 Run tests<a name="p_4"></a>
 
 If you want to run tests for this bundle on your project, you have to:

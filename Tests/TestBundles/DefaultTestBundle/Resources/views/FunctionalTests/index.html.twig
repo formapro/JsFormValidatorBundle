@@ -120,6 +120,11 @@
                     return ['groups_callback'];
                 }
             });
+
+            $('#a_submit').click(function(e){
+                e.preventDefault();
+                $('form').jsFormValidator('submitForm');
+            });
         });
     </script>
 
@@ -127,6 +132,7 @@
     {{ form_start(form, { 'attr': {'novalidate': 'novalidate' }}) }}
     {{ form_errors(form) }}
     <input type="submit" name="form_submit" id="form_submit"/>
+    <a href="#" id="a_submit">Submit</a>
     {{ form_rest(form) }}
     {{ form_end(form) }}
 {% endblock %}

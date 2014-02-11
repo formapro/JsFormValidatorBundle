@@ -248,6 +248,27 @@ function FpJsCustomizeMethods() {
         });
     };
 
+    this.submitForm = function (event) {
+        //noinspection JSCheckFunctionSignatures
+        FpJsFormValidator.each(this, function (item) {
+            var element = item.jsFormValidator;
+            element.validateRecursively();
+            if (!element.isValid() && event) {
+                event.preventDefault();
+            }
+            if (FpJsFormValidator.ajax.queue) {
+                if (event) {
+                    event.preventDefault();
+                }
+                FpJsFormValidator.ajax.callbacks.push(function () {
+                    if (element.isValid()) {
+                        item.submit();
+                    }
+                });
+            }
+        });
+    };
+
     this.get = function () {
         var elements = [];
         //noinspection JSCheckFunctionSignatures
@@ -608,20 +629,8 @@ var FpJsFormValidator = new function () {
      * @param {HTMLFormElement} form
      */
     this.attachDefaultEvent = function (element, form) {
-        var self = this;
         form.addEventListener('submit', function (event) {
-            element.validateRecursively();
-            if (!element.isValid()) {
-                event.preventDefault();
-            }
-            if (self.ajax.queue) {
-                event.preventDefault();
-                self.ajax.callbacks.push(function () {
-                    if (element.isValid()) {
-                        form.submit();
-                    }
-                });
-            }
+            FpJsFormValidator.customize(form, 'submitForm', event);
         });
     };
 

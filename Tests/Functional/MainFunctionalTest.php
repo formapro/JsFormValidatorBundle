@@ -72,7 +72,7 @@ class MainFunctionalTest extends BaseMinkTestCase
         $page->findField('form_name')->setValue('a');
         $page->findField('form_email')->setValue('a');
         $page->findField('form_title')->setValue('a');
-        $page->findButton('form_submit')->click();
+        $page->findLink('a_submit')->click();
         $this->session->wait(5000, '$("#extra_msg").text() == "unique_entity_valid"');
         $extraMsg = $this->session->getPage()->find('css', '#extra_msg')->getText();
         $this->assertEquals('unique_entity_valid', $extraMsg, 'All the fields is valid after corrects');
