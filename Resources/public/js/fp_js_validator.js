@@ -694,11 +694,15 @@ var FpJsFormValidator = new function () {
      *
      * @return {HTMLElement|null}
      */
-    this.findParentForm = function (child) {
+    this.findParentForm = function (child, callerChild) {
         if ('form' == child.tagName.toLowerCase()) {
-            return child;
+        	if ((callerChild.jsFormValidator != undefined)
+        		&& (child.jsFormValidator == undefined)) {
+        		child.jsFormValidator = callerChild.jsFormValidator;
+        		return child;
+        	}
         } else if (child.parentNode) {
-            return this.findParentForm(child.parentNode);
+            return this.findParentForm(child.parentNode, callerChild);
         } else {
             return null;
         }
