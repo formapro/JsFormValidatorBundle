@@ -49,10 +49,7 @@ class SubscriberToQueue implements EventSubscriberInterface
         // Add only parent forms which are not disabled
         if ($globalSwitch && $localSwitch) {
             $parent = $this->getParent($form);
-            if (
-                !$this->factory->inQueue($parent) &&
-                'form' == $parent->getConfig()->getType()->getInnerType()->getName()
-            ) {
+            if (!$this->factory->inQueue($parent)) {
                 $this->factory->addToQueue($this->getParent($form));
             }
         }
