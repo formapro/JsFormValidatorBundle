@@ -647,7 +647,7 @@ FpJsFormValidator.customize(field, {
 });
 ```
 
-**NB:** this option should be defined for the general form element
+**NB:** this option should be defined for the parent form element
 
 ### 3.12 Run validation on custom event<a name="p_3_12"></a>
 
