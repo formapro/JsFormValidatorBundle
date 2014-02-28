@@ -654,10 +654,10 @@ FpJsFormValidator.customize(field, {
 This is a real example, how to validate text fields on their change, and add error-markers instead of showing errors:
 ```css
 input[type=text].error, textarea.error {
-    background: 1px solid red;
+    border: 1px solid red;
 }
 input[type=text].ready, textarea.ready {
-    background: 1px solid green;
+    border: 1px solid green;
 }
 ```
 ```js
