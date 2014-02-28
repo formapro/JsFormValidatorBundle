@@ -605,11 +605,85 @@ $('a#link_submit').click(function(){
 Pure Javascript:
 ```js
 var link = document.getElementById('link_submit');
-link.addEventListener('click', function () {
+link.addEventListener('click', function (event) {
     var form = document.getElementById('user');
-    FpJsFormValidator.customize(form, 'submitForm');
+    FpJsFormValidator.customize(form, 'submitForm', event);
 });
 ```
+
+### 3.11 onValidate callback<a name="p_3_11"></a>
+
+To add an extra action that will be run after the validation:
+```js
+$('form#user').jsFormValidator({
+    onValidate: function(errors, event) {
+        // event - a form submittion event
+        // errors - an object that looks like:
+        /*
+        errors = {
+            element_1_id: {
+                source_1_id: ['error_1', 'error_2', 'error_3'],
+                source_2_id: ['error_4', 'error_5']
+            },
+            element_2_id: {
+                ...
+            },
+            ...
+        }
+        */
+
+        // Here your code
+    }
+});
+```
+
+Pure Javascript:
+```js
+var field = document.getElementById('user');
+FpJsFormValidator.customize(field, {
+    onValidate: function(errors, event) {
+        ...
+    }
+});
+```
+
+### 3.12 Run validation on custom event<a name="p_3_12"></a>
+
+This is a real example, how to validate text fields on their change, and add error-markers instead of showing errors:
+```css
+input[type=text].error, textarea.error {
+    background: 1px solid red;
+}
+input[type=text].ready, textarea.ready {
+    background: 1px solid green;
+}
+```
+```js
+$('form')
+    .find('input[type=text], textarea')
+    .blur(function(){
+        // Run validation for this field
+        $(this).jsFormValidator('validate')
+    })
+    .focus(function() {
+        // Reset markers when focus on a field
+        $(this).removeClass('error');
+        $(this).removeClass('ready');
+    })
+    .jsFormValidator({
+        'showErrors': function(errors) {
+            if (errors.length) {
+                $(this).removeClass('ready');
+                $(this).addClass('error');
+            } else {
+                $(this).removeClass('error');
+                $(this).addClass('ready');
+            }
+        }
+    });
+```
+
+**NB:** this option should be defined for the general form element
 
 ## 4 Run tests<a name="p_4"></a>
 

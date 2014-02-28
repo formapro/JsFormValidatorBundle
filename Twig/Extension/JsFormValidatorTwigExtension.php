@@ -59,7 +59,7 @@ class JsFormValidatorTwigExtension extends \Twig_Extension
 
     public function getConfig()
     {
-        return '<script type="text/javascript">FpJsFormValidator.config = ' . $this->getFactory()->createJsConfigModel() . ';</script>';
+        return $this->getFactory()->getJsConfigString();
     }
 
     /**
@@ -67,14 +67,7 @@ class JsFormValidatorTwigExtension extends \Twig_Extension
      */
     public function getJsValidator()
     {
-        $models = $this->getFactory()->processQueue();
-
-        $result = array();
-        foreach ($models as $model) {
-            $result[] = 'FpJsFormValidator.addModel(' . $model . ');';
-        }
-
-        return '<script type="text/javascript">' . implode("\n", $result) . '</script>';
+        return $this->getFactory()->getJsValidatorString();
     }
 
     /**

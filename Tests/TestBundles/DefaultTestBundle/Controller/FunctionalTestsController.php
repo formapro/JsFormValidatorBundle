@@ -88,7 +88,10 @@ class FunctionalTestsController extends BaseTestController
 
         return $this->render(
             'DefaultTestBundle:FunctionalTests:index.html.twig',
-            array('form' => $form->createView())
+            array(
+                'form'     => $form->createView(),
+                'extraMsg' => $request->isMethod('post') ? 'passed' : '',
+            )
         );
     }
 
@@ -165,8 +168,9 @@ class FunctionalTestsController extends BaseTestController
         return $this->render(
             'DefaultTestBundle:FunctionalTests:index.html.twig',
             array(
-                'form'     => $form->createView(),
-                'extraMsg' => $form->isValid() ? 'unique_entity_valid' : ''
+                'form'       => $form->createView(),
+                'extraMsg'   => $form->isValid() ? 'unique_entity_valid' : '',
+                'onValidate' => true,
             )
         );
     }

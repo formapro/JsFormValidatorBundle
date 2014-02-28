@@ -25,12 +25,11 @@ function FpJsFormElement() {
         }
 
         var self = this;
-        var sourceId = 'form-error-' + String(this.id).replace('_', '-');
+        var sourceId = 'form-error-' + String(this.id).replace(/_/g, '-');
         self.errors[sourceId] = FpJsFormValidator.validateElement(self);
 
         var errorPath = FpJsFormValidator.getErrorPathElement(self);
         errorPath.showErrors.apply(errorPath.domNode, [self.errors[sourceId], sourceId]);
-        errorPath.postValidate.apply(errorPath.domNode);
 
         return self.errors[sourceId].length == 0;
     };
@@ -99,7 +98,7 @@ function FpJsFormElement() {
         }
     };
 
-    this.postValidate = function (errors, sourceId) {
+    this.onValidate = function (errors, event) {
     };
 }
 
@@ -208,6 +207,8 @@ function FpJsCustomizeMethods() {
                 }
             }
         }, false);
+
+        return this;
     };
 
     this.validate = function (opts) {
@@ -232,7 +233,7 @@ function FpJsCustomizeMethods() {
                 }
             }
 
-            if (item.jsFormValidator[method]()) {
+            if (!item.jsFormValidator[method]()) {
                 isValid = false;
             }
         });
@@ -261,10 +262,16 @@ function FpJsCustomizeMethods() {
                     event.preventDefault();
                 }
                 FpJsFormValidator.ajax.callbacks.push(function () {
+                    element.onValidate.apply(element.domNode, [FpJsFormValidator.getAllErrors(element, {}), event]);
                     if (element.isValid()) {
                         item.submit();
                     }
                 });
+            } else {
+                element.onValidate.apply(element.domNode, [FpJsFormValidator.getAllErrors(element, {}), event]);
+                if (element.isValid()) {
+                    item.submit();
+                }
             }
         });
     };
@@ -336,6 +343,7 @@ var FpJsFormValidator = new function () {
         var element = this.createElement(model);
         var form = this.findFormElement(element);
         element.domNode = form;
+        this.attachElement(element);
         if (form) {
             this.attachDefaultEvent(element, form);
         }
@@ -350,11 +358,19 @@ var FpJsFormValidator = new function () {
      */
     this.createElement = function (model) {
         var element = new FpJsFormElement();
+        element.domNode = this.findDomElement(model);
+        if (model.children instanceof Array && !model.length && !element.domNode) {
+            return null;
+        }
+
         for (var key in model) {
             if ('children' == key) {
                 for (var childName in model.children) {
-                    element.children[childName] = this.createElement(model.children[childName]);
-                    element.children[childName].parent = element;
+                    var childElement = this.createElement(model.children[childName]);
+                    if (childElement) {
+                        element.children[childName] = childElement;
+                        element.children[childName].parent = element;
+                    }
                 }
             } else if ('transformers' == key) {
                 element.transformers = this.parseTransformers(model[key]);
@@ -380,7 +396,6 @@ var FpJsFormValidator = new function () {
             element.data[type].getters = getters;
         }
 
-        element.domNode = this.findDomElement(model);
         this.attachElement(element);
 
         return element;
@@ -815,5 +830,37 @@ var FpJsFormValidator = new function () {
         }
 
         return callback;
+    };
+
+    /**
+     * Returns an object with all the element's and children's errors
+     *
+     * @param {FpJsFormElement} element
+     * @param {Object} container
+     *
+     * @returns {Object}
+     */
+    this.getAllErrors = function (element, container) {
+        if (container == null || typeof container !== 'object') {
+            container = {};
+        }
+
+        var hasErrors = false;
+        for (var sourceId in element.errors) {
+            if (element.errors[sourceId].length) {
+                hasErrors = true;
+                break;
+            }
+        }
+
+        if (hasErrors) {
+            container[element.id] = element.errors;
+        }
+
+        for (var childName in element.children) {
+            container = this.getAllErrors(element.children[childName], container);
+        }
+
+        return container;
     };
 }();

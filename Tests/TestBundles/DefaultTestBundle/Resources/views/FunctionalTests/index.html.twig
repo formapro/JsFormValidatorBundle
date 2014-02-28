@@ -14,13 +14,6 @@
             };
 
             $('#form_clear').jsFormValidator({
-                'customEvents': function() {
-                    $(this).change(function(){
-                        if (!$(this).jsFormValidator('validate')) {
-                            console.log('custom_event');
-                        }
-                    });
-                },
                 'showErrors': function(errors) {
                     console.log('custom_show_errors', errors);
                 }
@@ -37,6 +30,17 @@
             });
 
             $('form').jsFormValidator({
+                {% if onValidate|default(false) %}
+                    onValidate: function(errors, event) {
+                        var arrErrors = [];
+                        for (var elId in errors) {
+                            for (var sourceId in errors[elId]) {
+                                arrErrors = arrErrors.concat(errors[elId][sourceId]);
+                            }
+                        }
+                        $('#on_validate_msg_container').text(arrErrors.join(', '));
+                    },
+                {% endif %}
                 'callbacks': {
                     'isNameValid':            function() { return false; },
 
@@ -128,6 +132,7 @@
         });
     </script>
 
+    <div id="on_validate_msg_container"></div>
     <div id="transformer_result"></div>
     {{ form_start(form, { 'attr': {'novalidate': 'novalidate' }}) }}
     {{ form_errors(form) }}

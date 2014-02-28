@@ -4,12 +4,10 @@ namespace Fp\JsFormValidatorBundle\Factory;
 use Fp\JsFormValidatorBundle\Form\Constraint\UniqueEntity;
 use Fp\JsFormValidatorBundle\Model\JsConfig;
 use Fp\JsFormValidatorBundle\Model\JsFormElement;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity as BaseUniqueEntity;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceListInterface;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
@@ -37,7 +35,7 @@ class JsFormValidatorFactory
     protected $translator;
 
     /**
-     * @var UrlGeneratorInterface
+     * @var \Symfony\Component\Routing\Generator\UrlGeneratorInterface
      */
     protected $router;
 
@@ -64,14 +62,14 @@ class JsFormValidatorFactory
     /**
      * @param ValidatorInterface    $validator
      * @param TranslatorInterface   $translator
-     * @param UrlGeneratorInterface $router
+     * @param \Symfony\Component\Routing\Generator\UrlGeneratorInterface $router
      * @param array                 $config
      * @param string                $domain
      */
     public function __construct(
         ValidatorInterface $validator,
         TranslatorInterface $translator,
-        UrlGeneratorInterface $router,
+        $router,
         $config,
         $domain
     ) {
@@ -187,9 +185,11 @@ class JsFormValidatorFactory
         $result = array();
 
         foreach ($this->queue as $form) {
-            $model = $this->createJsModel($form);
-            if ($model) {
-                $result[] = $model;
+            if ('_token' != $form->getName() && !$form->getParent()) {
+                $model = $this->createJsModel($form);
+                if ($model) {
+                    $result[] = $model;
+                }
             }
         };
 
@@ -504,7 +504,7 @@ class JsFormValidatorFactory
                 }
             }
 
-            if ($item instanceof BaseUniqueEntity) {
+            if ($item instanceof \Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity) {
                 $item = new UniqueEntity($item, $this->currentElement->getConfig()->getDataClass());
             }
 
@@ -512,5 +512,25 @@ class JsFormValidatorFactory
         }
 
         return $result;
+    }
+
+    public function getJsConfigString()
+    {
+        return '<script type="text/javascript">FpJsFormValidator.config = ' . $this->createJsConfigModel() . ';</script>';
+    }
+
+    /**
+     * @return string
+     */
+    public function getJsValidatorString()
+    {
+        $models = $this->processQueue();
+
+        $result = array();
+        foreach ($models as $model) {
+            $result[] = 'FpJsFormValidator.addModel(' . $model . ');';
+        }
+
+        return '<script type="text/javascript">' . implode("\n", $result) . '</script>';
     }
 }
