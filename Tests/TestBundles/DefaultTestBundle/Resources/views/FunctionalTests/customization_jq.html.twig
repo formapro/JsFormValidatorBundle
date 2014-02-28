@@ -3,11 +3,11 @@
 {% block body %}
     <script type="text/javascript">
         $(function(){
-            $('#form_disabled').jsFormValidator({
+            $('#custom_form_name_disabled').jsFormValidator({
                 disabled: true
             });
 
-            $('#form_showErrors').jsFormValidator({
+            $('#custom_form_name_showErrors').jsFormValidator({
                 showErrors: function(errors, type) {
                     var list = $(this).prev('ul.form-errors');
                     if (!list.length) {
@@ -24,40 +24,57 @@
                         list.append(li);
                     }
                 }
+            }).change(function(){
+                $(this).jsFormValidator('validate');
             });
 
             $('form').jsFormValidator({
                 groups: function () {
                     return ['groups_callback'];
                 },
+                onValidate: function(errors, event) {
+                    var arrErrors = [];
+                    for (var elId in errors) {
+                        for (var sourceId in errors[elId]) {
+                            var _err = errors[elId][sourceId];
+                            if ('custom_form_name_showErrors' == elId) {
+                                for (var i in _err) {
+                                    _err[i] = 'custom_'+ errors[elId][sourceId][i];
+                                }
+                            }
+                            arrErrors = arrErrors.concat(_err);
+                        }
+                    }
+                    $('#on_validate_msg_container').text(arrErrors.join(', '));
+                },
                 callbacks: {
                     'isPasswordLegal': function() {
                         return false;
                     },
                     'validateCallback': function() {
-                        $('#form_email').jsFormValidator('showErrors', {
+                        $('#custom_form_name_email').jsFormValidator('showErrors', {
                             errors: ['validate_callback_email_custom'],
-                            type: 'validate-callback'
+                            sourceId: 'validate-callback'
                         });
                     },
                     'ownCallback': function() {
-                        $('#form_email').jsFormValidator('showErrors', {
+                        $('#custom_form_name_email').jsFormValidator('showErrors', {
                             errors: ['own_callback_email_custom'],
-                            type: 'validate-callback-own'
+                            sourceId: 'validate-callback-own'
                         });
                     },
                     'Fp\\JsFormValidatorBundle\\Tests\\TestBundles\\DefaultTestBundle\\Validator\\ExternalValidator': {
                         validateStaticCallback: function () {
-                            $('#form_email').jsFormValidator('showErrors', {
+                            $('#custom_form_name_email').jsFormValidator('showErrors', {
                                 errors: ['static_callback_email_custom'],
-                                type: 'static-validate-callback'
+                                sourceId: 'static-validate-callback'
                             });
                         }
                     },
                     'validateDirectStaticCallback': function() {
-                        $('#form_email').jsFormValidator('showErrors', {
+                        $('#custom_form_name_email').jsFormValidator('showErrors', {
                             errors: ['direct_static_callback_email_custom'],
-                            type: 'direct-static-validate-callback'
+                            sourceId: 'direct-static-validate-callback'
                         });
                     },
                     'isValidChoicesList': function () {
@@ -71,8 +88,6 @@
         })
     </script>
 
-    {{ form_start(form, { 'attr': {'novalidate': 'novalidate' }}) }}
-    {{ form_errors(form) }}
-    {{ form_rest(form) }}
-    {{ form_end(form) }}
+    <div id="on_validate_msg_container"></div>
+    {{ form(form) }}
 {% endblock %}

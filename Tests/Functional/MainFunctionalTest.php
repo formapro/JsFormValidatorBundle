@@ -25,6 +25,13 @@ class MainFunctionalTest extends BaseMinkTestCase
         $sfErrors = $this->getAllErrorsOnPage('translations/test/0');
         $fpErrors = $this->getAllErrorsOnPage('translations/test/1');
         $this->assertErrorsEqual($sfErrors, $fpErrors, 'Was translated with a custom domain.');
+
+        $page = $this->session->getPage();
+        $page->findField('form_name')->setValue('asdf');
+        $page->findLink('a_submit')->click();
+        $this->session->wait(5000, '$("#extra_msg").text() == "passed"');
+        $extraMsg = $this->session->getPage()->find('css', '#extra_msg')->getText();
+        $this->assertEquals('passed', $extraMsg, 'Submittion with link is passed');
     }
 
     /**
@@ -63,6 +70,11 @@ class MainFunctionalTest extends BaseMinkTestCase
         $sfErrors = $this->getAllErrorsOnPage('unique_entity/0/0');
         $fpErrors = $this->getAllErrorsOnPage('unique_entity/0/1', '$("ul.form-errors li").length == 5');
         $this->assertErrorsEqual($sfErrors, $fpErrors, 'The unique entity constraint has all the errors.');
+
+        /** @var DocumentElement $page */
+        $page = $this->session->getPage();
+        $onValidateMsg = $page->find('css', '#on_validate_msg_container')->getText();
+        $this->assertErrorsEqual($sfErrors, explode(', ', $onValidateMsg));
 
 
         $fpErrors = $this->getAllErrorsOnPage('unique_entity/0/1', '$("ul.form-errors li").length == 5');
@@ -240,11 +252,26 @@ class MainFunctionalTest extends BaseMinkTestCase
             'validate_callback_email_custom'
         );
 
-        $jqErrors = $this->getAllErrorsOnPage('customization/jq/1');
+        $jqErrors = $this->getAllErrorsOnPage('customization/jq/1', null, 'custom_form_name_submit');
         $this->assertErrorsEqual($expected, $jqErrors, 'All the jQuery customizations were applied');
 
-        $jsErrors = $this->getAllErrorsOnPage('customization/js/1');
+        /** @var DocumentElement $page */
+        $page = $this->session->getPage();
+        $onValidateMsg = $page->find('css', '#on_validate_msg_container')->getText();
+        $this->assertErrorsEqual($expected, explode(', ', $onValidateMsg));
+
+        $field = $page->findField('custom_form_name_showErrors');
+        $field->setValue('asdf');
+        $field->blur();
+        $this->assertNull($page->find('css', '.form-error-custom-form-name-showErrors'));
+
+        $jsErrors = $this->getAllErrorsOnPage('customization/js/1', null, 'custom_form_name_submit');
         $this->assertErrorsEqual($expected, $jsErrors, 'All the Javascript customizations were applied');
+
+        /** @var DocumentElement $page */
+        $page = $this->session->getPage();
+        $onValidateMsg = $page->find('css', '#on_validate_msg_container')->getText();
+        $this->assertErrorsEqual($expected, explode(', ', $onValidateMsg));
     }
 
     /**

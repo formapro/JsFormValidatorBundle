@@ -37,7 +37,10 @@ class CustomizationType extends AbstractType
                 'data_class'        => 'Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\CustomizationEntity',
                 'validation_groups' => function () {
                         return array('groups_callback');
-                    }
+                    },
+                'attr' => array(
+                    'novalidate' => 'novalidate'
+                )
             )
         );
     }
@@ -47,6 +50,7 @@ class CustomizationType extends AbstractType
      */
     public function getName()
     {
-        return 'form';
+//        return 'form';
+        return 'custom_form_name';
     }
 }

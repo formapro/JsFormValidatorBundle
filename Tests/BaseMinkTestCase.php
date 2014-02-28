@@ -32,17 +32,17 @@ class BaseMinkTestCase extends MinkTestCase
 
     /**
      * @param string $name
-     *
      * @param null   $wait
+     * @param string $submitId
      *
      * @return array
      */
-    protected function getAllErrorsOnPage($name, $wait = null)
+    protected function getAllErrorsOnPage($name, $wait = null, $submitId = 'form_submit')
     {
         $session = $this->getMink()->getSession('selenium2');
         $this->session = $session;
         $session->visit($this->base . '/fp_js_form_validator/test/' . $name);
-        $session->getPage()->findButton('form_submit')->click();
+        $session->getPage()->findButton($submitId)->click();
 
         if ($wait) {
             $session->wait(5000, $wait);
