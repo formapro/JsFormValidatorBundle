@@ -711,7 +711,11 @@ var FpJsFormValidator = new function () {
      */
     this.findParentForm = function (child) {
         if ('form' == child.tagName.toLowerCase()) {
-            return child;
+            if ((callerChild.jsFormValidator != undefined)
+        		&& (child.jsFormValidator == undefined)) {
+        		child.jsFormValidator = callerChild.jsFormValidator;
+        		return child;
+        	}
         } else if (child.parentNode) {
             return this.findParentForm(child.parentNode);
         } else {
