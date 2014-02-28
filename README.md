@@ -597,8 +597,8 @@ Now, you can create your own logic to check the uniqueness using this input data
 
 If you want to submit your form by click on link or by another Javascript action:
 ```js
-$('a#link_submit').click(function(){
-    $('form#user').jsFormValidator('submitForm');
+$('a#link_submit').click(function(event){
+    $('form#user').jsFormValidator('submitForm', event);
 });
 ```
 
@@ -647,6 +647,8 @@ FpJsFormValidator.customize(field, {
 });
 ```
 
+**NB:** this option should be defined for the general form element
+
 ### 3.12 Run validation on custom event<a name="p_3_12"></a>
 
 This is a real example, how to validate text fields on their change, and add error-markers instead of showing errors:
@@ -682,8 +684,6 @@ $('form')
         }
     });
 ```
-
-**NB:** this option should be defined for the general form element
 
 ## 4 Run tests<a name="p_4"></a>
 
