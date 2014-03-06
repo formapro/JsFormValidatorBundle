@@ -59,8 +59,8 @@ Make sure that your security settings do not prevent these routes.
 
 After the previous steps the javascript validation will be enabled automatically for all your forms.
 
-2.1 [Disabling validation](Resources/doc/2_1.md)<a name="p_2_1"></a>
-2.2 [Issue with sub-requests](Resources/doc/2_2.md)<a name="p_2_2"></a>
+1. [Disabling validation](Resources/doc/2_1.md)<a name="p_2_1"></a>
+2. [Issue with sub-requests](Resources/doc/2_2.md)<a name="p_2_2"></a>
 
 ## 3 Customization<a name="p_3"></a>
 
