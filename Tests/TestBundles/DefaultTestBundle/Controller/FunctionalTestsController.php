@@ -4,10 +4,15 @@ namespace Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Controlle
 
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\BasicConstraintsEntity;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\CamelCaseEntity;
+use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\CommentEntity;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\CustomizationEntity;
+use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\TagEntity;
+use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\TaskEntity;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\UniqueEntity;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\BasicConstraintsEntityType;
+use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\CollectionType;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\CustomizationType;
+use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\TaskType;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\UniqueType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\Constraints\Choice;
@@ -613,5 +618,33 @@ class FunctionalTestsController extends BaseTestController
         $tpl = 'DefaultTestBundle:FunctionalTests:index.html.twig';
 
         return $this->render($tpl, array('form' => $form->createView()));
+    }
+
+    public function collectionAction(Request $request)
+    {
+        $task = new TaskEntity();
+        $task->addTag(new TagEntity());
+        $task->addComment(new CommentEntity());
+
+        $form = $this->createForm(
+            new TaskType(),
+            $task,
+            array(
+                'attr'          => array(
+                    'novalidate' => 'novalidate'
+                )
+            )
+        );
+
+        $form->handleRequest($request);
+        $tpl = 'DefaultTestBundle:FunctionalTests:collection.html.twig';
+
+        return $this->render(
+            $tpl,
+            array(
+                'form'     => $form->createView(),
+                'extraMsg' => $request->isMethod('post') ? 'done' : '',
+            )
+        );
     }
 }
