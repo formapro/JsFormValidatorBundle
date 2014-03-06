@@ -70,7 +70,7 @@ This bundle finds related DOM elements for each element of a symfony form and at
 This object contains list of properties and methods which fully define the validation process for the related form element.
 And some of those properties and methods can be changed to customize the validation process.
 
-If you render forms with a some level of castomization - read [this note](Resources/doc/3_0.md).
+If you render forms with a some level of customization - read [this note](Resources/doc/3_0.md).
 
 1. [Disable validation for a specified field](Resources/doc/3_1.md)
 2. [Error display](Resources/doc/3_2.md)
