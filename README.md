@@ -69,20 +69,19 @@ After the previous steps the javascript validation will be enabled automatically
 This bundle finds related DOM elements for each element of a symfony form and attach to it a special object-validator.
 This object contains list of properties and methods which fully define the validation process for the related form element.
 And some of those properties and methods can be changed to customize the validation process.
+
 If you render forms with a some level of castomization - read [this note](Resources/doc/3_0.md).
 
-3.1 [Disable validation for a specified field](Resources/doc/3_1.md)
-3.2 [Error display](Resources/doc/3_2.md)
-3.3 [Get validation groups from a closure](Resources/doc/3_3.md)
-3.4 [Getters validation](Resources/doc/3_4.md)
-3.5 [The Callback constraint](Resources/doc/3_5.md)
-3.6 [The Choice constraint. How to get the choices list from a callback](Resources/doc/3_6.md)
-3.7 [Custom constraints](Resources/doc/3_7.md)
-3.8 [Custom data transformers](Resources/doc/3_8.md)
-3.9 [Checking the uniqueness of entities](Resources/doc/3_9.md)
-3.10 [Form submit by Javasrcipt](Resources/doc/3_10.md)
-3.11 [onValidate callback](Resources/doc/3_11.md)
-3.12 [Run validation on custom event](Resources/doc/3_12.md)
-3.13 [Collections validation](Resources/doc/3_13.md)
-
-## 4 [Run tests](Resources/doc/4.md)
+3.1. [Disable validation for a specified field](Resources/doc/3_1.md)
+3.2. [Error display](Resources/doc/3_2.md)
+3.3. [Get validation groups from a closure](Resources/doc/3_3.md)
+3.4. [Getters validation](Resources/doc/3_4.md)
+3.5. [The Callback constraint](Resources/doc/3_5.md)
+3.6. [The Choice constraint. How to get the choices list from a callback](Resources/doc/3_6.md)
+3.7. [Custom constraints](Resources/doc/3_7.md)
+3.8. [Custom data transformers](Resources/doc/3_8.md)
+3.9. [Checking the uniqueness of entities](Resources/doc/3_9.md)
+3.10. [Form submit by Javasrcipt](Resources/doc/3_10.md)
+3.11. [onValidate callback](Resources/doc/3_11.md)
+3.12. [Run validation on custom event](Resources/doc/3_12.md)
+3.13. [Collections validation](Resources/doc/3_13.md)
