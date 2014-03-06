@@ -470,14 +470,11 @@ var FpJsFormValidator = new function () {
     };
 
     this.checkParentCascadeOption = function (element) {
-        var result = false;
-        var parent = element.parent;
-        if (parent) {
-            if (parent.cascade) {
-                result = true;
-            } else {
-                result = this.checkParentCascadeOption(parent);
-            }
+        var result = true;
+        if (element.parent && !element.parent.cascade && 'collection' != element.parent.type) {
+            result = false;
+        } else if (element.parent) {
+            result = this.checkParentCascadeOption(element.parent);
         }
 
         return result;
