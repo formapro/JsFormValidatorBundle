@@ -55,4 +55,9 @@ class JsFormElement extends JsModelAbstract
      * @var JsFormElement[]
      */
     public $children = array();
+
+    /**
+     * @var JsFormElement
+     */
+    public $prototype = null;
 } 

@@ -188,8 +188,6 @@ function FpJsAjaxRequest() {
 }
 
 function FpJsCustomizeMethods() {
-
-
     this.init = function (options) {
         FpJsFormValidator.each(this, function (item) {
             if (!item.jsFormValidator) {
@@ -254,7 +252,7 @@ function FpJsCustomizeMethods() {
         FpJsFormValidator.each(this, function (item) {
             var element = item.jsFormValidator;
             element.validateRecursively();
-            if (!element.isValid() && event) {
+            if (event) {
                 event.preventDefault();
             }
             if (FpJsFormValidator.ajax.queue) {
@@ -284,6 +282,31 @@ function FpJsCustomizeMethods() {
         });
 
         return elements;
+    };
+
+    //noinspection JSUnusedGlobalSymbols
+    this.addPrototype = function(name) {
+        //noinspection JSCheckFunctionSignatures
+        FpJsFormValidator.each(this, function (item) {
+            var prototype = FpJsFormValidator.preparePrototype(
+                FpJsFormValidator.cloneObject(item.jsFormValidator.prototype),
+                name,
+                item.jsFormValidator.id + '_' + name
+            );
+            item.jsFormValidator.children[name] = FpJsFormValidator.createElement(prototype);
+            item.jsFormValidator.children[name].parent = item.jsFormValidator;
+        });
+    };
+
+    //noinspection JSUnusedGlobalSymbols
+    this.delPrototype = function(name) {
+        //noinspection JSCheckFunctionSignatures
+        FpJsFormValidator.each(this, function (item) {
+//            console.log(name, item.jsFormValidator.children, item.jsFormValidator.children[name]);
+            delete (item.jsFormValidator.children[name]);
+//            console.log(item.jsFormValidator.children);
+//            console.log('----------------');
+        });
     };
 }
 
@@ -448,7 +471,7 @@ var FpJsFormValidator = new function () {
 
     this.checkParentCascadeOption = function (element) {
         var result = true;
-        if (element.parent && !element.parent.cascade) {
+        if (element.parent && !element.parent.cascade && 'collection' != element.parent.type) {
             result = false;
         } else if (element.parent) {
             result = this.checkParentCascadeOption(element.parent);
@@ -862,5 +885,44 @@ var FpJsFormValidator = new function () {
         }
 
         return container;
+    };
+
+    /**
+     * Replace patterns with real values for the specified prototype
+     *
+     * @param {Object} prototype
+     * @param {String} name
+     * @param {String} id
+     */
+    this.preparePrototype = function (prototype, name, id) {
+        prototype.name = prototype.name.replace(/__name__/g, name);
+        prototype.id = prototype.id.replace(/__name__/g, id);
+
+        if (typeof prototype.children == 'object') {
+            for (var childName in prototype.children) {
+                prototype[childName] = this.preparePrototype(prototype.children[childName], name, id);
+            }
+        }
+
+        return prototype;
+    };
+
+    /**
+     * Clone object recursively
+     *
+     * @param {{}} object
+     * @returns {{}}
+     */
+    this.cloneObject = function (object) {
+        var clone = {};
+        for (var i in object) {
+            if (typeof object[i] == 'object' && !(object[i] instanceof Array)) {
+                clone[i] = this.cloneObject(object[i]);
+            } else {
+                clone[i] = object[i];
+            }
+        }
+
+        return clone;
     };
 }();

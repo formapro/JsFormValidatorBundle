@@ -185,7 +185,9 @@ class JsFormValidatorFactory
         $result = array();
 
         foreach ($this->queue as $form) {
-            if ('_token' != $form->getName() && !$form->getParent()) {
+            $name = $form->getName();
+            $blockName = $form->getConfig()->getOption('block_name');
+            if ('_token' != $name && 'entry' != $blockName && !$form->getParent()) {
                 $model = $this->createJsModel($form);
                 if ($model) {
                     $result[] = $model;
@@ -225,6 +227,11 @@ class JsFormValidatorFactory
         $model->bubbling       = $conf->getOption('error_bubbling');
         $model->data           = $this->getValidationData($form);
         $model->children       = $this->processChildren($form);
+
+        $prototype = $form->getConfig()->getAttribute('prototype');
+        if ($prototype) {
+            $model->prototype = $this->createJsModel($prototype);
+        }
 
         // Return self id to add it as child to the parent model
         return $model;

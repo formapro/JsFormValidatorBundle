@@ -57,6 +57,8 @@ The main idea of most tests is:
 6) bind invalid values to the form  (call with ```type = 0```)
 7) repeat steps #3, #4, #5 (```test/mytest/0/0``` and ```test/mytest/0/0```)
 
+[How to run tests on a real project](Resources/doc/4.md)
+
 ## Javascripts
 
 All the javascripts placed in the ```Resources/pulic/js``` folder

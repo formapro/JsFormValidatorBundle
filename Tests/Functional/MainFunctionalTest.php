@@ -282,4 +282,50 @@ class MainFunctionalTest extends BaseMinkTestCase
         $sfErrors = $this->getAllErrorsOnPage('customUniqueEntityController/-/-');
         $this->assertErrorsEqual(array('not_blank_value'), $sfErrors, 'The custom UniqueConstraint controller works fine.');
     }
+
+    public function testCollection()
+    {
+        $errors = $this->getAllErrorsOnPage('collection/-/-', null, 'form_task_submit');
+        $page = $this->session->getPage();
+        $submit = $page->findButton('form_task_submit');
+        $getErrors = function () use ($page) {
+            $errors = array();
+            /** @var \Behat\Mink\Element\NodeElement $item */
+            foreach ($page->findAll('css', 'ul.form-errors li') as $item) {
+                $errors[] = $item->getText();
+            }
+
+            return $errors;
+        };
+        $getExpected = function ($tags, $comments) {
+            return array('tag_message' => $tags, 'comment_message' => $comments);
+        };
+
+        $this->assertEquals($getExpected(1, 1), array_count_values($errors));
+
+        $addTag = $this->find('#add_tag_link');
+        $addTag->click();
+        $addTag->click();
+        $addTag->click();
+        $addComment = $this->find('#add_comment_link');
+        $addComment->click();
+        $addComment->click();
+        $submit->click();
+
+        $this->assertEquals($getExpected(4, 3), array_count_values($getErrors()));
+
+        $this->find('#del_form_task_tags_2')->click();
+        $this->find('#del_form_task_comments_1')->click();
+        $submit->click();
+        $this->assertEquals($getExpected(3, 2), array_count_values($getErrors()));
+
+        $page->findField('form_task_tags_0_title')->setValue('asdf');
+        $page->findField('form_task_tags_1_title')->setValue('asdf');
+        $page->findField('form_task_tags_3_title')->setValue('asdf');
+        $page->findField('form_task_comments_0_content')->setValue('asdf');
+        $page->findField('form_task_comments_2_content')->setValue('asdf');
+        $submit->click();
+        $extraMsg = $this->session->getPage()->find('css', '#extra_msg')->getText();
+        $this->assertEquals('done', $extraMsg);
+    }
 }
