@@ -19,7 +19,7 @@ function SymfonyComponentValidatorConstraintsRegex() {
     };
 
     this.onCreate = function() {
-        var flags = this.pattern.match(/\/(\w*)$/);
-        this.pattern = new RegExp(this.pattern.trim().replace(/(^\/)|(\/\w*$)/g, ''), flags[1]);
+        var flags = this.pattern.match(/[\/#](\w*)$/);
+        this.pattern = new RegExp(this.pattern.trim().replace(/(^[\/#])|([\/#]\w*$)/g, ''), flags[1]);
     }
 }

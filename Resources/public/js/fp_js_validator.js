@@ -469,22 +469,6 @@ var FpJsFormValidator = new function () {
         return errors;
     };
 
-//    this.checkParentCascadeOption = function (element) {
-//        var result = false;
-//        var parent = element.parent;
-//        if (parent) {
-//            if (parent.cascade) {
-//                result = true;
-//            } else {
-//                result = this.checkParentCascadeOption(parent);
-//            }
-//        } else {
-//            result = true;
-//        }
-//
-//        return result;
-//    };
-
     this.checkParentCascadeOption = function (element) {
         var result = true;
         if (element.parent && !element.parent.cascade && 'collection' != element.parent.type) {
@@ -1681,8 +1665,8 @@ function SymfonyComponentValidatorConstraintsRegex() {
     };
 
     this.onCreate = function() {
-        var flags = this.pattern.match(/\/(\w*)$/);
-        this.pattern = new RegExp(this.pattern.trim().replace(/(^\/)|(\/\w*$)/g, ''), flags[1]);
+        var flags = this.pattern.match(/[\/#](\w*)$/);
+        this.pattern = new RegExp(this.pattern.trim().replace(/(^[\/#])|([\/#]\w*$)/g, ''), flags[1]);
     }
 }
 
