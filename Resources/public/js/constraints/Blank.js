@@ -9,7 +9,9 @@ function SymfonyComponentValidatorConstraintsBlank() {
 
     this.validate = function (value) {
         var errors = [];
-        if ([undefined, null, false, '', [], {}].indexOf(value) === -1) {
+        var f = FpJsFormValidator;
+
+        if (!f.isValueEmty(value)) {
             errors.push(this.message.replace('{{ value }}', String(value)));
         }
 

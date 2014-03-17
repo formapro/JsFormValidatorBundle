@@ -9,11 +9,8 @@ function SymfonyComponentValidatorConstraintsGreaterThan() {
     this.value = null;
 
     this.validate = function (value) {
-        if ('' === value) {
-            return [];
-        }
-
-        if (value > this.value) {
+        var f = FpJsFormValidator;
+        if (f.isValueEmty(value) || value > this.value) {
             return [];
         } else {
             return [

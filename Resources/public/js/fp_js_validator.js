@@ -925,6 +925,63 @@ var FpJsFormValidator = new function () {
 
         return clone;
     };
+
+    /**
+     * Check if a mixed value is emty
+     *
+     * @param value
+     *
+     * @returns boolean
+     */
+    this.isValueEmty = function (value) {
+        return [undefined, null, false].indexOf(value) >= 0 || 0 === this.getValueLength(value);
+    };
+
+    /**
+     * Check if a value is array
+     *
+     * @param value
+     *
+     * @returns boolean
+     */
+    this.isValueArray = function (value) {
+        return value instanceof Array;
+    };
+
+    /**
+     * Check if a value is object
+     *
+     * @param value
+     *
+     * @returns boolean
+     */
+    this.isValueObject = function (value) {
+        return typeof value == 'object' && null !== value;
+    };
+
+    /**
+     * Returns length of a mixed value
+     *
+     * @param value
+     *
+     * @returns int|null
+     */
+    this.getValueLength = function (value) {
+        var length = null;
+        if (typeof value == 'number' || typeof value == 'string' || this.isValueArray(value)) {
+            length = value.length;
+        } else if (this.isValueObject(value)) {
+            var count = 0;
+            for (var propName in value) {
+                if (value.hasOwnProperty(propName)) {
+                    count++;
+                }
+            }
+            length = count;
+        }
+
+        return length;
+    };
 }();
 //noinspection JSUnusedGlobalSymbols,JSUnusedGlobalSymbols
 /**
@@ -937,7 +994,9 @@ function SymfonyComponentValidatorConstraintsBlank() {
 
     this.validate = function (value) {
         var errors = [];
-        if ([undefined, null, false, '', [], {}].indexOf(value) === -1) {
+        var f = FpJsFormValidator;
+
+        if (!f.isValueEmty(value)) {
             errors.push(this.message.replace('{{ value }}', String(value)));
         }
 
@@ -1109,19 +1168,13 @@ function SymfonyComponentValidatorConstraintsCount() {
 
     this.validate = function (value) {
         var errors = [];
+        var f = FpJsFormValidator;
 
-        var count = null;
-        if (value instanceof Array) {
-            count = value.length;
-        } else if (typeof value == 'object') {
-            count = 0;
-            for (var propName in value) {
-                if (value.hasOwnProperty(propName)) {
-                    count++;
-                }
-            }
+        if (!f.isValueArray(value) && !f.isValueObject(value)) {
+            return errors;
         }
 
+        var count = f.getValueLength(value);
         if (null !== count) {
             if (this.max === this.min && count !== this.min) {
                 errors.push(this.exactMessage);
@@ -1170,12 +1223,12 @@ function SymfonyComponentValidatorConstraintsDate() {
     this.message = '';
 
     this.validate = function (value) {
+        var regexp = /^(\d{4})-(\d{2})-(\d{2})$/;
         var errors = [];
-        if (value) {
-            var regexp = /^(\d{4})-(\d{2})-(\d{2})$/;
-            if (!regexp.test(value)) {
-                errors.push(this.message.replace('{{ value }}', String(value)));
-            }
+        var f = FpJsFormValidator;
+
+        if (!f.isValueEmty(value) && !regexp.test(value)) {
+            errors.push(this.message.replace('{{ value }}', String(value)));
         }
 
         return errors;
@@ -1192,12 +1245,12 @@ function SymfonyComponentValidatorConstraintsDateTime() {
     this.message = '';
 
     this.validate = function (value) {
+        var regexp = /^(\d{4})-(\d{2})-(\d{2}) (0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/;
         var errors = [];
-        if (value) {
-            var regexp = /^(\d{4})-(\d{2})-(\d{2}) (0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/;
-            if (!regexp.test(value)) {
-                errors.push(this.message.replace('{{ value }}', String(value)));
-            }
+        var f = FpJsFormValidator;
+
+        if (!f.isValueEmty(value) && !regexp.test(value)) {
+            errors.push(this.message.replace('{{ value }}', String(value)));
         }
 
         return errors;
@@ -1213,9 +1266,11 @@ function SymfonyComponentValidatorConstraintsEmail() {
     this.message = '';
 
     this.validate = function (value) {
-        var errors = [];
         var regexp = /^[-a-z0-9~!$%^&*_=+}{'?]+(\.[-a-z0-9~!$%^&*_=+}{'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i;
-        if (String(value).length > 0 && !regexp.test(value)) {
+        var errors = [];
+        var f = FpJsFormValidator;
+
+        if (!f.isValueEmty(value) && !regexp.test(value)) {
             errors.push(this.message.replace('{{ value }}', String(value)));
         }
 
@@ -1234,12 +1289,10 @@ function SymfonyComponentValidatorConstraintsEqualTo() {
     this.value = null;
 
     this.validate = function (value) {
-        if ('' === value) {
-            return [];
-        }
-
         var errors = [];
-        if (this.value != value) {
+        var f = FpJsFormValidator;
+
+        if (!f.isValueEmty(value) && this.value != value) {
             errors.push(
                 this.message
                     .replace('{{ value }}', String(this.value))
@@ -1262,12 +1315,8 @@ function SymfonyComponentValidatorConstraintsFalse() {
     this.message = '';
 
     this.validate = function (value) {
-        if ('' === value) {
-            return [];
-        }
-
         var errors = [];
-        if (false !== value) {
+        if ('' !== value && false !== value) {
             errors.push(this.message.replace('{{ value }}', value));
         }
 
@@ -1286,11 +1335,8 @@ function SymfonyComponentValidatorConstraintsGreaterThan() {
     this.value = null;
 
     this.validate = function (value) {
-        if ('' === value) {
-            return [];
-        }
-
-        if (value > this.value) {
+        var f = FpJsFormValidator;
+        if (f.isValueEmty(value) || value > this.value) {
             return [];
         } else {
             return [
@@ -1313,11 +1359,8 @@ function SymfonyComponentValidatorConstraintsGreaterThanOrEqual() {
     this.value = null;
 
     this.validate = function (value) {
-        if ('' === value) {
-            return [];
-        }
-
-        if (value >= this.value) {
+        var f = FpJsFormValidator;
+        if (f.isValueEmty(value) || value >= this.value) {
             return [];
         } else {
             return [
@@ -1340,12 +1383,8 @@ function SymfonyComponentValidatorConstraintsIdenticalTo() {
     this.value = null;
 
     this.validate = function (value) {
-        if ('' === value) {
-            return [];
-        }
-
         var errors = [];
-        if (this.value !== value) {
+        if ('' !== value && this.value !== value) {
             errors.push(
                 this.message
                     .replace('{{ value }}', String(value))
@@ -1368,9 +1407,11 @@ function SymfonyComponentValidatorConstraintsIp() {
     this.message = '';
 
     this.validate = function (value) {
-        var errors = [];
         var regexp = /^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
-        if (String(value).length > 0 && !regexp.test(value)) {
+        var errors = [];
+        var f = FpJsFormValidator;
+
+        if (!f.isValueEmty(value) && !regexp.test(value)) {
             errors.push(this.message.replace('{{ value }}', String(value)));
         }
 
@@ -1393,19 +1434,19 @@ function SymfonyComponentValidatorConstraintsLength() {
 
     this.validate = function (value) {
         var errors = [];
-        if (typeof value == 'number' || typeof value == 'string' || value instanceof Array) {
-            var length = value.length;
-            if (length) {
-                if (this.max === this.min && length !== this.min) {
-                    errors.push(this.exactMessage);
-                    return errors;
-                }
-                if (!isNaN(this.max) && length > this.max) {
-                    errors.push(this.maxMessage);
-                }
-                if (!isNaN(this.min) && length < this.min) {
-                    errors.push(this.minMessage);
-                }
+        var f = FpJsFormValidator;
+        var length = f.getValueLength(value);
+
+        if ('' !== value && null !== length) {
+            if (this.max === this.min && length !== this.min) {
+                errors.push(this.exactMessage);
+                return errors;
+            }
+            if (!isNaN(this.max) && length > this.max) {
+                errors.push(this.maxMessage);
+            }
+            if (!isNaN(this.min) && length < this.min) {
+                errors.push(this.minMessage);
             }
         }
 
@@ -1445,11 +1486,8 @@ function SymfonyComponentValidatorConstraintsLessThan() {
     this.value = null;
 
     this.validate = function (value) {
-        if ('' === value) {
-            return [];
-        }
-
-        if (value < this.value) {
+        var f = FpJsFormValidator;
+        if (f.isValueEmty(value) || value < this.value) {
             return [];
         } else {
             return [
@@ -1472,11 +1510,8 @@ function SymfonyComponentValidatorConstraintsLessThanOrEqual() {
     this.value = null;
 
     this.validate = function (value) {
-        if ('' === value) {
-            return [];
-        }
-
-        if (value <= this.value) {
+        var f = FpJsFormValidator;
+        if (f.isValueEmty(value) || value <= this.value) {
             return [];
         } else {
             return [
@@ -1499,7 +1534,9 @@ function SymfonyComponentValidatorConstraintsNotBlank() {
 
     this.validate = function (value) {
         var errors = [];
-        if ([undefined, null, false, '', [], {}].indexOf(value) >= 0) {
+        var f = FpJsFormValidator;
+
+        if (f.isValueEmty(value)) {
             errors.push(this.message.replace('{{ value }}', String(value)));
         }
 
@@ -1519,7 +1556,7 @@ function SymfonyComponentValidatorConstraintsNotEqualTo() {
 
     this.validate = function (value) {
         var errors = [];
-        if (this.value == value) {
+        if ('' !== value && this.value == value) {
             errors.push(
                 this.message
                     .replace('{{ value }}', String(this.value))
@@ -1544,7 +1581,7 @@ function SymfonyComponentValidatorConstraintsNotIdenticalTo() {
 
     this.validate = function (value) {
         var errors = [];
-        if (this.value === value) {
+        if ('' !== value && this.value === value) {
             errors.push(
                 this.message
                     .replace('{{ value }}', String(value))
@@ -1609,11 +1646,12 @@ function SymfonyComponentValidatorConstraintsRange() {
     this.min = null;
 
     this.validate = function (value) {
-        if ('' === value) {
-            return [];
-        }
-
         var errors = [];
+        var f = FpJsFormValidator;
+
+        if (f.isValueEmty(value)) {
+            return errors;
+        }
         if (isNaN(value)) {
             errors.push(
                 this.invalidMessage
@@ -1657,7 +1695,9 @@ function SymfonyComponentValidatorConstraintsRegex() {
 
     this.validate = function(value) {
         var errors = [];
-        if (String(value).length > 0 && !this.pattern.test(value)) {
+        var f = FpJsFormValidator;
+
+        if (!f.isValueEmty(value) && !this.pattern.test(value)) {
             errors.push(this.message.replace('{{ value }}', String(value)));
         }
 
@@ -1680,9 +1720,11 @@ function SymfonyComponentValidatorConstraintsTime() {
     this.message = '';
 
     this.validate = function (value) {
-        var errors = [];
         var regexp = /^(0[0-9]|1[0-9]|2[0-3]):([0-5][0-9]):([0-5][0-9])$/;
-        if (String(value).length > 0 && !regexp.test(value)) {
+        var errors = [];
+        var f = FpJsFormValidator;
+
+        if (!f.isValueEmty(value) && !regexp.test(value)) {
             errors.push(this.message.replace('{{ value }}', String(value)));
         }
 
@@ -1913,9 +1955,11 @@ function SymfonyComponentValidatorConstraintsUrl() {
     this.message = '';
 
     this.validate = function(value, element) {
-        var errors = [];
         var regexp = /(ftp|https?):\/\/(www\.)?[\w\-\.@:%_\+~#=]+\.\w{2,3}(\/\w+)*(\?.*)?/;
-        if (String(value).length > 0 && !regexp.test(value)) {
+        var errors = [];
+        var f = FpJsFormValidator;
+
+        if (!f.isValueEmty(value) && !regexp.test(value)) {
             element.domNode.value = 'http://' + value;
             errors.push(this.message.replace('{{ value }}', String('http://' + value)));
         }
@@ -2009,8 +2053,13 @@ function SymfonyComponentFormExtensionCoreDataTransformerChoiceToBooleanArrayTra
 function SymfonyComponentFormExtensionCoreDataTransformerChoiceToValueTransformer() {
     this.choiceList = {};
 
-    // This transformer just returns values as is, because we actually receive choices (not values) from input fields
     this.reverseTransform = function(value) {
+        for (var i in value) {
+            if ('' === value[i]) {
+                value.splice(i, 1);
+            }
+        }
+
         return value;
     }
 }
@@ -2052,8 +2101,13 @@ function SymfonyComponentFormExtensionCoreDataTransformerChoicesToBooleanArrayTr
 function SymfonyComponentFormExtensionCoreDataTransformerChoicesToValuesTransformer() {
     this.choiceList = {};
 
-    // This transformer just returns values as is, because we actually receive choices (not values) from input fields
     this.reverseTransform = function(value) {
+        for (var i in value) {
+            if ('' === value[i]) {
+                value.splice(i, 1);
+            }
+        }
+
         return value;
     }
 }

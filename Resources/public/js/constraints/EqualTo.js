@@ -9,12 +9,10 @@ function SymfonyComponentValidatorConstraintsEqualTo() {
     this.value = null;
 
     this.validate = function (value) {
-        if ('' === value) {
-            return [];
-        }
-
         var errors = [];
-        if (this.value != value) {
+        var f = FpJsFormValidator;
+
+        if (!f.isValueEmty(value) && this.value != value) {
             errors.push(
                 this.message
                     .replace('{{ value }}', String(this.value))

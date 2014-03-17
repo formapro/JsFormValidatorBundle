@@ -10,7 +10,7 @@ function SymfonyComponentValidatorConstraintsNotEqualTo() {
 
     this.validate = function (value) {
         var errors = [];
-        if (this.value == value) {
+        if ('' !== value && this.value == value) {
             errors.push(
                 this.message
                     .replace('{{ value }}', String(this.value))

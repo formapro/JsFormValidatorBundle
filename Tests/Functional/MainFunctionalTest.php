@@ -328,4 +328,15 @@ class MainFunctionalTest extends BaseMinkTestCase
         $extraMsg = $this->session->getPage()->find('css', '#extra_msg')->getText();
         $this->assertEquals('done', $extraMsg);
     }
+
+    public function testEmptyChoice()
+    {
+        $sfErrors = $this->getAllErrorsOnPage('empty_choice/1/0', null, 'form_choice_submit');
+        $fpErrors = $this->getAllErrorsOnPage('empty_choice/1/1', null, 'form_choice_submit');
+        $this->assertErrorsEqual($sfErrors, $fpErrors, 'Choice fields are valid.');
+
+        $sfErrors = $this->getAllErrorsOnPage('empty_choice/0/0', null, 'form_choice_submit');
+        $fpErrors = $this->getAllErrorsOnPage('empty_choice/0/1', null, 'form_choice_submit');
+        $this->assertErrorsEqual($sfErrors, $fpErrors, 'Choice fields have all the errors.');
+    }
 }

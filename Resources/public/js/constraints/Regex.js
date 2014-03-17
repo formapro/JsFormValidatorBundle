@@ -11,7 +11,9 @@ function SymfonyComponentValidatorConstraintsRegex() {
 
     this.validate = function(value) {
         var errors = [];
-        if (String(value).length > 0 && !this.pattern.test(value)) {
+        var f = FpJsFormValidator;
+
+        if (!f.isValueEmty(value) && !this.pattern.test(value)) {
             errors.push(this.message.replace('{{ value }}', String(value)));
         }
 

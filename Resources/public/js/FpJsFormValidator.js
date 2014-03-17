@@ -925,4 +925,61 @@ var FpJsFormValidator = new function () {
 
         return clone;
     };
+
+    /**
+     * Check if a mixed value is emty
+     *
+     * @param value
+     *
+     * @returns boolean
+     */
+    this.isValueEmty = function (value) {
+        return [undefined, null, false].indexOf(value) >= 0 || 0 === this.getValueLength(value);
+    };
+
+    /**
+     * Check if a value is array
+     *
+     * @param value
+     *
+     * @returns boolean
+     */
+    this.isValueArray = function (value) {
+        return value instanceof Array;
+    };
+
+    /**
+     * Check if a value is object
+     *
+     * @param value
+     *
+     * @returns boolean
+     */
+    this.isValueObject = function (value) {
+        return typeof value == 'object' && null !== value;
+    };
+
+    /**
+     * Returns length of a mixed value
+     *
+     * @param value
+     *
+     * @returns int|null
+     */
+    this.getValueLength = function (value) {
+        var length = null;
+        if (typeof value == 'number' || typeof value == 'string' || this.isValueArray(value)) {
+            length = value.length;
+        } else if (this.isValueObject(value)) {
+            var count = 0;
+            for (var propName in value) {
+                if (value.hasOwnProperty(propName)) {
+                    count++;
+                }
+            }
+            length = count;
+        }
+
+        return length;
+    };
 }();
