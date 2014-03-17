@@ -6,12 +6,14 @@ use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\BasicCon
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\CamelCaseEntity;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\CommentEntity;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\CustomizationEntity;
+use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\EmptyChoiceEntity;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\TagEntity;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\TaskEntity;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\UniqueEntity;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\BasicConstraintsEntityType;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\CollectionType;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\CustomizationType;
+use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\EmtyChoiceType;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\TaskType;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\UniqueType;
 use Symfony\Component\HttpFoundation\Request;
@@ -630,7 +632,7 @@ class FunctionalTestsController extends BaseTestController
             new TaskType(),
             $task,
             array(
-                'attr'          => array(
+                'attr' => array(
                     'novalidate' => 'novalidate'
                 )
             )
@@ -638,6 +640,35 @@ class FunctionalTestsController extends BaseTestController
 
         $form->handleRequest($request);
         $tpl = 'DefaultTestBundle:FunctionalTests:collection.html.twig';
+
+        return $this->render(
+            $tpl,
+            array(
+                'form'     => $form->createView(),
+                'extraMsg' => $request->isMethod('post') ? 'done' : '',
+            )
+        );
+    }
+
+    public function empty_choiceAction(Request $request, $isValid, $js)
+    {
+        $entity = new EmptyChoiceEntity();
+
+        if ((bool)$isValid) {
+            $entity->setCity('london');
+            $entity->setCountries(array('france'));
+        }
+
+        $form   = $this->createForm(
+            new EmtyChoiceType(),
+            $entity,
+            array(
+                'js_validation' => (bool)$js
+            )
+        );
+
+        $form->handleRequest($request);
+        $tpl = 'DefaultTestBundle:FunctionalTests:empty_choice.html.twig';
 
         return $this->render(
             $tpl,

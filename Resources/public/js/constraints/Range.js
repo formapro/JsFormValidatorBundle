@@ -12,11 +12,12 @@ function SymfonyComponentValidatorConstraintsRange() {
     this.min = null;
 
     this.validate = function (value) {
-        if ('' === value) {
-            return [];
-        }
-
         var errors = [];
+        var f = FpJsFormValidator;
+
+        if (f.isValueEmty(value)) {
+            return errors;
+        }
         if (isNaN(value)) {
             errors.push(
                 this.invalidMessage
