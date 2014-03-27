@@ -354,7 +354,7 @@ var FpJsFormValidator = new function () {
         var eventName = document.addEventListener ? "DOMContentLoaded" : "onreadystatechange";
 
         addListener.call(document, eventName, function () {
-            removeListener(eventName, arguments.callee, false);
+            removeListener.call(this, eventName, arguments.callee, false);
             callback();
         }, false)
     };
