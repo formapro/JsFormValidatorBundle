@@ -297,11 +297,19 @@ class MainFunctionalTest extends BaseMinkTestCase
 
             return $errors;
         };
-        $getExpected = function ($tags, $comments) {
-            return array('tag_message' => $tags, 'comment_message' => $comments);
+        $getExpected = function ($tags, $comments, $collection) {
+            $errors = array(
+                'tag_message' => $tags,
+                'comment_message' => $comments,
+            );
+            if ($collection) {
+                $errors['collection_min_count_message'] = $collection;
+            }
+
+            return $errors;
         };
 
-        $this->assertEquals($getExpected(1, 1), array_count_values($errors));
+        $this->assertEquals($getExpected(1, 1, 1), array_count_values($errors));
 
         $addTag = $this->find('#add_tag_link');
         $addTag->click();
@@ -312,12 +320,12 @@ class MainFunctionalTest extends BaseMinkTestCase
         $addComment->click();
         $submit->click();
 
-        $this->assertEquals($getExpected(4, 3), array_count_values($getErrors()));
+        $this->assertEquals($getExpected(4, 3, 0), array_count_values($getErrors()));
 
         $this->find('#del_form_task_tags_2')->click();
         $this->find('#del_form_task_comments_1')->click();
         $submit->click();
-        $this->assertEquals($getExpected(3, 2), array_count_values($getErrors()));
+        $this->assertEquals($getExpected(3, 2, 0), array_count_values($getErrors()));
 
         $page->findField('form_task_tags_0_title')->setValue('asdf');
         $page->findField('form_task_tags_1_title')->setValue('asdf');

@@ -527,6 +527,11 @@ var FpJsFormValidator = new function () {
 
         if (i && undefined === value) {
             value = this.getMappedValue(element);
+        } else if ('collection' == element.type) {
+            value = {};
+            for (var childName in element.children) {
+                value[childName] = this.getMappedValue(element.children[childName]);
+            }
         } else {
             value = this.getSpecifiedElementTypeValue(element);
         }
@@ -535,6 +540,7 @@ var FpJsFormValidator = new function () {
             value = element.transformers[i].reverseTransform(value, element);
         }
 
+        console.log(element, value);
         return value;
     };
 
