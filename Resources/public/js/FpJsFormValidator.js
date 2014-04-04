@@ -302,10 +302,7 @@ function FpJsCustomizeMethods() {
     this.delPrototype = function(name) {
         //noinspection JSCheckFunctionSignatures
         FpJsFormValidator.each(this, function (item) {
-//            console.log(name, item.jsFormValidator.children, item.jsFormValidator.children[name]);
             delete (item.jsFormValidator.children[name]);
-//            console.log(item.jsFormValidator.children);
-//            console.log('----------------');
         });
     };
 }
@@ -527,6 +524,11 @@ var FpJsFormValidator = new function () {
 
         if (i && undefined === value) {
             value = this.getMappedValue(element);
+        } else if ('collection' == element.type) {
+            value = {};
+            for (var childName in element.children) {
+                value[childName] = this.getMappedValue(element.children[childName]);
+            }
         } else {
             value = this.getSpecifiedElementTypeValue(element);
         }

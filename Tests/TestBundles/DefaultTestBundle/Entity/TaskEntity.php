@@ -27,6 +27,10 @@ class TaskEntity
      * @var ArrayCollection
      *
      * @ORM\OneToMany(targetEntity="Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\TagEntity", mappedBy="task")
+     * @Assert\Count(
+     *     min=3,
+     *     minMessage="collection_min_count_message"
+     * )
      */
     private $tags;
 

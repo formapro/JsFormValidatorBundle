@@ -622,7 +622,7 @@ class FunctionalTestsController extends BaseTestController
         return $this->render($tpl, array('form' => $form->createView()));
     }
 
-    public function collectionAction(Request $request)
+    public function collectionAction(Request $request, $isValid, $js)
     {
         $task = new TaskEntity();
         $task->addTag(new TagEntity());
@@ -633,8 +633,9 @@ class FunctionalTestsController extends BaseTestController
             $task,
             array(
                 'attr' => array(
-                    'novalidate' => 'novalidate'
-                )
+                    'novalidate' => 'novalidate',
+                ),
+                'js_validation' => (bool)$js
             )
         );
 
