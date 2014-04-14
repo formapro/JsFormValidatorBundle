@@ -540,7 +540,6 @@ var FpJsFormValidator = new function () {
             value = element.transformers[i].reverseTransform(value, element);
         }
 
-        console.log(element, value);
         return value;
     };
 
