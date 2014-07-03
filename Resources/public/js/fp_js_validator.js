@@ -29,7 +29,17 @@ function FpJsFormElement() {
         self.errors[sourceId] = FpJsFormValidator.validateElement(self);
 
         var errorPath = FpJsFormValidator.getErrorPathElement(self);
-        errorPath.showErrors.apply(errorPath.domNode, [self.errors[sourceId], sourceId]);
+        var domNode = errorPath.domNode;
+        if (!domNode) {
+            for (var childName in errorPath.children) {
+                var childDomNode = errorPath.children[childName].domNode;
+                if (childDomNode) {
+                    domNode = childDomNode;
+                    break;
+                }
+            }
+        }
+        errorPath.showErrors.apply(domNode, [self.errors[sourceId], sourceId]);
 
         return self.errors[sourceId].length == 0;
     };
@@ -302,10 +312,7 @@ function FpJsCustomizeMethods() {
     this.delPrototype = function(name) {
         //noinspection JSCheckFunctionSignatures
         FpJsFormValidator.each(this, function (item) {
-//            console.log(name, item.jsFormValidator.children, item.jsFormValidator.children[name]);
             delete (item.jsFormValidator.children[name]);
-//            console.log(item.jsFormValidator.children);
-//            console.log('----------------');
         });
     };
 }
@@ -540,7 +547,6 @@ var FpJsFormValidator = new function () {
             value = element.transformers[i].reverseTransform(value, element);
         }
 
-        console.log(element, value);
         return value;
     };
 

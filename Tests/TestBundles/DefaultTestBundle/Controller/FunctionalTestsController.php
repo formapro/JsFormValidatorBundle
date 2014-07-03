@@ -7,6 +7,7 @@ use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\CamelCas
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\CommentEntity;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\CustomizationEntity;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\EmptyChoiceEntity;
+use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\PasswordFieldEntity;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\TagEntity;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\TaskEntity;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\UniqueEntity;
@@ -14,6 +15,7 @@ use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\BasicConst
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\CollectionType;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\CustomizationType;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\EmtyChoiceType;
+use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\PasswordFieldType;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\TaskType;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\UniqueType;
 use Symfony\Component\HttpFoundation\Request;
@@ -662,6 +664,34 @@ class FunctionalTestsController extends BaseTestController
 
         $form   = $this->createForm(
             new EmtyChoiceType(),
+            $entity,
+            array(
+                'js_validation' => (bool)$js
+            )
+        );
+
+        $form->handleRequest($request);
+        $tpl = 'DefaultTestBundle:FunctionalTests:empty_choice.html.twig';
+
+        return $this->render(
+            $tpl,
+            array(
+                'form'     => $form->createView(),
+                'extraMsg' => $request->isMethod('post') ? 'done' : '',
+            )
+        );
+    }
+
+    public function password_fieldAction(Request $request, $isValid, $js)
+    {
+        $entity = new PasswordFieldEntity();
+
+        if ((bool)$isValid) {
+            $entity->setPassword('test_pass');
+        }
+
+        $form   = $this->createForm(
+            new PasswordFieldType(),
             $entity,
             array(
                 'js_validation' => (bool)$js

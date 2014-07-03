@@ -30,7 +30,7 @@
         "symfony/assetic-bundle": ">=2.3",
         "phpunit/phpunit": "3.7.*",
         "behat/mink-bundle": "dev-master",
-        "behat/mink-selenium2-driver": "dev-master",
+        "behat/mink-selenium2-driver": "1.1.0",
         "satooshi/php-coveralls": "dev-master"
     },
 

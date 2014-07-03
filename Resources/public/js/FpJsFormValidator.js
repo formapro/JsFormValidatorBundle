@@ -29,7 +29,17 @@ function FpJsFormElement() {
         self.errors[sourceId] = FpJsFormValidator.validateElement(self);
 
         var errorPath = FpJsFormValidator.getErrorPathElement(self);
-        errorPath.showErrors.apply(errorPath.domNode, [self.errors[sourceId], sourceId]);
+        var domNode = errorPath.domNode;
+        if (!domNode) {
+            for (var childName in errorPath.children) {
+                var childDomNode = errorPath.children[childName].domNode;
+                if (childDomNode) {
+                    domNode = childDomNode;
+                    break;
+                }
+            }
+        }
+        errorPath.showErrors.apply(domNode, [self.errors[sourceId], sourceId]);
 
         return self.errors[sourceId].length == 0;
     };
