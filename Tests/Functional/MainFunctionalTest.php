@@ -347,4 +347,45 @@ class MainFunctionalTest extends BaseMinkTestCase
         $fpErrors = $this->getAllErrorsOnPage('empty_choice/0/1', null, 'form_choice_submit');
         $this->assertErrorsEqual($sfErrors, $fpErrors, 'Choice fields have all the errors.');
     }
+
+    public function testPasswordField()
+    {
+        $btnId = 'form_password_field_submit';
+        // Check the valid values
+        $sfErrors = $this->getAllErrorsOnPage('password_field/1/0', null, $btnId);
+        $fpErrors = $this->getAllErrorsOnPage('password_field/1/1', null, $btnId);
+        $this->assertErrorsEqual($sfErrors, $fpErrors, 'Choice fields are valid.');
+
+        $session = $this->session;
+        $changeAndGetErrors = function ($first, $second) use ($session) {
+            $page = $session->getPage();
+            $submit = $page->findButton('form_password_field_submit');
+
+            // Check the Length constraint
+            $page->findField('form_password_field_password_first')->setValue($first);
+            $page->findField('form_password_field_password_second')->setValue($second);
+            $submit->click();
+            $errors = array();
+            /** @var \Behat\Mink\Element\NodeElement $item */
+            foreach ($page->findAll('css', 'ul.form-errors li') as $item) {
+                $errors[] = $item->getText();
+            }
+
+            return $errors;
+        };
+
+        $sfErrors = array(
+            $this->getAllErrorsOnPage('password_field/0/0', null, $btnId), // blank fields
+            $changeAndGetErrors('a', 'a'), // too short
+            $changeAndGetErrors('lorem', 'qwerty'), // not equal
+        );
+
+        $fpErrors = array(
+            $this->getAllErrorsOnPage('password_field/0/1', null, $btnId), // blank fields
+            $changeAndGetErrors('a', 'a'), // too short
+            $changeAndGetErrors('lorem', 'qwerty'), // not equal
+        );
+
+        $this->assertEquals($sfErrors, $fpErrors, 'All the errors are correct');
+    }
 }
