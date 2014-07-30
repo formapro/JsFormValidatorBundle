@@ -13,8 +13,8 @@ before_script:
   - export DISPLAY=:99.0
   - sleep 4
 
+  - composer require symfony/symfony:${SF_VERSION}
   - composer install -n
-  - composer require --no-update symfony/symfony=$SF_VERSION
 
   - Tests/app/console assets:install Tests/app
   - sudo chmod -R 0777 Tests/app/cache Tests/app/logs
