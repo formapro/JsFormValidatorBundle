@@ -8,7 +8,9 @@
         {% endjavascripts %}
     {% endblock %}
 
-    {{ include('FpJsFormValidatorBundle::javascripts-dev.html.twig') }}
+    {% block init_validation %}
+        {{ include('FpJsFormValidatorBundle::javascripts-dev.html.twig') }}
+    {% endblock init_validation %}
 </head>
 <body>
 {% block body %}{% endblock %}

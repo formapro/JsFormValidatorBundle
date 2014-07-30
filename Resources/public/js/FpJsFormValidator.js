@@ -347,12 +347,16 @@ var FpJsFormValidator = new function () {
     this.constraintsCounter = 0;
 
     //noinspection JSUnusedGlobalSymbols
-    this.addModel = function (model) {
+    this.addModel = function (model, onLoad) {
         var self = this;
         if (!model) return;
-        this.onDocumentReady(function () {
+        if (onLoad !== false) {
+            this.onDocumentReady(function () {
+                self.forms[model.id] = self.initModel(model);
+            });
+        } else {
             self.forms[model.id] = self.initModel(model);
-        });
+        }
     };
 
     this.onDocumentReady = function (callback) {

@@ -388,4 +388,67 @@ class MainFunctionalTest extends BaseMinkTestCase
 
         $this->assertEquals($sfErrors, $fpErrors, 'All the errors are correct');
     }
+
+    public function testAsyncLoad()
+    {
+        $onLoad  = '1'; // initialize by onDocumentReady
+        $this->visitTest("async_load/0/{$onLoad}");
+
+        $page = $this->session->getPage();
+        $submit = $page->findButton('async_load_submit');
+        $initBtn = $page->findButton('init');
+
+        $submit->click();
+        $this->assertTrue($this->wasPostRequest(), 'Validation is disabled');
+
+        $this->visitTest("async_load/0/{$onLoad}");
+        $initBtn->click();
+        $submit->click();
+        $this->assertTrue($this->wasPostRequest(), 'Validation is still disabled');
+
+        $onLoad = '0'; // initialize directly by addModel
+        $this->visitTest("async_load/0/{$onLoad}");
+
+        $submit->click();
+        $this->assertTrue($this->wasPostRequest(), 'Validation is disabled');
+
+        $this->visitTest("async_load/0/{$onLoad}");
+        $initBtn->click();
+        $submit->click();
+        $this->assertFalse($this->wasPostRequest(), 'Validation is enabled');
+    }
+
+    public function testPassForm_as_object()
+    {
+        $form = '1'; // pass form as a FormView object
+        $this->visitTest("async_load/{$form}/1");
+
+        $page = $this->session->getPage();
+        $page->findButton('async_load_submit')->click();
+        $errors = $this->fetchErrors();
+        $this->assertEquals(array('async_load_message'), $errors, 'Correct errors');
+        $this->assertFalse($this->wasPostRequest(), 'Validation works fine');
+    }
+
+    public function testPassForm_as_string()
+    {
+        $form = 'async_load'; // pass form as a name string
+        $this->visitTest("async_load/{$form}/1");
+
+        $page = $this->session->getPage();
+        $page->findButton('async_load_submit')->click();
+        $errors = $this->fetchErrors();
+        $this->assertEquals(array('async_load_message'), $errors, 'Correct errors');
+        $this->assertFalse($this->wasPostRequest(), 'Validation works fine');
+    }
+
+    public function testPassForm_invalid()
+    {
+        $form = 'wrong_name'; // pass form as a name string
+        $this->visitTest("async_load/{$form}/1");
+        $page = $this->session->getPage();
+
+        $this->assertTrue($page->hasContent('Fp\JsFormValidatorBundle\Exception\UndefinedFormException'), 'Exception was thrown');
+        $this->assertTrue($page->hasContent("Form 'wrong_name' was not found. Existing forms: async_load"), 'Correct message');
+    }
 }

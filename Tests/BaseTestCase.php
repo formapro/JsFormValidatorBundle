@@ -3,6 +3,7 @@
 namespace Fp\JsFormValidatorBundle\Tests;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DependencyInjection\Container;
 
 /**
  * Class BaseTestCase
@@ -27,5 +28,27 @@ class BaseTestCase extends WebTestCase
         $method->setAccessible(true);
 
         return $method->invokeArgs($obj, $args);
+    }
+
+    /**
+     * @param $name
+     *
+     * @return object
+     */
+    protected function getService($name)
+    {
+        return $this->getContainer()->get($name);
+    }
+
+    /**
+     * @return Container
+     */
+    protected function getContainer()
+    {
+        if (!self::$kernel) {
+            self::bootKernel();
+        }
+
+        return self::$kernel->getContainer();
     }
 } 

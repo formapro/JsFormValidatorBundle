@@ -3,6 +3,7 @@
 namespace Fp\JsFormValidatorBundle\Twig\Extension;
 
 use Fp\JsFormValidatorBundle\Factory\JsFormValidatorFactory;
+use Symfony\Component\Form\FormView;
 
 /**
  * Class JsFormValidatorTwigExtension
@@ -63,11 +64,23 @@ class JsFormValidatorTwigExtension extends \Twig_Extension
     }
 
     /**
+     * @param null|string|FormView $form
+     * @param bool                 $onLoad
+     * @param bool                 $wrapped
+     *
      * @return string
      */
-    public function getJsValidator()
+    public function getJsValidator($form = null, $onLoad = true, $wrapped = true)
     {
-        return $this->getFactory()->getJsValidatorString();
+        if ($form instanceof FormView) {
+            $form = $form->vars['name'];
+        }
+        $jsModels = $this->getFactory()->getJsValidatorString($form, $onLoad);
+        if ($wrapped) {
+            $jsModels = '<script type="text/javascript">' . $jsModels . '</script>';
+        }
+
+        return $jsModels;
     }
 
     /**

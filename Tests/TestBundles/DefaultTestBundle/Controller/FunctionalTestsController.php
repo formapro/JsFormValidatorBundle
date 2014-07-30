@@ -11,8 +11,8 @@ use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\Password
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\TagEntity;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\TaskEntity;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\UniqueEntity;
+use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\AsyncLoadType;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\BasicConstraintsEntityType;
-use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\CollectionType;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\CustomizationType;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\EmtyChoiceType;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\PasswordFieldType;
@@ -706,6 +706,30 @@ class FunctionalTestsController extends BaseTestController
             array(
                 'form'     => $form->createView(),
                 'extraMsg' => $request->isMethod('post') ? 'done' : '',
+            )
+        );
+    }
+
+    public function async_loadAction(Request $request, $isValid, $js)
+    {
+        $passForm = $isValid;
+        $onLoad   = $js;
+        $form     = $this->createForm(new AsyncLoadType(), null, array('attr' => array('novalidate' => true)));
+        $form->handleRequest($request);
+
+        if ('1' == $passForm) {
+            $passForm = $form->createView();
+        } elseif ('0' == $passForm) {
+            $passForm = null;
+        }
+
+        return $this->render(
+            'DefaultTestBundle:FunctionalTests:async_load.html.twig',
+            array(
+                'form'     => $form->createView(),
+                'extraMsg' => $request->isMethod('post') ? 'done' : '',
+                'passForm' => $passForm,
+                'onLoad'    => (bool)$onLoad,
             )
         );
     }
