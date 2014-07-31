@@ -12,3 +12,4 @@ fix() {
 
 fix cache
 fix logs
+chmod 0777 ./../../Resources/public/js/fp_js_validator.js

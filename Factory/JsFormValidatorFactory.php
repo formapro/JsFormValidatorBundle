@@ -1,6 +1,7 @@
 <?php
 namespace Fp\JsFormValidatorBundle\Factory;
 
+use Fp\JsFormValidatorBundle\Exception\UndefinedFormException;
 use Fp\JsFormValidatorBundle\Form\Constraint\UniqueEntity;
 use Fp\JsFormValidatorBundle\Model\JsConfig;
 use Fp\JsFormValidatorBundle\Model\JsFormElement;
@@ -154,6 +155,16 @@ class JsFormValidatorFactory
     }
 
     /**
+     * Returns the current queue
+     *
+     * @return \Symfony\Component\Form\Form[]
+     */
+    public function getQueue()
+    {
+        return $this->queue;
+    }
+
+    /**
      * Add a new form to processing queue
      *
      * @param \Symfony\Component\Form\Form $form
@@ -178,20 +189,31 @@ class JsFormValidatorFactory
     }
 
     /**
+     * Removes from the queue elements which are not parent forms and should not be processes
+     *
+     * @return $this
+     */
+    public function siftQueue()
+    {
+        foreach ($this->queue as $name => $form) {
+            $blockName = $form->getConfig()->getOption('block_name');
+            if ('_token' == $name || 'entry' == $blockName || $form->getParent()) {
+                unset($this->queue[$name]);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
      * @return JsFormElement[]
      */
     public function processQueue()
     {
         $result = array();
-
         foreach ($this->queue as $form) {
-            $name = $form->getName();
-            $blockName = $form->getConfig()->getOption('block_name');
-            if ('_token' != $name && 'entry' != $blockName && !$form->getParent()) {
-                $model = $this->createJsModel($form);
-                if ($model) {
-                    $result[] = $model;
-                }
+            if (null !== ($model = $this->createJsModel($form))) {
+                $result[] = $model;
             }
         };
 
@@ -527,17 +549,39 @@ class JsFormValidatorFactory
     }
 
     /**
+     * @param string $formName
+     * @param bool   $onLoad
+     *
+     * @throws \Fp\JsFormValidatorBundle\Exception\UndefinedFormException
      * @return string
      */
-    public function getJsValidatorString()
+    public function getJsValidatorString($formName = null, $onLoad = true)
     {
-        $models = $this->processQueue();
+        $onLoad = $onLoad ? 'true' : 'false';
+        $this->siftQueue();
+
+        $models = array();
+        // Process just the specified form
+        if ($formName) {
+            if (!isset($this->queue[$formName])) {
+                $list = implode(', ', array_keys($this->queue));
+                throw new UndefinedFormException("Form '$formName' was not found. Existing forms: $list");
+            }
+            $models[] = $this->createJsModel($this->queue[$formName]);
+            unset($this->queue[$formName]);
+        } else { // Or process whole queue
+            $models = $this->processQueue();
+        }
+        // If there are no forms to validate
+        if (!array_filter($models)) {
+            return '';
+        }
 
         $result = array();
         foreach ($models as $model) {
-            $result[] = 'FpJsFormValidator.addModel(' . $model . ');';
+            $result[] = "FpJsFormValidator.addModel({$model}, {$onLoad});";
         }
 
-        return '<script type="text/javascript">' . implode("\n", $result) . '</script>';
+        return implode("\n", $result);
     }
 }

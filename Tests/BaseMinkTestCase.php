@@ -31,30 +31,57 @@ class BaseMinkTestCase extends MinkTestCase
     }
 
     /**
-     * @param string $name
+     * @param string $path
      * @param null   $wait
      * @param string $submitId
      *
      * @return array
      */
-    protected function getAllErrorsOnPage($name, $wait = null, $submitId = 'form_submit')
+    protected function getAllErrorsOnPage($path, $wait = null, $submitId = 'form_submit')
     {
-        $session = $this->getMink()->getSession('selenium2');
-        $this->session = $session;
-        $session->visit($this->base . '/fp_js_form_validator/test/' . $name);
-        $session->getPage()->findButton($submitId)->click();
+        $this->visitTest($path);
+        $this->session->getPage()->findButton($submitId)->click();
 
         if ($wait) {
-            $session->wait(5000, $wait);
+            $this->session->wait(5000, $wait);
         }
 
+        return $this->fetchErrors();
+    }
+
+    protected function fetchErrors()
+    {
         $errorsList = array();
         /** @var \Behat\Mink\Element\NodeElement $item */
-        foreach ($session->getPage()->findAll('css', 'ul.form-errors li') as $item) {
+        foreach ($this->session->getPage()->findAll('css', 'ul.form-errors li') as $item) {
             $errorsList[] = $item->getText();
         }
 
         return $errorsList;
+    }
+
+    /**
+     * Visit a test page
+     *
+     * @param $path
+     */
+    protected function visitTest($path)
+    {
+        $session = $this->getMink()->getSession('selenium2');
+        $this->session = $session;
+        $session->visit($this->base . '/fp_js_form_validator/test/' . $path);
+    }
+
+    /**
+     * If this was a POST request - we send something to the #extra_msg container
+     *
+     * @return bool
+     */
+    protected function wasPostRequest()
+    {
+        $extraMsg = $this->session->getPage()->find('css', '#extra_msg')->getText();
+
+        return !empty($extraMsg);
     }
 
     /**
