@@ -206,11 +206,7 @@ class MainFunctionalTest extends BaseMinkTestCase
             $sfErrors,
             'Sub request: a form was validated on the server side'
         );
-        $this->assertEquals(
-            'disabled_validation',
-            $this->find('#extra_msg')->getText(),
-            'Sub request: marker form the server side exists'
-        );
+        $this->assertTrue($this->wasPostRequest());
 
         $fpErrors = $this->getAllErrorsOnPage('sub_request/-/1');
         $this->assertEquals(
@@ -218,11 +214,7 @@ class MainFunctionalTest extends BaseMinkTestCase
             $fpErrors,
             'Sub request: a form was validated on the JS side'
         );
-        $this->assertEquals(
-            '',
-            $this->find('#extra_msg')->getText(),
-            'Sub request: marker form the server side does not exist'
-        );
+        $this->assertFalse($this->wasPostRequest());
     }
 
     /**
@@ -340,11 +332,15 @@ class MainFunctionalTest extends BaseMinkTestCase
     public function testEmptyChoice()
     {
         $sfErrors = $this->getAllErrorsOnPage('empty_choice/1/0', null, 'form_choice_submit');
+        $this->assertTrue($this->wasPostRequest());
         $fpErrors = $this->getAllErrorsOnPage('empty_choice/1/1', null, 'form_choice_submit');
+        $this->assertTrue($this->wasPostRequest());
         $this->assertErrorsEqual($sfErrors, $fpErrors, 'Choice fields are valid.');
 
         $sfErrors = $this->getAllErrorsOnPage('empty_choice/0/0', null, 'form_choice_submit');
+        $this->assertTrue($this->wasPostRequest());
         $fpErrors = $this->getAllErrorsOnPage('empty_choice/0/1', null, 'form_choice_submit');
+        $this->assertFalse($this->wasPostRequest());
         $this->assertErrorsEqual($sfErrors, $fpErrors, 'Choice fields have all the errors.');
     }
 

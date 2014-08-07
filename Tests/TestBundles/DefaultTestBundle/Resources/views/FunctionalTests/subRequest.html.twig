@@ -1,12 +1,7 @@
-{% extends 'DefaultTestBundle::layout.html.twig' %}
+<div id="extra_msg">{{ extraMsg|default('') }}</div>
+{{ init_js_validation() }}
 
-{% block body %}
-    <div id="extra_msg">{{ extraMsg|default('') }}</div>
-
-    {{ init_js_validation() }}
-
-    {{ form_start(form, { 'attr': {'novalidate': 'novalidate' }}) }}
-    <input type="submit" name="form_submit" id="form_submit"/>
-    {{ form_row(form.name) }}
-    {{ form_end(form) }}
-{% endblock %}
+{{ form_start(form, { 'attr': {'novalidate': 'novalidate' }}) }}
+<input type="submit" name="form_submit" id="form_submit"/>
+{{ form_row(form.name) }}
+{{ form_end(form) }}

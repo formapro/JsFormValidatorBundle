@@ -261,10 +261,10 @@ function FpJsCustomizeMethods() {
         //noinspection JSCheckFunctionSignatures
         FpJsFormValidator.each(this, function (item) {
             var element = item.jsFormValidator;
-            element.validateRecursively();
             if (event) {
                 event.preventDefault();
             }
+            element.validateRecursively();
             if (FpJsFormValidator.ajax.queue) {
                 if (event) {
                     event.preventDefault();
@@ -2037,29 +2037,26 @@ function SymfonyComponentFormExtensionCoreDataTransformerBooleanToStringTransfor
  */
 function SymfonyComponentFormExtensionCoreDataTransformerChoiceToBooleanArrayTransformer() {
     this.choiceList = {};
+    this.placeholderPresent = false;
 
     this.reverseTransform = function(value){
         if (typeof value !== 'object') {
             throw new Error('Unexpected value type')
         }
 
-        var result = [];
-        var unknown = [];
         for (var i in value) {
             if (value[i]) {
                 if (undefined !== this.choiceList[i]) {
-                    result.push(this.choiceList[i]);
+                    return this.choiceList[i] === '' ? null : this.choiceList[i];
+                } else if (this.placeholderPresent && 'placeholder' == i) {
+                    return null;
                 } else {
-                    unknown.push(i);
+                    throw new Error('The choice "' + i + '" does not exist');
                 }
             }
         }
 
-        if (unknown.length) {
-            throw new Error('The choices "'+unknown.join(', ')+'" were not found.');
-        }
-
-        return result;
+        return null;
     }
 }
 //noinspection JSUnusedGlobalSymbols

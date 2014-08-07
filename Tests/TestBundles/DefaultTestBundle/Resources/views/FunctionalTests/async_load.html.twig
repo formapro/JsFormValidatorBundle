@@ -15,7 +15,6 @@
 {% endblock init_validation %}
 
 {% block body %}
-    <div id="extra_msg">{{ extraMsg|default('') }}</div>
     {{ form(form) }}
     {% if passForm is null %}
         <button id="init" onclick="asyncLoad();">Init</button>

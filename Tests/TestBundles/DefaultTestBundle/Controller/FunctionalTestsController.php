@@ -660,9 +660,10 @@ class FunctionalTestsController extends BaseTestController
         if ((bool)$isValid) {
             $entity->setCity('london');
             $entity->setCountries(array('france'));
+            $entity->setContinent('europe');
         }
 
-        $form   = $this->createForm(
+        $form = $this->createForm(
             new EmtyChoiceType(),
             $entity,
             array(

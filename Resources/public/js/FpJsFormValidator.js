@@ -261,10 +261,10 @@ function FpJsCustomizeMethods() {
         //noinspection JSCheckFunctionSignatures
         FpJsFormValidator.each(this, function (item) {
             var element = item.jsFormValidator;
-            element.validateRecursively();
             if (event) {
                 event.preventDefault();
             }
+            element.validateRecursively();
             if (FpJsFormValidator.ajax.queue) {
                 if (event) {
                     event.preventDefault();
