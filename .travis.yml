@@ -28,7 +28,7 @@ before_script:
   - sudo sed -i -e "s,/var/www,$(pwd)/Tests/app,g" /etc/apache2/sites-available/default
   - sudo /etc/init.d/apache2 restart
 
-  - curl http://selenium.googlecode.com/files/selenium-server-standalone-2.34.0.jar > selenium.jar
+  - curl http://selenium.googlecode.com/files/selenium-server-standalone-2.33.0.jar > selenium.jar
   - java -jar selenium.jar > selenium.log &
   - sleep 4
 
