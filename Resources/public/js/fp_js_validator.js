@@ -227,7 +227,7 @@ function FpJsCustomizeMethods() {
                 ? 'validateRecursively'
                 : 'validate';
 
-            var validateUnique = (!opts || false !== opts['findUniqueContsraint']);
+            var validateUnique = (!opts || false !== opts['findUniqueConstraint']);
             if (validateUnique && item.jsFormValidator.parent) {
                 var data = item.jsFormValidator.parent.data;
                 if (data['entity'] && data['entity']['constraints']) {
