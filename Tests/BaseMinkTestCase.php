@@ -96,10 +96,16 @@ class BaseMinkTestCase extends MinkTestCase
 
     protected function assertErrorsEqual($stack_1, $stack_2, $msg = '')
     {
-        $diff_1   = array_diff($stack_1, $stack_2);
-        $diff_2   = array_diff($stack_2, $stack_1);
-        $fullDiff = array_merge($diff_1, $diff_2);
-        $diffStr  = implode("', '", $fullDiff);
-        $this->assertEmpty($fullDiff, "$msg (Differences: '$diffStr')");
+        $stack_1 = array_values($stack_1);
+        $stack_2 = array_values($stack_2);
+        sort($stack_1);
+        sort($stack_2);
+        $this->assertEquals($stack_1, $stack_2, $msg);
+
+//        $diff_1   = array_diff($stack_1, $stack_2);
+//        $diff_2   = array_diff($stack_2, $stack_1);
+//        $fullDiff = array_merge($diff_1, $diff_2);
+//        $diffStr  = implode("', '", $fullDiff);
+//        $this->assertEmpty($fullDiff, "$msg (Differences: '$diffStr')");
     }
 } 
