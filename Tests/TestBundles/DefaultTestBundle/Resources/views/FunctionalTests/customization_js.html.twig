@@ -56,7 +56,7 @@
             }
         });
 
-        var form = document.getElementsByName('custom_form_name')[0];
+        var form = document.getElementsByTagName('form')[0];
         FpJsFormValidator.customize(form, {
             groups: function () {
                 return ['groups_callback'];
