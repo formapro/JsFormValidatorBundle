@@ -206,11 +206,6 @@ class CustomizationEntity
     }
 
     /**
-     * This format is no available in sf2.3
-     *
-     * #Assert\Callback(
-     *    groups={"groups_callback"}
-     * )
      * @param ExecutionContextInterface $context
      */
     public function validateCallback(ExecutionContextInterface $context)
