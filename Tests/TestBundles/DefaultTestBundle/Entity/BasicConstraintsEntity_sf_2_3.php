@@ -14,8 +14,9 @@ use Symfony\Component\Validator\ExecutionContextInterface;
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\BasicConstraintsRepository")
  *
- * @Assert\Callback({"Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Validator\ExternalValidator", "validateStaticCallback"})
- * @Assert\Callback({"Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Validator\ExternalValidator", "validateDirectStaticCallback"})
+ * @Assert\Callback({"validateCallback"})
+ * @Assert\Callback({{"Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Validator\ExternalValidator", "validateStaticCallback"}})
+ * @Assert\Callback({{"Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Validator\ExternalValidator", "validateDirectStaticCallback"}})
  */
 class BasicConstraintsEntity
 {

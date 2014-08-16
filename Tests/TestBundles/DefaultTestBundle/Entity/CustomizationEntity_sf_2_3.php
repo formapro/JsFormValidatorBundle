@@ -14,7 +14,10 @@ use Symfony\Component\Validator\ExecutionContextInterface;
  * @ORM\Table()
  * @ORM\Entity()
  *
- *
+ * @Assert\Callback(
+ *     methods={"validateCallback"},
+ *     groups={"groups_callback"}
+ * )
  * @Assert\Callback(
  *     methods={"ownCallback"},
  *     groups={"groups_callback"}
