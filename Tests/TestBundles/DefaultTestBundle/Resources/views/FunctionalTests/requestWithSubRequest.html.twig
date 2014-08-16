@@ -1,5 +1,5 @@
 {% extends 'DefaultTestBundle::layout.html.twig' %}
-
+{% block extra_msg %}{% endblock %}
 {% block body %}
     {{ render(controller(
         'DefaultTestBundle:FunctionalTests:subRequestIncluded',

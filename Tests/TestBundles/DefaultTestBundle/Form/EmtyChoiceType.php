@@ -48,6 +48,20 @@ class EmtyChoiceType extends AbstractType
                 'expanded'    => true,
             )
         )
+        ->add(
+            'continent',
+            'choice',
+            array(
+                'empty_value' => 'Choose continent',
+                'choices' => array(
+                    'africa' => 'Africa',
+                    'asia'   => 'Asia',
+                    'europe' => 'Europe',
+                ),
+                'multiple' => false,
+                'expanded' => true,
+            )
+        )
         ->add('submit', 'submit');
     }
 
