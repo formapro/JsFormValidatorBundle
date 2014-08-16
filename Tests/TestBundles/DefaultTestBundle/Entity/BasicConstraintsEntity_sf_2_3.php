@@ -744,9 +744,6 @@ class BasicConstraintsEntity
     }
 
     /**
-     * Don't work for sf 2.3
-     *
-     * #Assert\Callback
      * @param ExecutionContextInterface $context
      */
     public function validateCallback(ExecutionContextInterface $context)
