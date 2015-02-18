@@ -503,7 +503,7 @@ var FpJsFormValidator = new function () {
         var errors = [];
         var i = constraints.length;
         while (i--) {
-            if (this.checkValidationGroups(groups, constraints[i].groups)) {
+            if (this.checkValidationGroups(groups, constraints[i])) {
                 errors = errors.concat(constraints[i].validate(value, owner));
             }
         }
@@ -516,9 +516,11 @@ var FpJsFormValidator = new function () {
      * @param {Array} haystack
      * @return {boolean}
      */
-    this.checkValidationGroups = function (needle, haystack) {
+    this.checkValidationGroups = function (needle, constraint) {
         var result = false;
         var i = needle.length;
+        // For symfony 2.6 Api
+        var haystack = constraint.groups || ['Default'];
         while (i--) {
             if (-1 !== haystack.indexOf(needle[i])) {
                 result = true;
