@@ -28,9 +28,10 @@ before_script:
   - sudo apt-get install -y --force-yes apache2 libapache2-mod-php5 > /dev/null
 
   - sudo sed -i -e "s,/var/www,$(pwd)/Tests/app,g" /etc/apache2/sites-available/default
+  - sudo cat /etc/apache2/sites-available/default
   - sudo /etc/init.d/apache2 restart
 
-  - curl http://selenium.googlecode.com/files/selenium-server-standalone-2.35.0.jar > selenium.jar
+  - curl http://selenium-release.storage.googleapis.com/2.45/selenium-server-standalone-2.45.0.jar > selenium.jar
   - java -jar selenium.jar > selenium.log &
   - sleep 4
 
