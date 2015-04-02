@@ -35,6 +35,7 @@ before_script:
   - sudo cp -f Tests/app/Resources/apache.tpl.conf /etc/apache2/sites-available/default
   - sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)/Tests/app?g" --in-place /etc/apache2/sites-available/default
   - sudo service apache2 restart
+  - curl $WEB_FIXTURES_HOST
 
   - curl http://selenium-release.storage.googleapis.com/2.45/selenium-server-standalone-2.45.0.jar > selenium.jar
   - java -jar selenium.jar > selenium.log &
