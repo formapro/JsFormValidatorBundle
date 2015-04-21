@@ -233,7 +233,7 @@ function FpJsCustomizeMethods() {
                 if (data['entity'] && data['entity']['constraints']) {
                     for (var i in data['entity']['constraints']) {
                         var constraint = data['entity']['constraints'][i];
-                        if (constraint instanceof FpJsFormValidatorBundleFormConstraintUniqueEntity && constraint.fields.indexOf(item.name)) {
+                        if (constraint instanceof FpJsFormValidatorBundleFormConstraintUniqueEntity && constraint.fields.indexOf(item.name) > -1) {
                             var owner = item.jsFormValidator.parent;
                             constraint.validate(null, owner);
                         }
