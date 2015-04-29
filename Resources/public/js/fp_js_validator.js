@@ -2170,15 +2170,20 @@ function SymfonyComponentFormExtensionCoreDataTransformerDateTimeToArrayTransfor
     };
 
     this.twoDigits = function(value) {
+        if ('' === value[0]) {
+            return '';
+        }
+
         return ('0' + value).slice(-2);
     };
 
     this.formatDate = function(format, date) {
+        if ('' === date.join('')) {
+            return '';
+        }
+
         return format.replace(/{(\d+)}/g, function(match, number) {
-            return typeof date[number] != 'undefined'
-                ? date[number]
-                : match
-            ;
+            return typeof date[number] != 'undefined' ? date[number] : match;
         });
     }
 }

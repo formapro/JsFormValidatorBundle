@@ -1,0 +1,27 @@
+{
+  "name": "JsFormValidatorBundle",
+  "version": "1.2.1",
+  "description": "The Javascript validation for sf2 forms",
+  "main": "index.js",
+  "scripts": {
+    "test": "./karma start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hanneskaeufler/JsFormValidatorBundle.git"
+  },
+  "author": "",
+  "license": "Copyright (C) 2014 by Forma-Pro",
+  "bugs": {
+    "url": "https://github.com/hanneskaeufler/JsFormValidatorBundle/issues"
+  },
+  "homepage": "https://github.com/hanneskaeufler/JsFormValidatorBundle",
+  "devDependencies": {
+    "chai": "^2.3.0",
+    "karma": "^0.12.31",
+    "karma-chai": "^0.1.0",
+    "karma-chrome-launcher": "^0.1.8",
+    "karma-mocha": "^0.1.10",
+    "mocha": "^2.2.4"
+  }
+}
