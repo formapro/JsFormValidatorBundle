@@ -31,7 +31,8 @@
         "phpunit/phpunit": "3.7.*",
         "behat/mink-bundle": "dev-master",
         "behat/mink-selenium2-driver": "1.1.0",
-        "satooshi/php-coveralls": "dev-master"
+        "satooshi/php-coveralls": "dev-master",
+        "se/selenium-server-standalone": "2.45.0"
     },
 
     "suggest": {
