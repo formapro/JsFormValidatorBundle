@@ -44,7 +44,7 @@ fi
 #------------------- Run Selenium -------------------#
 #----------------------------------------------------#
 if [ ! -f selenium.jar ]; then
-    curl http://selenium.googlecode.com/files/selenium-server-standalone-2.33.0.jar > selenium.jar
+    curl http://selenium-release.storage.googleapis.com/2.45/selenium-server-standalone-2.45.0.jar > selenium.jar
 fi
 java -jar selenium.jar > selenium.log &
 sleep 4
