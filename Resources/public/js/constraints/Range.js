@@ -21,21 +21,21 @@ function SymfonyComponentValidatorConstraintsRange() {
         if (isNaN(value)) {
             errors.push(
                 this.invalidMessage
-                    .replace('{{ value }}', String(value))
+                    .replace('{{ value }}', FpJsBaseConstraint.formatValue(value))
             );
         }
         if (!isNaN(this.max) && value > this.max) {
             errors.push(
                 this.maxMessage
-                    .replace('{{ value }}', String(value))
-                    .replace('{{ limit }}', this.max)
+                    .replace('{{ value }}', FpJsBaseConstraint.formatValue(value))
+                    .replace('{{ limit }}', FpJsBaseConstraint.formatValue(this.max))
             );
         }
         if (!isNaN(this.min) && value < this.min) {
             errors.push(
                 this.minMessage
-                    .replace('{{ value }}', String(value))
-                    .replace('{{ limit }}', this.min)
+                    .replace('{{ value }}', FpJsBaseConstraint.formatValue(value))
+                    .replace('{{ limit }}', FpJsBaseConstraint.formatValue(this.min))
             );
         }
 

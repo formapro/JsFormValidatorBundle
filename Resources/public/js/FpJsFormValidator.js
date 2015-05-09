@@ -335,6 +335,31 @@ var FpJsBaseConstraint = {
         }
 
         return realMsg;
+    },
+
+    formatValue: function (value) {
+        switch (Object.prototype.toString.call(value)) {
+            case '[object Date]':
+                return value.format('Y-m-d H:i:s');
+
+            case '[object Object]':
+                return 'object';
+
+            case '[object Array]':
+                return 'array';
+
+            case '[object String]':
+                return '"' + value + '"';
+
+            case '[object Null]':
+                return 'null';
+
+            case '[object Boolean]':
+                return value ? 'true' : 'false';
+
+            default:
+                return String(value);
+        }
     }
 };
 

@@ -10,7 +10,7 @@ function SymfonyComponentValidatorConstraintsNotNull() {
     this.validate = function (value) {
         var errors = [];
         if (null === value) {
-            errors.push(this.message.replace('{{ value }}', String(value)));
+            errors.push(this.message.replace('{{ value }}', FpJsBaseConstraint.formatValue(value)));
         }
 
         return errors;

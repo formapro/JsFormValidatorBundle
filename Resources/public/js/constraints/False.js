@@ -10,7 +10,7 @@ function SymfonyComponentValidatorConstraintsFalse() {
     this.validate = function (value) {
         var errors = [];
         if ('' !== value && false !== value) {
-            errors.push(this.message.replace('{{ value }}', value));
+            errors.push(this.message.replace('{{ value }}', FpJsBaseConstraint.formatValue(value)));
         }
 
         return errors;

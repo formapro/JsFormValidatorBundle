@@ -12,7 +12,7 @@ function SymfonyComponentValidatorConstraintsBlank() {
         var f = FpJsFormValidator;
 
         if (!f.isValueEmty(value)) {
-            errors.push(this.message.replace('{{ value }}', String(value)));
+            errors.push(this.message.replace('{{ value }}', FpJsBaseConstraint.formatValue(value)));
         }
 
         return errors;
