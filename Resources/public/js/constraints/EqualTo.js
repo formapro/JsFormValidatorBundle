@@ -15,7 +15,7 @@ function SymfonyComponentValidatorConstraintsEqualTo() {
         if (!f.isValueEmty(value) && this.value != value) {
             errors.push(
                 this.message
-                    .replace('{{ value }}', String(this.value))
+                    .replace('{{ value }}', String(value))
                     .replace('{{ compared_value }}', String(this.value))
                     .replace('{{ compared_value_type }}', String(this.value))
             );
