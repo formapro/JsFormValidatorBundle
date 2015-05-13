@@ -56,7 +56,6 @@ function SymfonyComponentValidatorConstraintsType() {
 
             case 'scalar':
                 isValid = (/boolean|number|string/).test(typeof value);
-                value = 'Array';
                 break;
 
             case '':
@@ -76,7 +75,7 @@ function SymfonyComponentValidatorConstraintsType() {
         if (!isValid) {
             errors.push(
                 this.message
-                    .replace('{{ value }}', value)
+                    .replace('{{ value }}', FpJsBaseConstraint.formatValue(value))
                     .replace('{{ type }}', this.type)
             );
         }

@@ -29,7 +29,10 @@ function SymfonyComponentValidatorConstraintsChoice() {
         if (this.multiple) {
             if (invalidCnt) {
                 while (invalidCnt--) {
-                    errors.push(this.multipleMessage.replace('{{ value }}', String(invalidList[invalidCnt])));
+                    errors.push(this.multipleMessage.replace(
+                        '{{ value }}',
+                        FpJsBaseConstraint.formatValue(invalidList[invalidCnt])
+                    ));
                 }
             }
             if (!isNaN(this.min) && value.length < this.min) {
@@ -40,7 +43,10 @@ function SymfonyComponentValidatorConstraintsChoice() {
             }
         } else if (invalidCnt) {
             while (invalidCnt--) {
-                errors.push(this.message.replace('{{ value }}', String(invalidList[invalidCnt])));
+                errors.push(this.message.replace(
+                    '{{ value }}',
+                    FpJsBaseConstraint.formatValue(invalidList[invalidCnt])
+                ));
             }
         }
 
@@ -53,12 +59,12 @@ function SymfonyComponentValidatorConstraintsChoice() {
 
         this.minMessage = FpJsBaseConstraint.prepareMessage(
             this.minMessage,
-            {'{{ limit }}': this.min},
+            {'{{ limit }}': FpJsBaseConstraint.formatValue(this.min)},
             this.min
         );
         this.maxMessage = FpJsBaseConstraint.prepareMessage(
             this.maxMessage,
-            {'{{ limit }}': this.max},
+            {'{{ limit }}': FpJsBaseConstraint.formatValue(this.max)},
             this.max
         );
     };

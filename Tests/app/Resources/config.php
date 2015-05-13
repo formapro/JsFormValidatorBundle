@@ -61,7 +61,13 @@ $container->loadFromExtension('doctrine', array(
     'orm' => array(
         'auto_mapping' => true
     ),
-    'dbal' => array()
+    'dbal' => array(
+        'connections' => array(
+            'default' => array(
+                'driver'   => 'pdo_sqlite',
+            )
+        )
+    )
 ));
 $container->loadFromExtension(
     'mink',

@@ -3,9 +3,9 @@ language: php
 php: [5.3]
 
 env:
-  - SF_VERSION='~2.3.0'
-  - SF_VERSION='~2.4.0'
-  - SF_VERSION='>=2.5,<2.5.3'
+  - SF_VERSION='~2.3.0,>=2.3.19'
+  - SF_VERSION='~2.4.0,>=2.4.9'
+  - SF_VERSION='~2.5.0,>=2.5.3,<=2.5.4'
 
 before_script:
   - export WEB_FIXTURES_HOST=http://localhost/index.php
@@ -17,6 +17,7 @@ before_script:
   - Tests/app/switch_sf_version.sh "$SF_VERSION"
   - composer require "symfony/symfony:${SF_VERSION}"
   - composer install -n
+  - composer info -i
 
   - Tests/app/console assets:install Tests/app
   - sudo chmod -R 0777 Tests/app/cache Tests/app/logs
@@ -30,8 +31,7 @@ before_script:
   - sudo sed -i -e "s,/var/www,$(pwd)/Tests/app,g" /etc/apache2/sites-available/default
   - sudo /etc/init.d/apache2 restart
 
-  - curl http://selenium.googlecode.com/files/selenium-server-standalone-2.35.0.jar > selenium.jar
-  - java -jar selenium.jar > selenium.log &
+  - vendor/bin/selenium-server-standalone &> selenium.log &
   - sleep 4
 
 script: phpunit -v

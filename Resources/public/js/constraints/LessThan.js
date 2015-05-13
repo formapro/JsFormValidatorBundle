@@ -15,8 +15,8 @@ function SymfonyComponentValidatorConstraintsLessThan() {
         } else {
             return [
                 this.message
-                    .replace('{{ value }}', String(this.value))
-                    .replace('{{ compared_value }}', String(this.value))
+                    .replace('{{ value }}', FpJsBaseConstraint.formatValue(value))
+                    .replace('{{ compared_value }}', FpJsBaseConstraint.formatValue(this.value))
             ];
         }
     }

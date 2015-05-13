@@ -14,7 +14,7 @@ function SymfonyComponentValidatorConstraintsTrue() {
 
         var errors = [];
         if (true !== value) {
-            errors.push(this.message.replace('{{ value }}', value));
+            errors.push(this.message.replace('{{ value }}', FpJsBaseConstraint.formatValue(value)));
         }
 
         return errors;

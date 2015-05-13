@@ -15,7 +15,7 @@ move() {
     echo "$1 enabled!"
 }
 
-if [[ '~2.3.0' == "$1" ]]; then
+if [[ '~2.3.0,>=2.3.19' == "$1" ]]; then
     NATIVE="$DIR/Tests/TestBundles/DefaultTestBundle/Entity/CustomizationEntity.php"
     SF23="$DIR/Tests/TestBundles/DefaultTestBundle/Entity/CustomizationEntity_sf_2_3.php"
     move "$SF23" "$NATIVE"

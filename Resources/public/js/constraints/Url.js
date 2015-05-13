@@ -14,7 +14,7 @@ function SymfonyComponentValidatorConstraintsUrl() {
 
         if (!f.isValueEmty(value) && !regexp.test(value)) {
             element.domNode.value = 'http://' + value;
-            errors.push(this.message.replace('{{ value }}', String('http://' + value)));
+            errors.push(this.message.replace('{{ value }}', FpJsBaseConstraint.formatValue('http://' + value)));
         }
 
         return errors;
