@@ -102,9 +102,9 @@ class JsFormValidatorFactory
      * @return string
      * @codeCoverageIgnore
      */
-    protected function translateMessage($message)
+    protected function translateMessage($message, array $parameters = array())
     {
-        return $this->translator->trans($message, array(), $this->transDomain);
+        return $this->translator->trans($message, $parameters, $this->transDomain);
     }
 
     /**
@@ -243,7 +243,10 @@ class JsFormValidatorFactory
         $model->id             = $this->getElementId($form);
         $model->name           = $form->getName();
         $model->type           = $conf->getType()->getInnerType()->getName();
-        $model->invalidMessage = $conf->getOption('invalid_message');
+        $model->invalidMessage = $this->translateMessage(
+            $conf->getOption('invalid_message'),
+            $conf->getOption('invalid_message_parameters')
+        );
         $model->transformers   = $this->parseTransformers($form->getConfig()->getViewTransformers());
         $model->cascade        = $conf->getOption('cascade_validation');
         $model->bubbling       = $conf->getOption('error_bubbling');
