@@ -774,7 +774,7 @@ var FpJsFormValidator = new function () {
      * @return {HTMLElement|null}
      */
     this.findParentForm = function (child) {
-        if ('form' == child.tagName.toLowerCase()) {
+        if (child.tagName && 'form' == child.tagName.toLowerCase()) {
             return child;
         } else if (child.parentNode) {
             return this.findParentForm(child.parentNode);
