@@ -110,6 +110,10 @@ function FpJsFormElement() {
 
     this.onValidate = function (errors, event) {
     };
+
+    this.submitForm = function (form) {
+        form.submit();
+    };
 }
 
 function FpJsAjaxRequest() {
@@ -272,13 +276,13 @@ function FpJsCustomizeMethods() {
                 FpJsFormValidator.ajax.callbacks.push(function () {
                     element.onValidate.apply(element.domNode, [FpJsFormValidator.getAllErrors(element, {}), event]);
                     if (element.isValid()) {
-                        item.submit();
+                        element.submitForm.apply(item, [item]);
                     }
                 });
             } else {
                 element.onValidate.apply(element.domNode, [FpJsFormValidator.getAllErrors(element, {}), event]);
                 if (element.isValid()) {
-                    item.submit();
+                    element.submitForm.apply(item, [item]);
                 }
             }
         });
