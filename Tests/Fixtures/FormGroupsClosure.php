@@ -4,7 +4,7 @@ namespace Fp\JsFormValidatorBundle\Tests\Fixtures;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Class FormGroupsClosure
@@ -27,7 +27,7 @@ class FormGroupsClosure extends AbstractType
      *
      * @return void
      */
-    public function setDefaultOptions(OptionsResolverInterface $resolver)
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
             'data_class' => 'Fp\JsFormValidatorBundle\Tests\Fixtures\Entity',
