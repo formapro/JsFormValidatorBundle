@@ -1,5 +1,5 @@
 {
-    "name": "fp/jsformvalidator-bundle",
+    "name": "benr77/jsformvalidator-bundle",
     "type": "symfony-bundle",
     "description": "Javascript validation for sf2 forms.",
     "keywords": ["Symfony", "Form", "Javascript", "Validation"],
