@@ -2,10 +2,10 @@
 [![Build Status](https://travis-ci.org/formapro/JsFormValidatorBundle.png?branch=master)](https://travis-ci.org/formapro/JsFormValidatorBundle)
 [![Total Downloads](https://poser.pugx.org/fp/jsformvalidator-bundle/downloads.png)](https://packagist.org/packages/fp/jsformvalidator-bundle)
 
-This module enables validation of the Symfony 2.5.5+ forms on the JavaScript side.
+This module enables validation of the Symfony 2.5.3+ forms on the JavaScript side.
 It converts form type constraints into JavaScript validation rules.
 
-If you have Symfony 2.5.4* or less* - you need to use [Version 1.2.*](https://github.com/formapro/JsFormValidatorBundle/tree/1.2)
+If you have Symfony 2.5.2* or less* - you need to use [Version 1.2.*](https://github.com/formapro/JsFormValidatorBundle/tree/1.2)
 
 * More details here [Symfony2](https://github.com/symfony/symfony/commit/97243bcd024bbfa458d66a4263a50ee7f16bbe74)
 
