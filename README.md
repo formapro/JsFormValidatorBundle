@@ -14,7 +14,7 @@ It converts form type constraints into JavaScript validation rules.
 
 Run in terminal:
 ```bash
-$ php composer.phar require "fp/jsformvalidator-bundle":"dev-master"
+$ php composer.phar require "fp/jsformvalidator-bundle":"v1.2.*"
 ```
 ### 1.2 Enable the bundle<a name="p_1_2"></a>
 
