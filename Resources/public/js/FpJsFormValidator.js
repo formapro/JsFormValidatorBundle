@@ -807,6 +807,9 @@ var FpJsFormValidator = new function () {
      * @param {FpJsFormElement} element
      */
     this.getErrorPathElement = function (element) {
+        if (element.type == 'repeated') {
+            return this.findDomElement({id: element.id+'_first', name: element.name+'_first'}).jsFormValidator;
+        }
         if (!element.bubbling) {
             return element;
         } else {
