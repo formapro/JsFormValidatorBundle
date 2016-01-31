@@ -1,11 +1,11 @@
 language: php
 
-php: [5.3,5.4,5.5,5.6,7]
+php: [5.3,5.4,5.5,5.6]
 
 env:
-  - SF_VERSION='~2.3.0,>=2.3.18'
-  - SF_VERSION='~2.4.0,>=2.4.8'
-  - SF_VERSION='~2.5.0,>=2.5.2'
+  - SF_VERSION='~2.3.0,>=2.3.19'
+  - SF_VERSION='~2.4.0,>=2.4.9'
+  - SF_VERSION='~2.5.0,>=2.5.3,<=2.5.4'
 
 before_script:
   - export WEB_FIXTURES_HOST=http://localhost/index.php
@@ -15,27 +15,41 @@ before_script:
   - sleep 4
 
   - Tests/app/switch_sf_version.sh "$SF_VERSION"
-  - composer require "symfony/symfony:${SF_VERSION}"
-  - composer install -n
-  - composer info -i
+  - curl -sS https://getcomposer.org/installer | php
+  - php -d memory_limit=-1 composer.phar require "symfony/symfony:${SF_VERSION}"
+  - php -d memory_limit=-1 composer.phar install -n
+  - php -d memory_limit=-1 composer.phar info -i
 
-  - Tests/app/console assets:install Tests/app
+  - Tests/app/console assets:install -v Tests/app || Tests/app/console assets:install -v Tests/app
+  - Tests/app/console assetic:dump -v Tests/app
+
   - sudo chmod -R 0777 Tests/app/cache Tests/app/logs
-  - sudo chmod 0777 Resources/public/js/fp_js_validator.js
+  - sudo chmod 0777 Resources/public/js
   # just show the current directory tree
   - ls -R | grep ":$" | sed -e 's/:$//' -e 's/[^-][^\/]*\//--/g' -e 's/^/   /' -e 's/-/|/'
 
   - sudo apt-get update > /dev/null
-  - sudo apt-get install -y --force-yes apache2 libapache2-mod-php5 > /dev/null
+  - sudo apt-get install -y --force-yes apache2 libapache2-mod-fastcgi > /dev/null
+  # enable php-fpm
+  - sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
+  - sudo a2enmod rewrite actions fastcgi alias
+  - echo "cgi.fix_pathinfo = 1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
+  - ~/.phpenv/versions/$(phpenv version-name)/sbin/php-fpm
+  # configure apache virtual hosts
+  - sudo cp -f Tests/app/Resources/travis-ci-apache /etc/apache2/sites-available/default
+  - sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)/Tests/app?g" --in-place /etc/apache2/sites-available/default
+  - sudo /etc/init.d/apache2 restart || (sudo cat /var/log/apache2/error.log && exit 1)
 
-  - sudo sed -i -e "s,/var/www,$(pwd)/Tests/app,g" /etc/apache2/sites-available/default
-  - sudo /etc/init.d/apache2 restart
-
-  - vendor/bin/selenium-server-standalone &> selenium.log &
+  - vendor/bin/selenium-server-standalone &> Tests/app/logs/selenium.log &
   - sleep 4
 
-script: phpunit -v
+
+script: ./vendor/bin/phpunit -v --debug
 #after_script:
 #  - php vendor/bin/coveralls -v
 after_failure:
-  - cat selenium.log
+  - cat Tests/app/logs/selenium.log
+  - cat Tests/app/logs/apache-access.log
+  - cat Tests/app/logs/apache-error.log
+  - cat Tests/app/logs/cgi.log
+  - firefox-bin -v
