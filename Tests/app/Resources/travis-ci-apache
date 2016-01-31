@@ -1,0 +1,29 @@
+<VirtualHost *:80>
+
+    ServerName jsformvalidatorbundle.local
+    DocumentRoot %TRAVIS_BUILD_DIR%
+
+    <Directory "%TRAVIS_BUILD_DIR%">
+        Options FollowSymLinks MultiViews ExecCGI
+        AllowOverride All
+        Order deny,allow
+        Allow from all
+    </Directory>
+
+    # Wire up Apache to use Travis CI's php-fpm.
+    <IfModule mod_fastcgi.c>
+        AddHandler php5-fcgi .php
+        Action php5-fcgi /php5-fcgi
+        Alias /php5-fcgi /usr/lib/cgi-bin/php5-fcgi
+        FastCgiExternalServer /usr/lib/cgi-bin/php5-fcgi -host 127.0.0.1:9000 -pass-header Authorization
+    </IfModule>
+
+    ErrorLog "%TRAVIS_BUILD_DIR%/logs/apache-error.log"
+    LogLevel warn
+    CustomLog "%TRAVIS_BUILD_DIR%/logs/apache-access.log" combined
+
+    # Added for development purposes - Location of the CGI script error logfile showing input and output
+    ScriptLog  "%TRAVIS_BUILD_DIR%/logs/cgi.log"
+    # Maximum amount of PUT or POST requests that will be recorded in the scriptlog, default: 1024
+    # ScriptLogBuffer 1024
+</VirtualHost>

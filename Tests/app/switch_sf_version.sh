@@ -17,14 +17,10 @@ move() {
 
 if [[ '~2.3.0,>=2.3.19' == "$1" ]]; then
     NATIVE="$DIR/Tests/TestBundles/DefaultTestBundle/Entity/CustomizationEntity.php"
-    SF23="$DIR/Tests/TestBundles/DefaultTestBundle/Entity/CustomizationEntity_sf_2_3.php"
+    SF23="$DIR/Tests/app/Resources/CustomizationEntity_sf_2_3.php"
     move "$SF23" "$NATIVE"
 
     NATIVE="$DIR/Tests/TestBundles/DefaultTestBundle/Entity/BasicConstraintsEntity.php"
-    SF23="$DIR/Tests/TestBundles/DefaultTestBundle/Entity/BasicConstraintsEntity_sf_2_3.php"
+    SF23="$DIR/Tests/app/Resources/BasicConstraintsEntity_sf_2_3.php"
     move "$SF23" "$NATIVE"
-else
-    rm "$DIR/Tests/TestBundles/DefaultTestBundle/Entity/CustomizationEntity_sf_2_3.php"
-    rm "$DIR/Tests/TestBundles/DefaultTestBundle/Entity/BasicConstraintsEntity_sf_2_3.php"
-    exit 0;
 fi
