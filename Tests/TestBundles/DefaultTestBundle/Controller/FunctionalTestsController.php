@@ -50,6 +50,19 @@ use Symfony\Component\Validator\Constraints\Url;
 class FunctionalTestsController extends BaseTestController
 {
     /**
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function phpinfoAction() {
+        ob_start();
+        phpinfo();
+
+        return $this->render(
+            'DefaultTestBundle:FunctionalTests:phpinfo.html.twig',
+            array('phpinfo' => ob_get_clean())
+        );
+    }
+
+    /**
      * @param Request $request
      * @param         $controller
      * @param         $type

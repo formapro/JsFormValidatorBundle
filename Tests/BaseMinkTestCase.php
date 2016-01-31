@@ -23,6 +23,11 @@ class BaseMinkTestCase extends MinkTestCase
      */
     protected $session;
 
+    /**
+     * @var
+     */
+    protected static $uploader;
+
     protected function setUp()
     {
         /** @var Container $container */
@@ -40,7 +45,9 @@ class BaseMinkTestCase extends MinkTestCase
     protected function getAllErrorsOnPage($path, $wait = null, $submitId = 'form_submit')
     {
         $this->visitTest($path);
-        $this->session->getPage()->findButton($submitId)->click();
+        $button = $this->session->getPage()->findButton($submitId);
+        $this->assertNotNull($button, "Button ID '{$submitId}' does not found'");
+        $button->click();
 
         if ($wait) {
             $this->session->wait(5000, $wait);
@@ -108,4 +115,62 @@ class BaseMinkTestCase extends MinkTestCase
 //        $diffStr  = implode("', '", $fullDiff);
 //        $this->assertEmpty($fullDiff, "$msg (Differences: '$diffStr')");
     }
-} 
+
+    protected function getUploader()
+    {
+        if (empty(static::$uploader)) {
+//            $cacher = new \Doctrine\Common\Cache\FilesystemCache('/tmp');
+            static::$uploader = \RemoteImageUploader\Factory::create('Imageshack', array(
+//                'cacher' => $cacher,
+                'api_key' => '849MPVZ0ccccf4d199886724532ccaad3d8799cf',
+                'username' => 'JsFormValidatorBundle@66ton99.org.ua',
+                'password' => 'b5SSquF7kmp1'
+            ));
+            static::$uploader->login();
+        }
+
+        return static::$uploader;
+    }
+
+    protected function makeScreenshot()
+    {
+        if (empty($this->session)) {
+            return 'No session';
+        }
+
+        try {
+            $name = date('Y-m-d_H:i:s') . '.png';
+            file_put_contents(
+                '/tmp/' . $name,
+                $this->session->getScreenshot()
+            );
+            $imageUrl = $this->getUploader()->upload('/tmp/' . $name);
+        } catch (\Exception $e) {
+            $imageUrl = $e->getMessage();
+        }
+        return $imageUrl;
+    }
+
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function onNotSuccessfulTest(\Exception $e)
+    {
+        if (!in_array(
+                get_class($e),
+                array('PHPUnit_Framework_IncompleteTestError', 'PHPUnit_Framework_SkippedTestError')
+            )
+        ) {
+            $e = new \ErrorException(
+                $e->getMessage() . "\nScreenshot: " . $this->makeScreenshot(),
+                $e->getCode(),
+                0,
+                $e->getFile(),
+                $e->getLine() - 1, /* @link http://php.net/manual/en/exception.getline.php#102225 */
+                $e
+            );
+        }
+        parent::onNotSuccessfulTest($e);
+    }
+}
