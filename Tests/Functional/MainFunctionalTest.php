@@ -12,6 +12,15 @@ use Fp\JsFormValidatorBundle\Tests\BaseMinkTestCase;
  */
 class MainFunctionalTest extends BaseMinkTestCase
 {
+// TODO make test with comparison WEB and CLI versions of PHP
+//    /**
+//     * Take screenshot of phpinfo page
+//     */
+//    public function testPHPInfo()
+//    {
+//        $this->visitTest('phpinfo');
+//        var_dump($this->makeScreenshot());
+//    }
 
     /**
      * Test translation service
@@ -325,8 +334,9 @@ class MainFunctionalTest extends BaseMinkTestCase
         $page->findField('form_task_comments_0_content')->setValue('asdf');
         $page->findField('form_task_comments_2_content')->setValue('asdf');
         $submit->click();
-        $extraMsg = $this->session->getPage()->find('css', '#extra_msg')->getText();
-        $this->assertEquals('done', $extraMsg);
+        $extraMsgEl = $this->session->getPage()->find('css', '#extra_msg');
+        $this->assertNotNull($extraMsgEl);
+        $this->assertEquals('done', $extraMsgEl->getText());
     }
 
     public function testEmptyChoice()
@@ -392,6 +402,7 @@ class MainFunctionalTest extends BaseMinkTestCase
 
         $page = $this->session->getPage();
         $submit = $page->findButton('async_load_submit');
+        $this->assertNotNull($submit, "Button ID 'async_load_submit' does not found'");
         $initBtn = $page->findButton('init');
 
         $submit->click();
@@ -420,7 +431,9 @@ class MainFunctionalTest extends BaseMinkTestCase
         $this->visitTest("async_load/{$form}/1");
 
         $page = $this->session->getPage();
-        $page->findButton('async_load_submit')->click();
+        $submit = $page->findButton('async_load_submit');
+        $this->assertNotNull($submit, "Button ID 'async_load_submit' does not found'");
+        $submit->click();
         $errors = $this->fetchErrors();
         $this->assertEquals(array('async_load_message'), $errors, 'Correct errors');
         $this->assertFalse($this->wasPostRequest(), 'Validation works fine');
@@ -432,7 +445,9 @@ class MainFunctionalTest extends BaseMinkTestCase
         $this->visitTest("async_load/{$form}/1");
 
         $page = $this->session->getPage();
-        $page->findButton('async_load_submit')->click();
+        $submit = $page->findButton('async_load_submit');
+        $this->assertNotNull($submit, "Button ID 'async_load_submit' does not found'");
+        $submit->click();
         $errors = $this->fetchErrors();
         $this->assertEquals(array('async_load_message'), $errors, 'Correct errors');
         $this->assertFalse($this->wasPostRequest(), 'Validation works fine');

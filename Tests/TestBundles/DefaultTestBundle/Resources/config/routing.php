@@ -9,6 +9,16 @@ $controllerClass = 'Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle
 $uniqueEntityControllerClass = 'Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Controller\UniqueEntityController';
 
 $collection->add(
+    'fp_js_form_validator_phpinfo',
+    new Route(
+        '/fp_js_form_validator/test/phpinfo',
+        array(
+            '_controller' => $controllerClass . '::phpinfoAction',
+        )
+    )
+);
+
+$collection->add(
     'fp_js_form_validator_test_base',
     new Route(
         '/fp_js_form_validator/test/{controller}/{type}/{js}',
