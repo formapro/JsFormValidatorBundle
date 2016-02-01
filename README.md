@@ -7,7 +7,7 @@ It converts form type constraints into JavaScript validation rules.
 
 If you have Symfony 2.5.4* or less* - you need to use [Version 1.2.*](https://github.com/formapro/JsFormValidatorBundle/tree/1.2)
 
-* More details here [Symfony2](https://github.com/symfony/symfony/commit/97243bcd024bbfa458d66a4263a50ee7f16bbe74)
+* More details here: [Symfony2](https://github.com/symfony/symfony/commit/97243bcd024bbfa458d66a4263a50ee7f16bbe74), [PR #83](https://github.com/formapro/JsFormValidatorBundle/pull/83)
 
 
 ## 1 Installation<a name="p_1"></a>
