@@ -20,7 +20,7 @@ function FpJsFormElement() {
     };
 
     this.validate = function () {
-        if (this.disabled) {
+        if (this.disabled || (this.domNode && this.domNode.disabled)) {
             return true;
         }
 
