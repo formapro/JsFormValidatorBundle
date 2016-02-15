@@ -375,6 +375,10 @@ var FpJsFormValidator = new function () {
     this.customizeMethods = new FpJsCustomizeMethods();
     this.constraintsCounter = 0;
 
+    function elementIsType(element, type) {
+        return element.type.indexOf(type) >= 0;
+    }
+
     //noinspection JSUnusedGlobalSymbols
     this.addModel = function (model, onLoad) {
         var self = this;
@@ -511,7 +515,7 @@ var FpJsFormValidator = new function () {
 
     this.checkParentCascadeOption = function (element) {
         var result = true;
-        if (element.parent && !element.parent.cascade && 'collection' != element.parent.type) {
+        if (element.parent && !element.parent.cascade && !elementIsType(element.parent, 'collection')) {
             result = false;
         } else if (element.parent) {
             result = this.checkParentCascadeOption(element.parent);
@@ -569,7 +573,7 @@ var FpJsFormValidator = new function () {
 
         if (i && undefined === value) {
             value = this.getMappedValue(element);
-        } else if ('collection' == element.type) {
+        } else if (elementIsType(element, 'collection')) {
             value = {};
             for (var childName in element.children) {
                 value[childName] = this.getMappedValue(element.children[childName]);
@@ -609,7 +613,7 @@ var FpJsFormValidator = new function () {
         }
 
         var value;
-        if ('checkbox' == element.type || 'radio' == element.type) {
+        if (elementIsType(element, 'checkbox') || elementIsType(element, 'radio')) {
             value = element.domNode.checked;
         } else if ('select' === element.domNode.tagName.toLowerCase()) {
             value = [];

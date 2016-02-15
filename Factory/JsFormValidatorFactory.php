@@ -11,6 +11,8 @@ use Symfony\Component\Form\Extension\Core\DataTransformer\ChoicesToBooleanArrayT
 use Symfony\Component\Form\Extension\Core\DataTransformer\ChoiceToBooleanArrayTransformer;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\ResolvedFormTypeInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
@@ -65,7 +67,7 @@ class JsFormValidatorFactory
     /**
      * @param ValidatorInterface    $validator
      * @param TranslatorInterface   $translator
-     * @param \Symfony\Component\Routing\Generator\UrlGeneratorInterface $router
+     * @param UrlGeneratorInterface $router
      * @param array                 $config
      * @param string                $domain
      */
@@ -244,7 +246,7 @@ class JsFormValidatorFactory
         $model                 = new JsFormElement;
         $model->id             = $this->getElementId($form);
         $model->name           = $form->getName();
-        $model->type           = $conf->getType()->getInnerType()->getName();
+        $model->type           = $this->getFormTypeHierarchy($conf->getType());
         $model->invalidMessage = $this->translateMessage(
             $conf->getOption('invalid_message'),
             $conf->getOption('invalid_message_parameters')
@@ -262,6 +264,19 @@ class JsFormValidatorFactory
 
         // Return self id to add it as child to the parent model
         return $model;
+    }
+
+    private function getFormTypeHierarchy(ResolvedFormTypeInterface $formType)
+    {
+        $type = [
+            $formType->getName(),
+        ];
+
+        while ($formType = $formType->getParent()) {
+            $type[] = $formType->getName();
+        }
+
+        return $type;
     }
 
     /**
