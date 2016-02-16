@@ -20,12 +20,18 @@ function FpJsFormElement() {
     };
 
     this.validate = function () {
-        if (this.disabled || (this.domNode && this.domNode.disabled)) {
+        if (this.disabled) {
             return true;
         }
 
         var self = this;
         var sourceId = 'form-error-' + String(this.id).replace(/_/g, '-');
+        self.errors[sourceId] = [];
+
+        if (this.domNode && this.domNode.disabled) {
+            return true;
+        }
+
         self.errors[sourceId] = FpJsFormValidator.validateElement(self);
 
         var errorPath = FpJsFormValidator.getErrorPathElement(self);
