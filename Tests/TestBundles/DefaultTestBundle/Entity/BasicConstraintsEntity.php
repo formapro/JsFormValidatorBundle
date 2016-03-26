@@ -6,7 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use /** @noinspection PhpUnusedAliasInspection */
     Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity as BaseUniqueEntity;
-use Symfony\Component\Validator\ExecutionContextInterface;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * Book
@@ -352,7 +352,7 @@ class BasicConstraintsEntity
 
     /**
      * @return bool
-     * @Assert\True(message="true_value")
+     * @Assert\IsTrue(message="true_value")
      */
     public function isTrue()
     {
@@ -361,7 +361,7 @@ class BasicConstraintsEntity
 
     /**
      * @return bool
-     * @Assert\False(message="false_value")
+     * @Assert\IsFalse(message="false_value")
      */
     public function isFalse()
     {
@@ -370,7 +370,7 @@ class BasicConstraintsEntity
 
     /**
      * @return bool
-     * @Assert\Null(message="null_{{ value }}")
+     * @Assert\IsNull(message="null_{{ value }}")
      */
     public function isNull()
     {
@@ -749,7 +749,7 @@ class BasicConstraintsEntity
     public function validateCallback(ExecutionContextInterface $context)
     {
         if (!$this->isValid) {
-            $context->addViolationAt('email', 'callback_email_' . $this->getEmail(), array(), null);
+            $context->buildViolation('callback_email_' . $this->getEmail())->atPath('email');
         }
     }
 }

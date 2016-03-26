@@ -4,6 +4,7 @@ namespace Fp\JsFormValidatorBundle\Form\Extension;
 use Fp\JsFormValidatorBundle\Factory\JsFormValidatorFactory;
 use Fp\JsFormValidatorBundle\Form\Subscriber\SubscriberToQueue;
 use Symfony\Component\Form\AbstractTypeExtension;
+use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -37,7 +38,7 @@ class FormExtension extends AbstractTypeExtension
     }
 
     /**
-     * @param OptionsResolverInterface $resolver
+     * @param OptionsResolver $resolver
      */
     public function configureOptions(OptionsResolver $resolver)
     {
@@ -51,6 +52,6 @@ class FormExtension extends AbstractTypeExtension
      */
     public function getExtendedType()
     {
-        return 'form';
+        return FormType::class;
     }
 }

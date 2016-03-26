@@ -3,6 +3,8 @@
 namespace Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -21,21 +23,13 @@ class AsyncLoadType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('name', 'text', array(
+            ->add('name', TextType::class, array(
                 'constraints' => array(
                     new NotBlank(array(
                         'message' => 'async_load_message'
                     )),
                 )
             ))
-            ->add('submit', 'submit');
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return 'async_load';
+            ->add('submit', SubmitType::class);
     }
 }

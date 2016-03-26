@@ -1,11 +1,9 @@
 language: php
 
-php: [5.3,5.4,5.5,5.6]
+php: [5.5,5.6,7.0]
 
 env:
-  - SF_VERSION='>=2.5.5,<2.6.0'
-  - SF_VERSION='~2.6.0'
-  - SF_VERSION='~2.7.0'
+  - SF_VERSION='~3.0.0'
 
 before_script:
   - export WEB_FIXTURES_HOST=http://localhost/index.php
@@ -30,6 +28,7 @@ before_script:
   - sudo apt-get update > /dev/null
   - sudo apt-get install -y --force-yes apache2 libapache2-mod-fastcgi > /dev/null
   # enable php-fpm
+  - if [[ ${TRAVIS_PHP_VERSION:0:2} == "7." ]]; then sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.d/www.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.d/www.conf; fi
   - sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
   - sudo a2enmod rewrite actions fastcgi alias
   - echo "cgi.fix_pathinfo = 1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini

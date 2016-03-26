@@ -8,6 +8,7 @@ use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\TestSubFor
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form\TestFormType;
 use Symfony\Component\Form\Form;
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\TestEntity;
+use Symfony\Component\Validator\Constraints\Valid;
 
 class BaseTestController extends  Controller {
     /**
@@ -32,7 +33,7 @@ class BaseTestController extends  Controller {
     {
         return $this
             ->createForm(
-                new TestFormType(),
+                TestFormType::class,
                 new TestEntity(),
                 array(
                     'validation_groups' => $groups,
@@ -45,30 +46,32 @@ class BaseTestController extends  Controller {
     {
         return $this
             ->createForm(
-                new TestFormType(),
+                TestFormType::class,
                 new TestEntity(),
                 array(
                     'validation_groups'  => array('groups_array'),
-                    'cascade_validation' => $cascade,
                     'js_validation'      => $js,
                 )
             )
             ->add(
                 'email',
-                new TestSubFormType(),
+                TestSubFormType::class,
                 array(
                     'error_bubbling'    => $bubbling,
-                    'constraints'       => array(
-                        new Type(array(
-                            'type'    => 'integer',
-                            'message' => 'child_groups_array_message',
-                            'groups'  => array('groups_array'),
-                        )),
-                        new Type(array(
-                            'type'    => 'integer',
-                            'message' => 'child_groups_child_message',
-                            'groups'  => array('groups_child'),
-                        ))
+                    'constraints'       => array_merge(
+                        $cascade ? array(new Valid()) : array(),
+                        array(
+                            new Type(array(
+                                'type'    => 'integer',
+                                'message' => 'child_groups_array_message',
+                                'groups'  => array('groups_array'),
+                            )),
+                            new Type(array(
+                                'type'    => 'integer',
+                                'message' => 'child_groups_child_message',
+                                'groups'  => array('groups_child'),
+                            ))
+                        )
                     ),
                     'validation_groups' => $childGroups
                 )

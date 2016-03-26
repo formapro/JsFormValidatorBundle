@@ -74,7 +74,7 @@ class Entity
 
     /**
      * @return bool
-     * @Assert\True(message = "wrong_name")
+     * @Assert\IsTrue(message = "wrong_name")
      */
     public function isNameLegal()
     {

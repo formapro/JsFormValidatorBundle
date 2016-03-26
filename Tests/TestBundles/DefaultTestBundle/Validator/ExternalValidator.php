@@ -2,7 +2,7 @@
 namespace Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Validator;
 
 use Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\BasicConstraintsEntity;
-use Symfony\Component\Validator\ExecutionContextInterface;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class ExternalValidator {
     /**
@@ -12,7 +12,7 @@ class ExternalValidator {
     public static function validateStaticCallback($object, ExecutionContextInterface $context)
     {
         if (!$object->isValid) {
-            $context->addViolationAt('email', 'static_callback_email_' . $object->getEmail(), array(), null);
+            $context->buildViolation('static_callback_email_' . $object->getEmail())->atPath('email');
         }
     }
 
@@ -23,7 +23,7 @@ class ExternalValidator {
     public static function validateDirectStaticCallback($object, ExecutionContextInterface $context)
     {
         if (!$object->isValid) {
-            $context->addViolationAt('email', 'direct_static_callback_email_' . $object->getEmail(), array(), null);
+            $context->buildViolation('direct_static_callback_email_' . $object->getEmail())->atPath('email');
         }
     }
 } 

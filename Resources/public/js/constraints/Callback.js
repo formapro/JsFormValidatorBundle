@@ -11,7 +11,7 @@ function SymfonyComponentValidatorConstraintsCallback () {
         if (!this.callback) {
             this.callback = [];
         }
-        if (!this.methods) {
+        if (!this.methods.length) {
             this.methods = [this.callback];
         }
 

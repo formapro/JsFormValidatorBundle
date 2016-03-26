@@ -43,13 +43,6 @@ class AppKernel extends Kernel
     }
 
     /**
-     * An empty init function
-     */
-    public function init()
-    {
-    }
-
-    /**
      * @param string $name
      * @param string $extension
      */

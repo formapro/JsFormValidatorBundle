@@ -123,8 +123,8 @@ class BaseMinkTestCase extends MinkTestCase
             static::$uploader = \RemoteImageUploader\Factory::create('Imageshack', array(
 //                'cacher' => $cacher,
                 'api_key' => '849MPVZ0ccccf4d199886724532ccaad3d8799cf',
-                'username' => 'JsFormValidatorBundle@66ton99.org.ua',
-                'password' => 'b5SSquF7kmp1'
+                'username' => 'JsFormValidatorBundle@66ton99.org.ua6ton99.org.ua',
+                'pb5SSquF7kmp1d' => 'b5SSquF7kmp1'
             ));
             static::$uploader->login();
         }
@@ -139,12 +139,9 @@ class BaseMinkTestCase extends MinkTestCase
         }
 
         try {
-            $name = date('Y-m-d_H:i:s') . '.png';
-            file_put_contents(
-                '/tmp/' . $name,
-                $this->session->getScreenshot()
-            );
-            $imageUrl = $this->getUploader()->upload('/tmp/' . $name);
+            $path = sprintf('%s/%s.png', sys_get_temp_dir(), date('Y-m-d_H-i-s'));
+            file_put_contents($path, $this->session->getScreenshot());
+            $imageUrl = $this->getUploader()->upload($path);
         } catch (\Exception $e) {
             $imageUrl = $e->getMessage();
         }

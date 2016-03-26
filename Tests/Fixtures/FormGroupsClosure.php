@@ -3,6 +3,7 @@
 namespace Fp\JsFormValidatorBundle\Tests\Fixtures;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -19,11 +20,11 @@ class FormGroupsClosure extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('name', 'text');
+        $builder->add('name', TextType::class);
     }
 
     /**
-     * @param OptionsResolverInterface $resolver
+     * @param OptionsResolver $resolver
      *
      * @return void
      */
@@ -35,13 +36,5 @@ class FormGroupsClosure extends AbstractType
                 return array('test');
             }
         ));
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return 'fp_jsformvalidatorbundle_tests_fixtures_formgroupsclosure';
     }
 }

@@ -90,9 +90,9 @@ class MainFunctionalTest extends BaseMinkTestCase
         $this->assertCount(5, $fpErrors);
         /** @var DocumentElement $page */
         $page = $this->session->getPage();
-        $page->findField('form_name')->setValue('a');
-        $page->findField('form_email')->setValue('a');
-        $page->findField('form_title')->setValue('a');
+        $page->findField('unique_name')->setValue('a');
+        $page->findField('unique_email')->setValue('a');
+        $page->findField('unique_title')->setValue('a');
         $page->findLink('a_submit')->click();
         $this->session->wait(5000, '$("#extra_msg").text() == "unique_entity_valid"');
         $extraMsg = $this->session->getPage()->find('css', '#extra_msg')->getText();
@@ -253,7 +253,7 @@ class MainFunctionalTest extends BaseMinkTestCase
             'validate_callback_email_custom'
         );
 
-        $jqErrors = $this->getAllErrorsOnPage('customization/jq/1', null, 'custom_form_name_submit');
+        $jqErrors = $this->getAllErrorsOnPage('customization/jq/1', null, 'customization_submit');
         $this->assertErrorsEqual($expected, $jqErrors, 'All the jQuery customizations were applied');
 
         /** @var DocumentElement $page */
@@ -261,12 +261,12 @@ class MainFunctionalTest extends BaseMinkTestCase
         $onValidateMsg = $page->find('css', '#on_validate_msg_container')->getText();
         $this->assertErrorsEqual($expected, explode(', ', $onValidateMsg));
 
-        $field = $page->findField('custom_form_name_showErrors');
+        $field = $page->findField('customization_showErrors');
         $field->setValue('asdf');
         $field->blur();
         $this->assertNull($page->find('css', '.form-error-custom-form-name-showErrors'));
 
-        $jsErrors = $this->getAllErrorsOnPage('customization/js/1', null, 'custom_form_name_submit');
+        $jsErrors = $this->getAllErrorsOnPage('customization/js/1', null, 'customization_submit');
         $this->assertErrorsEqual($expected, $jsErrors, 'All the Javascript customizations were applied');
 
         /** @var DocumentElement $page */
@@ -286,9 +286,9 @@ class MainFunctionalTest extends BaseMinkTestCase
 
     public function testCollection()
     {
-        $errors = $this->getAllErrorsOnPage('collection/-/-', null, 'form_task_submit');
+        $errors = $this->getAllErrorsOnPage('collection/-/-', null, 'task_submit');
         $page = $this->session->getPage();
-        $submit = $page->findButton('form_task_submit');
+        $submit = $page->findButton('task_submit');
         $getErrors = function () use ($page) {
             $errors = array();
             /** @var \Behat\Mink\Element\NodeElement $item */
@@ -323,16 +323,16 @@ class MainFunctionalTest extends BaseMinkTestCase
 
         $this->assertEquals($getExpected(4, 3, 0), array_count_values($getErrors()));
 
-        $this->find('#del_form_task_tags_2')->click();
-        $this->find('#del_form_task_comments_1')->click();
+        $this->find('#del_task_tags_2')->click();
+        $this->find('#del_task_comments_1')->click();
         $submit->click();
         $this->assertEquals($getExpected(3, 2, 0), array_count_values($getErrors()));
 
-        $page->findField('form_task_tags_0_title')->setValue('asdf');
-        $page->findField('form_task_tags_1_title')->setValue('asdf');
-        $page->findField('form_task_tags_3_title')->setValue('asdf');
-        $page->findField('form_task_comments_0_content')->setValue('asdf');
-        $page->findField('form_task_comments_2_content')->setValue('asdf');
+        $page->findField('task_tags_0_title')->setValue('asdf');
+        $page->findField('task_tags_1_title')->setValue('asdf');
+        $page->findField('task_tags_3_title')->setValue('asdf');
+        $page->findField('task_comments_0_content')->setValue('asdf');
+        $page->findField('task_comments_2_content')->setValue('asdf');
         $submit->click();
         $extraMsgEl = $this->session->getPage()->find('css', '#extra_msg');
         $this->assertNotNull($extraMsgEl);
@@ -341,22 +341,22 @@ class MainFunctionalTest extends BaseMinkTestCase
 
     public function testEmptyChoice()
     {
-        $sfErrors = $this->getAllErrorsOnPage('empty_choice/1/0', null, 'form_choice_submit');
+        $sfErrors = $this->getAllErrorsOnPage('empty_choice/1/0', null, 'empty_choice_submit');
         $this->assertTrue($this->wasPostRequest());
-        $fpErrors = $this->getAllErrorsOnPage('empty_choice/1/1', null, 'form_choice_submit');
+        $fpErrors = $this->getAllErrorsOnPage('empty_choice/1/1', null, 'empty_choice_submit');
         $this->assertTrue($this->wasPostRequest());
         $this->assertErrorsEqual($sfErrors, $fpErrors, 'Choice fields are valid.');
 
-        $sfErrors = $this->getAllErrorsOnPage('empty_choice/0/0', null, 'form_choice_submit');
+        $sfErrors = $this->getAllErrorsOnPage('empty_choice/0/0', null, 'empty_choice_submit');
         $this->assertTrue($this->wasPostRequest());
-        $fpErrors = $this->getAllErrorsOnPage('empty_choice/0/1', null, 'form_choice_submit');
+        $fpErrors = $this->getAllErrorsOnPage('empty_choice/0/1', null, 'empty_choice_submit');
         $this->assertFalse($this->wasPostRequest());
         $this->assertErrorsEqual($sfErrors, $fpErrors, 'Choice fields have all the errors.');
     }
 
     public function testPasswordField()
     {
-        $btnId = 'form_password_field_submit';
+        $btnId = 'password_field_submit';
         // Check the valid values
         $sfErrors = $this->getAllErrorsOnPage('password_field/1/0', null, $btnId);
         $fpErrors = $this->getAllErrorsOnPage('password_field/1/1', null, $btnId);
@@ -365,11 +365,11 @@ class MainFunctionalTest extends BaseMinkTestCase
         $session = $this->session;
         $changeAndGetErrors = function ($first, $second) use ($session) {
             $page = $session->getPage();
-            $submit = $page->findButton('form_password_field_submit');
+            $submit = $page->findButton('password_field_submit');
 
             // Check the Length constraint
-            $page->findField('form_password_field_password_first')->setValue($first);
-            $page->findField('form_password_field_password_second')->setValue($second);
+            $page->findField('password_field_password_first')->setValue($first);
+            $page->findField('password_field_password_second')->setValue($second);
             $submit->click();
             $errors = array();
             /** @var \Behat\Mink\Element\NodeElement $item */
