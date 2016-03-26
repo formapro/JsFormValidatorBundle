@@ -24,11 +24,12 @@ use Symfony\Component\Validator\Constraints\Date;
 use Symfony\Component\Validator\Constraints\DateTime;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\EqualTo;
-use Symfony\Component\Validator\Constraints\False;
 use Symfony\Component\Validator\Constraints\GreaterThan;
 use Symfony\Component\Validator\Constraints\GreaterThanOrEqual;
 use Symfony\Component\Validator\Constraints\IdenticalTo;
 use Symfony\Component\Validator\Constraints\Ip;
+use Symfony\Component\Validator\Constraints\IsFalse;
+use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\LessThan;
 use Symfony\Component\Validator\Constraints\LessThanOrEqual;
@@ -37,7 +38,6 @@ use Symfony\Component\Validator\Constraints\NotEqualTo;
 use Symfony\Component\Validator\Constraints\NotIdenticalTo;
 use Symfony\Component\Validator\Constraints\Range;
 use Symfony\Component\Validator\Constraints\Time;
-use Symfony\Component\Validator\Constraints\True;
 use Symfony\Component\Validator\Constraints\Type;
 use Symfony\Component\Validator\Constraints\Url;
 
@@ -293,10 +293,10 @@ class FunctionalTestsController extends BaseTestController
                 'checkbox',
                 array(
                     'constraints' => array(
-                        new True(array(
+                        new IsTrue(array(
                             'message' => 'checkbox_false'
                         )),
-                        new False(array(
+                        new IsFalse(array(
                             'message' => 'checkbox_true'
                         ))
                     )
@@ -307,10 +307,10 @@ class FunctionalTestsController extends BaseTestController
                 'radio',
                 array(
                     'constraints' => array(
-                        new True(array(
+                        new IsTrue(array(
                             'message' => 'radio_false'
                         )),
-                        new False(array(
+                        new IsFalse(array(
                             'message' => 'radio_true'
                         ))
                     )
@@ -469,7 +469,7 @@ class FunctionalTestsController extends BaseTestController
                     'constraints' => array(
                         new Email(array('message' => 'wrong_email')),
                         new EqualTo(array('value' => 'asdf', 'message' => 'wrong_equal_to')),
-                        new False(array('message' => 'wrong_false')),
+                        new IsFalse(array('message' => 'wrong_false')),
                         new GreaterThan(array('value' => 5, 'message' => 'wrong_greater_than')),
                         new GreaterThanOrEqual(array('value' => 5, 'message' => 'wrong_greater_than_or_equal')),
                         new IdenticalTo(array('value' => 5, 'message' => 'wrong_identical_to')),
@@ -491,7 +491,7 @@ class FunctionalTestsController extends BaseTestController
                         new Time(array('message' => 'wrong_time')),
                         new Date(array('message' => 'wrong_date')),
                         new DateTime(array('message' => 'wrong_date_time')),
-                        new True(array('message' => 'wrong_true')),
+                        new IsTrue(array('message' => 'wrong_true')),
                         new Type(array('type' => 'integer', 'message' => 'wrong_type')),
                         new Url(array('message' => 'wrong_url')),
                     )

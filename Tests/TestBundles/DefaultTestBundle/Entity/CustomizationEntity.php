@@ -189,7 +189,7 @@ class CustomizationEntity
     /**
      * @return bool
      *
-     * @Assert\True(
+     * @Assert\IsTrue(
      *     message="getter_message",
      *     groups={"groups_callback"}
      * )

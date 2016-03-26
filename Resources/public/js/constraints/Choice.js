@@ -28,12 +28,10 @@ function SymfonyComponentValidatorConstraintsChoice() {
 
         if (this.multiple) {
             if (invalidCnt) {
-                while (invalidCnt--) {
-                    errors.push(this.multipleMessage.replace(
-                        '{{ value }}',
-                        FpJsBaseConstraint.formatValue(invalidList[invalidCnt])
-                    ));
-                }
+                errors.push(this.multipleMessage.replace(
+                    '{{ value }}',
+                    FpJsBaseConstraint.formatValue(invalidList[0])
+                ));
             }
             if (!isNaN(this.min) && value.length < this.min) {
                 errors.push(this.minMessage);

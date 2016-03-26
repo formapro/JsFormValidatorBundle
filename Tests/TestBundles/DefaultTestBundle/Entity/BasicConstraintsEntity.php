@@ -352,7 +352,7 @@ class BasicConstraintsEntity
 
     /**
      * @return bool
-     * @Assert\True(message="true_value")
+     * @Assert\IsTrue(message="true_value")
      */
     public function isTrue()
     {
@@ -361,7 +361,7 @@ class BasicConstraintsEntity
 
     /**
      * @return bool
-     * @Assert\False(message="false_value")
+     * @Assert\IsFalse(message="false_value")
      */
     public function isFalse()
     {
@@ -370,7 +370,7 @@ class BasicConstraintsEntity
 
     /**
      * @return bool
-     * @Assert\Null(message="null_{{ value }}")
+     * @Assert\IsNull(message="null_{{ value }}")
      */
     public function isNull()
     {

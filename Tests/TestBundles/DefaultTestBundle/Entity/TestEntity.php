@@ -116,11 +116,11 @@ class TestEntity
 
     /**
      * @return bool
-     * @Assert\True(
+     * @Assert\IsTrue(
      *     message="getter_groups_array_message",
      *     groups={"groups_array"}
      * )
-     * @Assert\True(
+     * @Assert\IsTrue(
      *     message="getter_no_groups_message"
      * )
      */

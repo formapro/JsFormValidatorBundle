@@ -12,9 +12,6 @@ use Symfony\Component\HttpKernel\Kernel;
  */
 class TestTwigExtension extends \Twig_Extension
 {
-    /** @var  \Twig_Environment */
-    protected $env;
-
     /**
      * @var Kernel
      */
@@ -26,20 +23,12 @@ class TestTwigExtension extends \Twig_Extension
     }
 
     /**
-     * @param \Twig_Environment $environment
-     */
-    public function initRuntime(\Twig_Environment $environment)
-    {
-        $this->env = $environment;
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getFunctions()
     {
         return array(
-            'update_js_lib'  => new \Twig_Function_Method($this, 'updateJsLib'),
+            new \Twig_SimpleFunction('update_js_lib', array($this, 'updateJsLib')),
         );
     }
 
