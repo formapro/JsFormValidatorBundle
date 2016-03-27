@@ -4,15 +4,4 @@
  * @constructor
  * @author dev.ymalcev@gmail.com
  */
-function SymfonyComponentValidatorConstraintsFalse() {
-    this.message = '';
-
-    this.validate = function (value) {
-        var errors = [];
-        if ('' !== value && false !== value) {
-            errors.push(this.message.replace('{{ value }}', FpJsBaseConstraint.formatValue(value)));
-        }
-
-        return errors;
-    }
-}
+var SymfonyComponentValidatorConstraintsFalse = SymfonyComponentValidatorConstraintsIsFalse;

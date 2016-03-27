@@ -711,7 +711,7 @@ class BasicConstraintsEntity
      */
     public function isValidMultipleChoice()
     {
-        return $this->_t_get(array('June', 'July'), array('June', 'May', 'September'));
+        return $this->_t_get(array('June', 'July'), array('June', 'May'));
     }
 
     /**

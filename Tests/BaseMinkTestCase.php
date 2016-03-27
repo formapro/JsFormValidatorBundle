@@ -139,12 +139,9 @@ class BaseMinkTestCase extends MinkTestCase
         }
 
         try {
-            $name = date('Y-m-d_H:i:s') . '.png';
-            file_put_contents(
-                '/tmp/' . $name,
-                $this->session->getScreenshot()
-            );
-            $imageUrl = $this->getUploader()->upload('/tmp/' . $name);
+            $path = sprintf('%s/%s.png', sys_get_temp_dir(), date('Y-m-d_H-i-s'));
+            file_put_contents($path, $this->session->getScreenshot());
+            $imageUrl = $this->getUploader()->upload($path);
         } catch (\Exception $e) {
             $imageUrl = $e->getMessage();
         }
