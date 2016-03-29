@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/formapro/JsFormValidatorBundle.svg?branch=master)](https://travis-ci.org/formapro/JsFormValidatorBundle)
 [![Total Downloads](https://poser.pugx.org/fp/jsformvalidator-bundle/downloads.png)](https://packagist.org/packages/fp/jsformvalidator-bundle)
 
-This module enables validation of the 3.0+ forms on the JavaScript side.
+This module enables validation of the Symfony 3 forms on the JavaScript side.
 It converts form type constraints into JavaScript validation rules.
 
 If you have Symfony 2.8.* or 2.7.* - you need to use [Version 1.3.*](https://github.com/formapro/JsFormValidatorBundle/tree/1.3)
@@ -10,13 +10,15 @@ If you have Symfony 2.6.* or less - you need to use [Version 1.2.*](https://gith
 
 ## 1 Installation<a name="p_1"></a>
 
-[Upgrade from the previous version](https://github.com/formapro/JsFormValidatorBundle/blob/master/UPGRADE-1.1.md)
-
 ### 1.1 Download FpJsFormValidatorBundle using composer<a name="p_1_1"></a>
 
 Run in terminal:
 ```bash
 $ php composer.phar require "fp/jsformvalidator-bundle":"dev-master"
+```
+Or if you do not want to unexpected problems better to use exact version.
+```bash
+$ php composer.phar require "fp/jsformvalidator-bundle":"v1.4.*"
 ```
 ### 1.2 Enable the bundle<a name="p_1_2"></a>
 
@@ -48,9 +50,8 @@ public function registerBundles()
 
 ### 1.4 Add routes<a name="p_1_4"></a>
 
-If you use the UniqueEntity constraint, then you have to include the next part to your routing config:
+If you use the UniqueEntity constraint, then you have to include the next part to your routing config: app/config/routing.yml
 ```yaml
-//app/config/routing.yml
 # ...
 fp_js_form_validator:
     resource: "@FpJsFormValidatorBundle/Resources/config/routing.xml"
