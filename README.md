@@ -1,21 +1,21 @@
 # FpJsFormValidatorBundle
-[![Build Status](https://travis-ci.org/formapro/JsFormValidatorBundle.svg?branch=master)](https://travis-ci.org/formapro/JsFormValidatorBundle)
+[![Build Status](https://travis-ci.org/formapro/JsFormValidatorBundle.svg?branch=1.3)](https://travis-ci.org/formapro/JsFormValidatorBundle)
 [![Total Downloads](https://poser.pugx.org/fp/jsformvalidator-bundle/downloads.png)](https://packagist.org/packages/fp/jsformvalidator-bundle)
 
 This module enables validation of the Symfony 2.7+ forms on the JavaScript side.
 It converts form type constraints into JavaScript validation rules.
 
-If you have Symfony 2.6.* or less* - you need to use [Version 1.2.*](https://github.com/formapro/JsFormValidatorBundle/tree/1.2)
+If you have Symfony 3 or more - you need to use [Version 1.4+](https://github.com/formapro/JsFormValidatorBundle/tree/master)
+
+If you have Symfony 2.3+ - you need to use [Version 1.2.*](https://github.com/formapro/JsFormValidatorBundle/tree/1.2)
 
 ## 1 Installation<a name="p_1"></a>
-
-[Upgrade from the previous version](https://github.com/formapro/JsFormValidatorBundle/blob/master/UPGRADE-1.1.md)
 
 ### 1.1 Download FpJsFormValidatorBundle using composer<a name="p_1_1"></a>
 
 Run in terminal:
 ```bash
-$ php composer.phar require "fp/jsformvalidator-bundle":"dev-master"
+$ php composer.phar require "fp/jsformvalidator-bundle":"v1.3.*"
 ```
 ### 1.2 Enable the bundle<a name="p_1_2"></a>
 
