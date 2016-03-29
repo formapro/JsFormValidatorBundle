@@ -3,9 +3,12 @@
 namespace Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Valid;
 
 /**
  * Class TestFormType
@@ -22,41 +25,34 @@ class TaskType extends AbstractType
     {
         $builder->add(
             'tags',
-            'collection',
+            CollectionType::class,
             array(
-                'type'      => new TagType(),
-                'allow_add' => true,
+                'entry_type' => TagType::class,
+                'allow_add'  => true,
+                'constraints' => array(new Valid()),
             )
         )
         ->add(
             'comments',
-            'collection',
+            CollectionType::class,
             array(
-                'type'      => new CommentType(),
-                'allow_add' => true,
+                'entry_type' => CommentType::class,
+                'allow_add'  => true,
+                'constraints' => array(new Valid()),
             )
         )
-        ->add('submit', 'submit');
+        ->add('submit', SubmitType::class);
     }
 
     /**
-     * @param OptionsResolverInterface $resolver
+     * @param OptionsResolver $resolver
      */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
             array(
-                'cascade_validation' => true,
-                'data_class'         => 'Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\TaskEntity',
+                'data_class'  => 'Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\TaskEntity',
             )
         );
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return 'form_task';
     }
 }

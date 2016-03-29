@@ -5,9 +5,9 @@
         $(function () {
             function addPrototype(name) {
                 var prototype = $('#' + name + '_prototype').html();
-                var holderId = 'form_task_' + name + 's';
+                var holderId = 'task_' + name + 's';
                 var holder = $('#' + holderId);
-                var itemId = 'form_task_' + name + 's_';
+                var itemId = 'task_' + name + 's_';
                 var index = holder
                         .find('[id^=' + itemId + ']')
                         .filter(function () {
@@ -16,7 +16,7 @@
                         })
                         .length;
 
-                var delLink = $('<a href="#" class="del_form_task" id="del_form_task_' + name + 's_' + index + '">Delete tag</a>');
+                var delLink = $('<a href="#" class="del_task" id="del_task_' + name + 's_' + index + '">Delete tag</a>');
                 delLink.click(function () {
                     var id = $(this).prop('id').replace('del_', '');
                     $('#' + id).remove();

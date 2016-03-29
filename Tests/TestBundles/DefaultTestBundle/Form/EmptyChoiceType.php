@@ -3,6 +3,8 @@
 namespace Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -12,7 +14,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  *
  * @package Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form
  */
-class EmtyChoiceType extends AbstractType
+class EmptyChoiceType extends AbstractType
 {
     /**
      * @param FormBuilderInterface $builder
@@ -22,13 +24,13 @@ class EmtyChoiceType extends AbstractType
     {
         $builder->add(
             'city',
-            'choice',
+            ChoiceType::class,
             array(
-                'empty_value' => 'Choose a City',
+                'placeholder' => 'Choose a City',
                 'choices'     => array(
-                    'london' => 'London',
-                    'paris'  => 'Paris',
-                    'berlin' => 'Berlin',
+                    'London' => 'london',
+                    'Paris'  => 'paris',
+                    'Berlin' => 'berlin',
                 ),
                 'multiple'    => false,
                 'expanded'    => false,
@@ -36,13 +38,13 @@ class EmtyChoiceType extends AbstractType
         )
         ->add(
             'countries',
-            'choice',
+            ChoiceType::class,
             array(
-                'empty_value' => 'Choose countries',
+                'placeholder' => 'Choose countries',
                 'choices'     => array(
-                    'france' => 'France',
-                    'spain'  => 'Spain',
-                    'germany' => 'Germany',
+                    'France' => 'france',
+                    'Spain'  => 'spain',
+                    'Germany' => 'germany',
                 ),
                 'multiple'    => true,
                 'expanded'    => true,
@@ -50,23 +52,23 @@ class EmtyChoiceType extends AbstractType
         )
         ->add(
             'continent',
-            'choice',
+            ChoiceType::class,
             array(
-                'empty_value' => 'Choose continent',
+                'placeholder' => 'Choose continent',
                 'choices' => array(
-                    'africa' => 'Africa',
-                    'asia'   => 'Asia',
-                    'europe' => 'Europe',
+                    'Africa' => 'africa',
+                    'Asia'   => 'asia',
+                    'Europe' => 'europe',
                 ),
                 'multiple' => false,
                 'expanded' => true,
             )
         )
-        ->add('submit', 'submit');
+        ->add('submit', SubmitType::class);
     }
 
     /**
-     * @param OptionsResolverInterface $resolver
+     * @param OptionsResolver $resolver
      */
     public function configureOptions(OptionsResolver $resolver)
     {
@@ -78,13 +80,5 @@ class EmtyChoiceType extends AbstractType
                 )
             )
         );
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return 'form_choice';
     }
 }

@@ -5,8 +5,10 @@ use Fp\JsFormValidatorBundle\Exception\UndefinedFormException;
 use Fp\JsFormValidatorBundle\Form\Constraint\UniqueEntity;
 use Fp\JsFormValidatorBundle\Model\JsConfig;
 use Fp\JsFormValidatorBundle\Model\JsFormElement;
+use Symfony\Component\Form\ChoiceList\ChoiceListInterface;
 use Symfony\Component\Form\DataTransformerInterface;
-use Symfony\Component\Form\Extension\Core\ChoiceList\ChoiceListInterface;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -14,7 +16,7 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 use Symfony\Component\Validator\Mapping\GetterMetadata;
 use Symfony\Component\Validator\Mapping\PropertyMetadata;
-use Symfony\Component\Validator\ValidatorInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * This factory uses to parse a form to a tree of JsFormElement's
@@ -91,7 +93,7 @@ class JsFormValidatorFactory
      */
     protected function getMetadataFor($className)
     {
-        return $this->validator->getMetadataFactory()->getMetadataFor($className);
+        return $this->validator->getMetadataFor($className);
     }
 
     /**
@@ -242,13 +244,15 @@ class JsFormValidatorFactory
         $model                 = new JsFormElement;
         $model->id             = $this->getElementId($form);
         $model->name           = $form->getName();
-        $model->type           = $conf->getType()->getInnerType()->getName();
+        $model->type           = get_class($conf->getType()->getInnerType());
         $model->invalidMessage = $this->translateMessage(
             $conf->getOption('invalid_message'),
             $conf->getOption('invalid_message_parameters')
         );
-        $model->transformers   = $this->parseTransformers($form->getConfig()->getViewTransformers());
-        $model->cascade        = $conf->getOption('cascade_validation');
+        $model->transformers   = $this->normalizeViewTransformers(
+            $form,
+            $this->parseTransformers($conf->getViewTransformers())
+        );
         $model->bubbling       = $conf->getOption('error_bubbling');
         $model->data           = $this->getValidationData($form);
         $model->children       = $this->processChildren($form);
@@ -315,8 +319,8 @@ class JsFormValidatorFactory
         $parent = $form->getParent();
         if ($parent && null !== $parent->getConfig()->getDataClass()) {
             $classMetadata = $metadata = $this->getMetadataFor($parent->getConfig()->getDataClass());
-            if ($classMetadata->hasMemberMetadatas($form->getName())) {
-                $metadata = $classMetadata->getMemberMetadatas($form->getName());
+            if ($classMetadata->hasPropertyMetadata($form->getName())) {
+                $metadata = $classMetadata->getPropertyMetadata($form->getName());
                 /** @var PropertyMetadata $item */
                 foreach ($metadata as $item) {
                     $this->composeValidationData(
@@ -444,8 +448,33 @@ class JsFormValidatorFactory
      */
     protected function isProcessableElement($element)
     {
-        return ($element instanceof Form)
-        && ('hidden' !== $element->getConfig()->getType()->getName());
+        return ($element instanceof Form) && (!is_a($element->getConfig()->getType(), HiddenType::class, true));
+    }
+
+    /**
+     * Gets view transformers from the given form.
+     * Merges in an extra Choice(s)ToBooleanArrayTransformer transformer in case of expanded choice.
+     *
+     * @param FormInterface $form
+     * @param array $viewTransformers
+     *
+     * @return array
+     */
+    protected function normalizeViewTransformers(FormInterface $form, array $viewTransformers)
+    {
+        $config = $form->getConfig();
+
+        // Choice(s)ToBooleanArrayTransformer was deprecated in SF2.7 in favor of CheckboxListMapper and RadioListMapper
+        if ($config->getType()->getInnerType() instanceof ChoiceType && $config->getOption('expanded')) {
+            $namespace = 'Symfony\Component\Form\Extension\Core\DataTransformer\\';
+            $transformer = $config->getOption('multiple')
+                ? array('name' => $namespace . 'ChoicesToBooleanArrayTransformer')
+                : array('name' => $namespace . 'ChoiceToBooleanArrayTransformer');
+            $transformer['choiceList'] = array_values($config->getOption('choices'));
+            array_unshift($viewTransformers, $transformer);
+        }
+
+        return $viewTransformers;
     }
 
     /**
@@ -471,7 +500,6 @@ class JsFormValidatorFactory
 
             $result[] = $item;
         }
-
         return $result;
     }
 
@@ -495,7 +523,7 @@ class JsFormValidatorFactory
         } elseif (is_scalar($value) || is_array($value)) {
             $result = $value;
         } elseif ($value instanceof ChoiceListInterface) {
-            $result = $value->getChoices();
+            $result = array_values($value->getChoices());
         }
 
         return $result;

@@ -3,11 +3,11 @@
 {% block body %}
     <script type="text/javascript">
         $(function(){
-            $('#custom_form_name_disabled').jsFormValidator({
+            $('#customization_disabled').jsFormValidator({
                 disabled: true
             });
 
-            $('#custom_form_name_showErrors').jsFormValidator({
+            $('#customization_showErrors').jsFormValidator({
                 showErrors: function(errors, type) {
                     var list = $(this).prev('ul.form-errors');
                     if (!list.length) {
@@ -37,7 +37,7 @@
                     for (var elId in errors) {
                         for (var sourceId in errors[elId]) {
                             var _err = errors[elId][sourceId];
-                            if ('custom_form_name_showErrors' == elId) {
+                            if ('customization_showErrors' == elId) {
                                 for (var i in _err) {
                                     _err[i] = 'custom_'+ errors[elId][sourceId][i];
                                 }
@@ -52,27 +52,27 @@
                         return false;
                     },
                     'validateCallback': function() {
-                        $('#custom_form_name_email').jsFormValidator('showErrors', {
+                        $('#customization_email').jsFormValidator('showErrors', {
                             errors: ['validate_callback_email_custom'],
                             sourceId: 'validate-callback'
                         });
                     },
                     'ownCallback': function() {
-                        $('#custom_form_name_email').jsFormValidator('showErrors', {
+                        $('#customization_email').jsFormValidator('showErrors', {
                             errors: ['own_callback_email_custom'],
                             sourceId: 'validate-callback-own'
                         });
                     },
                     'Fp\\JsFormValidatorBundle\\Tests\\TestBundles\\DefaultTestBundle\\Validator\\ExternalValidator': {
                         validateStaticCallback: function () {
-                            $('#custom_form_name_email').jsFormValidator('showErrors', {
+                            $('#customization_email').jsFormValidator('showErrors', {
                                 errors: ['static_callback_email_custom'],
                                 sourceId: 'static-validate-callback'
                             });
                         }
                     },
                     'validateDirectStaticCallback': function() {
-                        $('#custom_form_name_email').jsFormValidator('showErrors', {
+                        $('#customization_email').jsFormValidator('showErrors', {
                             errors: ['direct_static_callback_email_custom'],
                             sourceId: 'direct-static-validate-callback'
                         });

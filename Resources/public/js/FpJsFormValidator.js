@@ -3,7 +3,6 @@ function FpJsFormElement() {
     this.name = '';
     this.type = '';
     this.invalidMessage = '';
-    this.cascade = false;
     this.bubbling = false;
     this.disabled = false;
     this.transformers = [];
@@ -46,6 +45,7 @@ function FpJsFormElement() {
 
     this.validateRecursively = function () {
         this.validate();
+
         for (var childName in this.children) {
             this.children[childName].validateRecursively();
         }
@@ -470,16 +470,15 @@ var FpJsFormValidator = new function () {
     this.validateElement = function (element) {
         var errors = [];
         var value = this.getElementValue(element);
+
         for (var type in element.data) {
-
-            if (!this.checkParentCascadeOption(element) && 'entity' == type) {
+            if ('entity' == type && element.parent && !this.shouldValidEmbedded(element)) {
                 continue;
             }
 
-            if (element.parent && !this.checkParentCascadeOption(element.parent) && 'parent' == type) {
+            if ('parent' == type && element.parent && element.parent.parent && !this.shouldValidEmbedded(element.parent)) {
                 continue;
             }
-
 
             // Evaluate groups
             var groupsValue = element.data[type]['groups'];
@@ -505,19 +504,32 @@ var FpJsFormValidator = new function () {
                 }
             }
         }
-
         return errors;
     };
 
-    this.checkParentCascadeOption = function (element) {
-        var result = true;
-        if (element.parent && !element.parent.cascade && 'collection' != element.parent.type) {
-            result = false;
-        } else if (element.parent) {
-            result = this.checkParentCascadeOption(element.parent);
+    this.shouldValidEmbedded = function (element) {
+        if (this.getElementValidConstraint(element)) {
+            return true;
+        } else if (
+            element.parent
+            && 'Symfony\\Component\\Form\\Extension\\Core\\Type\\CollectionType' == element.parent.type
+        ) {
+            var validConstraint = this.getElementValidConstraint(element);
+
+            return !validConstraint || validConstraint.traverse;
         }
 
-        return result;
+        return false;
+    };
+
+    this.getElementValidConstraint = function (element) {
+        if (element.data && element.data.form) {
+            for (var i in element.data.form.constraints) {
+                if (element.data.form.constraints[i] instanceof SymfonyComponentValidatorConstraintsValid) {
+                    return element.data.form.constraints[i];
+                }
+            }
+        }
     };
 
     /**
@@ -569,7 +581,7 @@ var FpJsFormValidator = new function () {
 
         if (i && undefined === value) {
             value = this.getMappedValue(element);
-        } else if ('collection' == element.type) {
+        } else if ('Symfony\\Component\\Form\\Extension\\Core\\Type\\CollectionType' == element.type) {
             value = {};
             for (var childName in element.children) {
                 value[childName] = this.getMappedValue(element.children[childName]);
@@ -609,7 +621,10 @@ var FpJsFormValidator = new function () {
         }
 
         var value;
-        if ('checkbox' == element.type || 'radio' == element.type) {
+        if (
+            'Symfony\\Component\\Form\\Extension\\Core\\Type\\CheckboxType' == element.type
+            || 'Symfony\\Component\\Form\\Extension\\Core\\Type\\RadioType' == element.type
+        ) {
             value = element.domNode.checked;
         } else if ('select' === element.domNode.tagName.toLowerCase()) {
             value = [];

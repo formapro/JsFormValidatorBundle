@@ -74,15 +74,15 @@ class TestSubEntity
 
     /**
      * @return bool
-     * @Assert\True(
+     * @Assert\IsTrue(
      *     message="sub_entity_getter_groups_child_message",
      *     groups={"groups_child"}
      * )
-     * @Assert\True(
+     * @Assert\IsTrue(
      *     message="sub_entity_getter_groups_array_message",
      *     groups={"groups_array"}
      * )
-     * @Assert\True(
+     * @Assert\IsTrue(
      *     message="sub_entity_getter_no_groups_message"
      * )
      */

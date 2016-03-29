@@ -18,7 +18,7 @@
 
         <service id="fp_js_form_validator.extension" class="%fp_js_form_validator.extension.class%">
             <argument type="service" id="fp_js_form_validator.factory" />
-            <tag name="form.type_extension" alias="form" />
+            <tag name="form.type_extension" extended-type="Symfony\Component\Form\Extension\Core\Type\FormType" />
         </service>
 
         <service id="fp_js_form_validator.factory" class="%fp_js_form_validator.factory.class%">

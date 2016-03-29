@@ -4,7 +4,7 @@ namespace Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\ExecutionContextInterface;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 /**
  * Book
@@ -189,7 +189,7 @@ class CustomizationEntity
     /**
      * @return bool
      *
-     * @Assert\True(
+     * @Assert\IsTrue(
      *     message="getter_message",
      *     groups={"groups_callback"}
      * )
@@ -207,7 +207,7 @@ class CustomizationEntity
      */
     public function validateCallback(ExecutionContextInterface $context)
     {
-        $context->addViolationAt('email', 'validate_callback_email_' . $this->getEmail());
+        $context->buildViolation('validate_callback_email_' . $this->getEmail())->atPath('email');
     }
 
     /**
@@ -215,7 +215,7 @@ class CustomizationEntity
      */
     public function ownCallback(ExecutionContextInterface $context)
     {
-        $context->addViolationAt('email', 'own_callback_email_' . $this->getEmail());
+        $context->buildViolation('own_callback_email_' . $this->getEmail())->atPath('email');
     }
 
     /**

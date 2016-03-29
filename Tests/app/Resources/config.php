@@ -49,13 +49,12 @@ $container->loadFromExtension('framework', array(
     'fragments' => array(),
     'http_method_override' => true,
     'test' => true,
+    'assets' => array(),
 ));
 $container->loadFromExtension('twig', array(
     'debug' => true,
     'strict_variables' => true,
-    'form' => array(
-        'resources' => array('DefaultTestBundle::form_theme.html.twig')
-    ),
+    'form_themes' => array('DefaultTestBundle::form_theme.html.twig')
 ));
 $container->loadFromExtension('doctrine', array(
     'orm' => array(

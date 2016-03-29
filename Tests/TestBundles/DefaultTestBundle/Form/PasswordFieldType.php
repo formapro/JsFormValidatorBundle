@@ -3,6 +3,9 @@
 namespace Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -22,19 +25,19 @@ class PasswordFieldType extends AbstractType
     {
         $builder->add(
             'password',
-            'repeated',
+            RepeatedType::class,
             array(
-                'type' => 'password',
+                'type' => PasswordType::class,
                 'invalid_message' => 'diff_pass_message',
                 'first_options'  => array('label' => 'Password'),
                 'second_options' => array('label' => 'Repeat Password'),
             )
         )
-        ->add('submit', 'submit');
+        ->add('submit', SubmitType::class);
     }
 
     /**
-     * @param OptionsResolverInterface $resolver
+     * @param OptionsResolver $resolver
      */
     public function configureOptions(OptionsResolver $resolver)
     {
@@ -46,13 +49,5 @@ class PasswordFieldType extends AbstractType
                 )
             )
         );
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return 'form_password_field';
     }
 }

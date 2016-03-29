@@ -12,17 +12,6 @@ use Symfony\Component\Form\FormView;
  */
 class JsFormValidatorTwigExtension extends \Twig_Extension
 {
-    /** @var  \Twig_Environment */
-    protected $env;
-
-    /**
-     * @param \Twig_Environment $environment
-     */
-    public function initRuntime(\Twig_Environment $environment)
-    {
-        $this->env = $environment;
-    }
-
     /**
      * @var JsFormValidatorFactory
      */
@@ -53,8 +42,12 @@ class JsFormValidatorTwigExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            'init_js_validation'  => new \Twig_Function_Method($this, 'getJsValidator', array('is_safe' => array('html'))),
-            'js_validator_config' => new \Twig_Function_Method($this, 'getConfig', array('is_safe' => array('html'))),
+            new \Twig_SimpleFunction('init_js_validation', array($this, 'getJsValidator'), array(
+                'is_safe' => array('html')
+            )),
+            new \Twig_SimpleFunction('js_validator_config', array($this, 'getConfig'), array(
+                'is_safe' => array('html')
+            )),
         );
     }
 

@@ -3,6 +3,7 @@
 namespace Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Form;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -24,11 +25,11 @@ class CustomizationType extends AbstractType
             ->add('showErrors')
             ->add('callbackGroups')
             ->add('email')
-            ->add('submit', 'submit');
+            ->add('submit', SubmitType::class);
     }
 
     /**
-     * @param OptionsResolverInterface $resolver
+     * @param OptionsResolver $resolver
      */
     public function configureOptions(OptionsResolver $resolver)
     {
@@ -43,14 +44,5 @@ class CustomizationType extends AbstractType
                 )
             )
         );
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-//        return 'form';
-        return 'custom_form_name';
     }
 }

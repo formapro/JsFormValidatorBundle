@@ -26,20 +26,12 @@ class UniqueType extends AbstractType
     }
 
     /**
-     * @param OptionsResolverInterface $resolver
+     * @param OptionsResolver $resolver
      */
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
             'data_class' => 'Fp\JsFormValidatorBundle\Tests\TestBundles\DefaultTestBundle\Entity\UniqueEntity',
         ));
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return 'form';
     }
 }

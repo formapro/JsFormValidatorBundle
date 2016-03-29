@@ -5,7 +5,8 @@ ini_set('display_errors', 1);
 set_error_handler(
     function ($code, $message, $file, $line) {
         throw new \ErrorException($message . ' in ' . $file . ' line ' . $line, $code);
-    }
+    },
+    E_ALL ^ E_USER_DEPRECATED
 );
 $env = 'dev';
 if (!empty($_SERVER['REQUEST_URI'])) {
