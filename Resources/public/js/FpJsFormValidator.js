@@ -1,3 +1,29 @@
+function FpJsFormError(message) {
+    this.message = message;
+    this.atPath = null;
+
+    this.getTarget = function(rootElement) {
+        if (!this.atPath) {
+            return rootElement;
+        }
+
+        var path = this.atPath.split('.');
+        var targetElement = rootElement;
+        var pathSegment;
+
+        while (pathSegment = path.shift()) {
+            if (!targetElement.children[pathSegment]) {
+                return targetElement;
+            }
+
+            targetElement = targetElement.children[pathSegment];
+        }
+
+        // fallback to rootElement in case the targetElement is not found
+        return targetElement || rootElement;
+    }
+}
+
 function FpJsFormElement() {
     this.id = '';
     this.name = '';
@@ -26,22 +52,43 @@ function FpJsFormElement() {
 
         var self = this;
         var sourceId = 'form-error-' + String(this.id).replace(/_/g, '-');
-        self.errors[sourceId] = FpJsFormValidator.validateElement(self);
+        this.clearErrorsRecursively(sourceId);
 
-        var errorPath = FpJsFormValidator.getErrorPathElement(self);
-        var domNode = errorPath.domNode;
-        if (!domNode) {
-            for (var childName in errorPath.children) {
-                var childDomNode = errorPath.children[childName].domNode;
-                if (childDomNode) {
-                    domNode = childDomNode;
-                    break;
+        var validationErrors = FpJsFormValidator.validateElement(self);
+
+        var invalidTargets = {};
+        var validationError, errorTarget;
+        for (var v = 0, vel = validationErrors.length; v < vel; ++v) {
+            validationError = validationErrors[v];
+            errorTarget  = validationError.getTarget(self);
+
+            invalidTargets[errorTarget.id] = errorTarget;
+
+            if (!errorTarget.errors[sourceId]) {
+                errorTarget.errors[sourceId] = [];
+            }
+
+            errorTarget.errors[sourceId].push(validationError.message);
+        }
+
+        for (var id in invalidTargets) {
+            self = invalidTargets[id];
+
+            var errorPath = FpJsFormValidator.getErrorPathElement(self);
+            var domNode = errorPath.domNode;
+            if (!domNode) {
+                for (var childName in errorPath.children) {
+                    var childDomNode = errorPath.children[childName].domNode;
+                    if (childDomNode) {
+                        domNode = childDomNode;
+                        break;
+                    }
                 }
             }
+            errorPath.showErrors.apply(domNode, [self.errors[sourceId], sourceId]);
         }
-        errorPath.showErrors.apply(domNode, [self.errors[sourceId], sourceId]);
 
-        return self.errors[sourceId].length == 0;
+        return validationErrors.length === 0;
     };
 
     this.validateRecursively = function () {
@@ -65,6 +112,24 @@ function FpJsFormElement() {
         }
 
         return true;
+    };
+
+    this.clearErrors = function(sourceId) {
+        if (!sourceId) {
+            for (sourceId in this.errors) {
+                this.clearErrors(sourceId);
+            }
+        } else {
+            this.errors[sourceId] = [];
+            this.showErrors.apply(this.domNode, [this.errors[sourceId], sourceId]);
+        }
+    };
+
+    this.clearErrorsRecursively = function (sourceId) {
+        this.clearErrors(sourceId);
+        for (var childName in this.children) {
+            this.children[childName].clearErrorsRecursively(sourceId);
+        }
     };
 
     this.showErrors = function (errors, sourceId) {
@@ -531,9 +596,16 @@ var FpJsFormValidator = new function () {
     this.validateConstraints = function (value, constraints, groups, owner) {
         var errors = [];
         var i = constraints.length;
+
         while (i--) {
             if (this.checkValidationGroups(groups, constraints[i])) {
                 errors = errors.concat(constraints[i].validate(value, owner));
+            }
+        }
+
+        for (var e = 0, el = errors.length; e < el; ++e) {
+            if (typeof errors[e] === 'string') {
+                errors[e] = new FpJsFormError(errors[e]);
             }
         }
 
