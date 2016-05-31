@@ -2,6 +2,8 @@
 
 namespace Fp\JsFormValidatorBundle\Model;
 
+use Symfony\Component\Validator\Constraint;
+
 /**
  * All the models inherited from this class converted to a similar Javascript model by printing them as a string
  *
@@ -38,6 +40,11 @@ abstract class JsModelAbstract
      */
     public static function phpValueToJs($value)
     {
+        // Initialize "groups" option if it is not set
+        if ($value instanceof Constraint) {
+            $value->groups;
+        }
+
         // For object which has own __toString method
         if ($value instanceof JsModelAbstract) {
             return $value->toJsString();
