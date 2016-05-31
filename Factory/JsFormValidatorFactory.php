@@ -268,9 +268,9 @@ class JsFormValidatorFactory
 
     private function getFormTypeHierarchy(ResolvedFormTypeInterface $formType)
     {
-        $type = [
+        $type = array(
             $formType->getName(),
-        ];
+        );
 
         while ($formType = $formType->getParent()) {
             $type[] = $formType->getName();
