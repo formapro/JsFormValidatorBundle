@@ -49,6 +49,10 @@ abstract class JsModelAbstract
         // For an object or associative array
         elseif (is_object($value) || (is_array($value) && array_values($value) !== $value)) {
             $jsObject = array();
+            if ($value instanceof Symfony\Component\Validator\Constraints\File && $value->maxSize) {
+                $jsObject[] = "'maxSize':" . self::phpValueToJs($value->maxSize);
+            }
+
             foreach ($value as $paramName => $paramValue) {
                 $paramName = addcslashes($paramName, '\'\\');
                 $jsObject[] = "'$paramName':" . self::phpValueToJs($paramValue);
