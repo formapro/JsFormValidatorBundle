@@ -33,7 +33,7 @@
     "require-dev": {
         "doctrine/orm": ">=2.2.3",
         "doctrine/doctrine-bundle": "~1.4",
-        "symfony/symfony": "^3.0",
+        "symfony/symfony": "3.0.*",
         "twig/twig": "<2.0",
         "symfony/assetic-bundle": ">=2.5",
         "phpunit/phpunit": "3.7.*",
