@@ -21,7 +21,7 @@ $ php composer.phar require "fp/jsformvalidator-bundle":"dev-master"
 ```
 Or if you do not want to unexpected problems better to use exact version.
 ```bash
-$ php composer.phar require "fp/jsformvalidator-bundle":"v1.4.*"
+$ php composer.phar require "fp/jsformvalidator-bundle":"v1.5.*"
 ```
 ### 1.2 Enable the bundle<a name="p_1_2"></a>
 
