@@ -321,7 +321,7 @@ class MainFunctionalTest extends BaseMinkTestCase
         $addComment->click();
         $submit->click();
 
-        $this->assertEquals($getExpected(4, 3, 0), array_count_values($getErrors()));
+        $this->assertEquals($getExpected(1, 1, 0), array_count_values($getErrors()));
 
         $this->find('#del_task_tags_2')->click();
         $this->find('#del_task_comments_1')->click();
