@@ -40,6 +40,16 @@ public function registerBundles()
 
 ### 1.3 Enable javascript libraries<a name="p_1_3"></a>
 
+#### 1.3.1 Add FpJsFormValidatorBundle to assetic bundles
+```yaml
+#app/config/config.yml
+
+assetic:
+    bundles:
+        - FpJsFormValidatorBundle
+```
+
+#### 1.3.2 Include the javascripts to your template
 ```twig
 <html>
     <head>
