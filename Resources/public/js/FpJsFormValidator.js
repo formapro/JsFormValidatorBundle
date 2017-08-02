@@ -265,25 +265,21 @@ function FpJsCustomizeMethods() {
         //noinspection JSCheckFunctionSignatures
         FpJsFormValidator.each(this, function (item) {
             var element = item.jsFormValidator;
-            if (event) {
-                event.preventDefault();
-            }
             element.validateRecursively();
-            if (FpJsFormValidator.ajax.queue) {
-                if (event) {
+            var submitCallback = function () {
+                element.onValidate.apply(element.domNode, [FpJsFormValidator.getAllErrors(element, {}), event]);
+                if (!element.isValid() && event) {
                     event.preventDefault();
                 }
-                FpJsFormValidator.ajax.callbacks.push(function () {
-                    element.onValidate.apply(element.domNode, [FpJsFormValidator.getAllErrors(element, {}), event]);
-                    if (element.isValid()) {
-                        element.submitForm.apply(item, [item]);
-                    }
-                });
-            } else {
-                element.onValidate.apply(element.domNode, [FpJsFormValidator.getAllErrors(element, {}), event]);
-                if (element.isValid()) {
+                if (element.isValid() && !event) {
+                    // call submit only if the original submission was not trigerred by an event.
                     element.submitForm.apply(item, [item]);
                 }
+            };
+            if (FpJsFormValidator.ajax.queue) {
+                FpJsFormValidator.ajax.callbacks.push(submitCallback);
+            } else {
+                submitCallback();
             }
         });
     };
