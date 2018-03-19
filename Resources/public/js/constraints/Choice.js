@@ -107,10 +107,10 @@ function SymfonyComponentValidatorConstraintsChoice() {
         // More precise comparison by type
         if (this.strict) {
             callbackFilter = function (n) {
-                var result = false;
+                var result = true;
                 for (var i in validChoices) {
-                    if (n !== validChoices[i]) {
-                        result = true;
+                    if (n === validChoices[i]) {
+                        result = false;
                     }
                 }
                 return result;
