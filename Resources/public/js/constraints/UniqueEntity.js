@@ -11,6 +11,7 @@ function FpJsFormValidatorBundleFormConstraintUniqueEntity() {
     this.errorPath        = null;
     this.ignoreNull       = true;
     this.entityName       = null;
+    this.entityId         = null;
 
     this.groups           = [];
 
@@ -19,6 +20,7 @@ function FpJsFormValidatorBundleFormConstraintUniqueEntity() {
      * @param {FpJsFormElement} element
      */
     this.validate = function(value, element) {
+
         var self   = this;
         var route  = null;
         var config = FpJsFormValidator.config;
@@ -44,6 +46,7 @@ function FpJsFormValidatorBundleFormConstraintUniqueEntity() {
                 ignoreNull:       this.ignoreNull ? 1 : 0,
                 groups:           this.groups,
 
+                entityId:         this.entityId,
                 entityName:       this.entityName,
                 data:             this.getValues(element, this.fields)
             },

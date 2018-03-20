@@ -565,7 +565,7 @@ class JsFormValidatorFactory
             }
 
             if ($item instanceof \Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity) {
-                $item = new UniqueEntity($item, $this->currentElement->getConfig()->getDataClass());
+                $item = new UniqueEntity($item, $this->currentElement->getConfig()->getDataClass(), $this->currentElement->getConfig()->getData());
             }
 
             $result[get_class($item)][] = $item;
