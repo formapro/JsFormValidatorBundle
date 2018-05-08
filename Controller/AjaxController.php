@@ -5,6 +5,7 @@ namespace Fp\JsFormValidatorBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * These actions call from the client side to check some validations on the server side
@@ -24,6 +25,10 @@ class AjaxController extends Controller
     public function checkUniqueEntityAction(Request $request)
     {
         $data = $request->request->all();
+        if (!array_key_exists('data', $data)) {
+            throw new BadRequestHttpException();
+        }
+
         foreach ($data['data'] as $value) {
             // If field(s) has an empty value and it should be ignored
             if ((bool) $data['ignoreNull'] && ('' === $value || is_null($value))) {
