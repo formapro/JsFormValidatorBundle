@@ -2,7 +2,7 @@
 /**
  * Created by ymaltsev on 11/28/13.
  */
-function SymfonyComponentFormExtensionCoreDataTransformerBooleanToStringTransformer() {
+export default function SymfonyComponentFormExtensionCoreDataTransformerBooleanToStringTransformer() {
     this.trueValue = null;
 
     this.reverseTransform = function(value) {
@@ -17,3 +17,5 @@ function SymfonyComponentFormExtensionCoreDataTransformerBooleanToStringTransfor
         }
     }
 }
+
+window.SymfonyComponentFormExtensionCoreDataTransformerBooleanToStringTransformer = SymfonyComponentFormExtensionCoreDataTransformerBooleanToStringTransformer;

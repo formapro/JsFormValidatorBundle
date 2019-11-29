@@ -4,7 +4,7 @@
  * @constructor
  * @author dev.ymalcev@gmail.com
  */
-function SymfonyComponentValidatorConstraintsChoice() {
+export default function SymfonyComponentValidatorConstraintsChoice() {
     this.choices = [];
     this.callback = null;
     this.max = null;
@@ -120,3 +120,5 @@ function SymfonyComponentValidatorConstraintsChoice() {
         return value.filter(callbackFilter);
     }
 }
+
+window.SymfonyComponentValidatorConstraintsChoice = SymfonyComponentValidatorConstraintsChoice;

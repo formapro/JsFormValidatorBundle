@@ -4,7 +4,7 @@
  * @constructor
  * @author dev.ymalcev@gmail.com
  */
-function SymfonyComponentValidatorConstraintsEmail() {
+export default function SymfonyComponentValidatorConstraintsEmail() {
     this.message = '';
 
     this.validate = function (value) {
@@ -19,3 +19,5 @@ function SymfonyComponentValidatorConstraintsEmail() {
         return errors;
     }
 }
+
+window.SymfonyComponentValidatorConstraintsEmail = SymfonyComponentValidatorConstraintsEmail;

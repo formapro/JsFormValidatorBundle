@@ -4,7 +4,7 @@
  * @constructor
  * @author dev.ymalcev@gmail.com
  */
-function SymfonyComponentValidatorConstraintsIsTrue() {
+export default function SymfonyComponentValidatorConstraintsIsTrue() {
     this.message = '';
 
     this.validate = function(value) {
@@ -21,3 +21,5 @@ function SymfonyComponentValidatorConstraintsIsTrue() {
     }
 }
 
+window.SymfonyComponentValidatorConstraintsIsTrue = SymfonyComponentValidatorConstraintsIsTrue;
+window.SymfonyComponentValidatorConstraintsTrue = SymfonyComponentValidatorConstraintsIsTrue;

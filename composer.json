@@ -26,9 +26,8 @@
 
     "require": {
         "php": ">=5.5.9",
-        "symfony/form": "^2.7|^3.0",
-        "symfony/validator": "^2.7|^3.0",
-        "symfony/assetic-bundle": ">=2.5"
+        "symfony/form": "^2.7|^3.0|^4.0",
+        "symfony/validator": "^2.7|^3.0|^4.0"
     },
 
     "require-dev": {

@@ -4,7 +4,7 @@
  * @constructor
  * @author dev.ymalcev@gmail.com
  */
-function SymfonyComponentValidatorConstraintsTime() {
+export default function SymfonyComponentValidatorConstraintsTime() {
     this.message = '';
 
     this.validate = function (value) {
@@ -19,3 +19,5 @@ function SymfonyComponentValidatorConstraintsTime() {
         return errors;
     }
 }
+
+window.SymfonyComponentValidatorConstraintsTime = SymfonyComponentValidatorConstraintsTime;

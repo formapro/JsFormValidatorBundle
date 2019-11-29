@@ -2,7 +2,7 @@
 /**
  * Created by ymaltsev on 11/28/13.
  */
-function SymfonyComponentFormExtensionCoreDataTransformerChoiceToValueTransformer() {
+export default function SymfonyComponentFormExtensionCoreDataTransformerChoiceToValueTransformer() {
     this.choiceList = {};
 
     this.reverseTransform = function(value) {
@@ -15,3 +15,5 @@ function SymfonyComponentFormExtensionCoreDataTransformerChoiceToValueTransforme
         return value;
     }
 }
+
+window.SymfonyComponentFormExtensionCoreDataTransformerChoiceToValueTransformer = SymfonyComponentFormExtensionCoreDataTransformerChoiceToValueTransformer;

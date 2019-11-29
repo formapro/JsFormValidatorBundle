@@ -2,7 +2,7 @@
 /**
  * Created by ymaltsev on 11/29/13.
  */
-function SymfonyComponentFormExtensionCoreDataTransformerChoiceToBooleanArrayTransformer() {
+export default function SymfonyComponentFormExtensionCoreDataTransformerChoiceToBooleanArrayTransformer() {
     this.choiceList = {};
     this.placeholderPresent = false;
 
@@ -26,3 +26,5 @@ function SymfonyComponentFormExtensionCoreDataTransformerChoiceToBooleanArrayTra
         return null;
     }
 }
+
+window.SymfonyComponentFormExtensionCoreDataTransformerChoiceToBooleanArrayTransformer = SymfonyComponentFormExtensionCoreDataTransformerChoiceToBooleanArrayTransformer;

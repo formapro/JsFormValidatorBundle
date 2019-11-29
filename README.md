@@ -17,48 +17,39 @@ If you have Symfony 2.6.* or less - you need to use [Version 1.2.*](https://gith
 
 Run in terminal:
 ```bash
-$ php composer.phar require "fp/jsformvalidator-bundle":"dev-master"
+$ composer require "fp/jsformvalidator-bundle":"dev-master"
 ```
 Or if you do not want to unexpected problems better to use exact version.
 ```bash
-$ php composer.phar require "fp/jsformvalidator-bundle":"v1.5.*"
-```
-### 1.2 Enable the bundle<a name="p_1_2"></a>
-
-Enable the bundle:
-```php
-// app/AppKernel.php
-
-public function registerBundles()
-{
-    $bundles = array(
-        // ...
-        new Fp\JsFormValidatorBundle\FpJsFormValidatorBundle(),
-    );
-}
+$ composer require "fp/jsformvalidator-bundle":"v1.6.*"
 ```
 
-### 1.3 Enable javascript libraries<a name="p_1_3"></a>
+### 1.2 Enable javascript libraries<a name="p_1_3"></a>
 
-#### 1.3.1 Add FpJsFormValidatorBundle to assetic bundles
-```yaml
-#app/config/config.yml
-
-assetic:
-    bundles:
-        - FpJsFormValidatorBundle
+#### 1.2.1 Add FpJsFormValidatorBundle to webpack.config.js
+```diff
+Encore
+    ...
+    .addEntry('search', './assets/js/search.js')
++   .addEntry('FpJsFormElement', './vendor/fp/jsformvalidator-bundle/Fp/JsFormValidatorBundle/Resources/public/js/FpJsFormValidator.js')
+    ...
+    .configureBabel(null, {
+        useBuiltIns: 'usage',
+        corejs: 3,
+    })
+;
 ```
 
 #### 1.3.2 Include the javascripts to your template
-```twig
-<html>
-    <head>
-        {{ include('FpJsFormValidatorBundle::javascripts.html.twig') }}
-    </head>
-    <body>
+```diff
+{% block javascripts %}
+    {{ encore_entry_script_tags('app') }}
++   {{ encore_entry_script_tags('FpJsFormElement') }}
 
-    </body>
-</html>
++   {{ js_validator_config() }}
++   {{ init_js_validation() }}
+
+{% endblock %}
 ```
 
 ### 1.4 Add routes<a name="p_1_4"></a>

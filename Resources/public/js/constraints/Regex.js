@@ -4,7 +4,7 @@
  * @constructor
  * @author dev.ymalcev@gmail.com
  */
-function SymfonyComponentValidatorConstraintsRegex() {
+export default function SymfonyComponentValidatorConstraintsRegex() {
     this.message = '';
     this.pattern = '';
     this.match = true;
@@ -25,3 +25,5 @@ function SymfonyComponentValidatorConstraintsRegex() {
         this.pattern = new RegExp(this.pattern.trim().replace(/(^[\/#])|([\/#]\w*$)/g, ''), flags[1]);
     }
 }
+
+window.SymfonyComponentValidatorConstraintsRegex = SymfonyComponentValidatorConstraintsRegex;

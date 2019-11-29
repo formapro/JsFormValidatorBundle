@@ -2,7 +2,7 @@
 /**
  * Created by ymaltsev on 11/26/13.
  */
-function FpJsFormValidatorBundleFormConstraintUniqueEntity() {
+export default function FpJsFormValidatorBundleFormConstraintUniqueEntity() {
     this.message          = 'This value is already used.';
     this.service          = 'doctrine.orm.validator.unique';
     this.em               = null;
@@ -99,3 +99,5 @@ function FpJsFormValidatorBundleFormConstraintUniqueEntity() {
         return element.children[errorPath];
     }
 }
+
+window.FpJsFormValidatorBundleFormConstraintUniqueEntity = FpJsFormValidatorBundleFormConstraintUniqueEntity;

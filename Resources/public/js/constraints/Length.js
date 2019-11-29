@@ -4,7 +4,7 @@
  * @constructor
  * @author dev.ymalcev@gmail.com
  */
-function SymfonyComponentValidatorConstraintsLength() {
+export default function SymfonyComponentValidatorConstraintsLength() {
     this.maxMessage = '';
     this.minMessage = '';
     this.exactMessage = '';
@@ -53,3 +53,5 @@ function SymfonyComponentValidatorConstraintsLength() {
         );
     }
 }
+
+window.SymfonyComponentValidatorConstraintsLength = SymfonyComponentValidatorConstraintsLength;

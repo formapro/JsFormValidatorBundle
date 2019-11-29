@@ -2,7 +2,7 @@
 /**
  * Created by ymaltsev on 11/28/13.
  */
-function SymfonyComponentFormExtensionCoreDataTransformerArrayToPartsTransformer() {
+export default function SymfonyComponentFormExtensionCoreDataTransformerArrayToPartsTransformer() {
     this.partMapping = {};
 
     this.reverseTransform = function(value) {
@@ -26,3 +26,5 @@ function SymfonyComponentFormExtensionCoreDataTransformerArrayToPartsTransformer
         return result;
     }
 }
+
+window.SymfonyComponentFormExtensionCoreDataTransformerArrayToPartsTransformer = SymfonyComponentFormExtensionCoreDataTransformerArrayToPartsTransformer;
