@@ -1,3 +1,6 @@
+import './constraints';
+import './transformers';
+
 function FpJsFormElement() {
     this.id = '';
     this.name = '';
@@ -393,8 +396,8 @@ var FpJsFormValidator = new function () {
         var removeListener = document.removeEventListener || document.detachEvent;
         var eventName = document.addEventListener ? "DOMContentLoaded" : "onreadystatechange";
 
-        addListener.call(document, eventName, function () {
-            removeListener.call(this, eventName, arguments.callee, false);
+        addListener.call(document, eventName, function (callee) {
+            removeListener.call(this, eventName, callee, false);
             callback();
         }, false)
     };
@@ -1045,3 +1048,6 @@ var FpJsFormValidator = new function () {
         return length;
     };
 }();
+
+window.FpJsBaseConstraint = FpJsBaseConstraint;
+window.FpJsFormValidator = FpJsFormValidator;

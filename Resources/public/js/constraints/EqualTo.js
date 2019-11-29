@@ -4,7 +4,7 @@
  * @constructor
  * @author dev.ymalcev@gmail.com
  */
-function SymfonyComponentValidatorConstraintsEqualTo() {
+export default function SymfonyComponentValidatorConstraintsEqualTo() {
     this.message = '';
     this.value = null;
 
@@ -24,3 +24,5 @@ function SymfonyComponentValidatorConstraintsEqualTo() {
         return errors;
     }
 }
+
+window.SymfonyComponentValidatorConstraintsEqualTo = SymfonyComponentValidatorConstraintsEqualTo;

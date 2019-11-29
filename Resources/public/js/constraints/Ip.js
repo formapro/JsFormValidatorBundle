@@ -4,7 +4,7 @@
  * @constructor
  * @author dev.ymalcev@gmail.com
  */
-function SymfonyComponentValidatorConstraintsIp() {
+export default function SymfonyComponentValidatorConstraintsIp() {
     this.message = '';
 
     this.validate = function (value) {
@@ -19,3 +19,5 @@ function SymfonyComponentValidatorConstraintsIp() {
         return errors;
     }
 }
+
+window.SymfonyComponentValidatorConstraintsIp = SymfonyComponentValidatorConstraintsIp;

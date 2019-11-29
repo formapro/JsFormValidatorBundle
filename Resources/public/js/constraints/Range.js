@@ -4,7 +4,7 @@
  * @constructor
  * @author dev.ymalcev@gmail.com
  */
-function SymfonyComponentValidatorConstraintsRange() {
+export default function SymfonyComponentValidatorConstraintsRange() {
     this.maxMessage = '';
     this.minMessage = '';
     this.invalidMessage = '';
@@ -47,3 +47,5 @@ function SymfonyComponentValidatorConstraintsRange() {
         this.max = parseInt(this.max);
     }
 }
+
+window.SymfonyComponentValidatorConstraintsRange = SymfonyComponentValidatorConstraintsRange;

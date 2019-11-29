@@ -4,7 +4,7 @@
  * @constructor
  * @author dev.ymalcev@gmail.com
  */
-function SymfonyComponentValidatorConstraintsGreaterThan() {
+export default function SymfonyComponentValidatorConstraintsGreaterThan() {
     this.message = '';
     this.value = null;
 
@@ -21,3 +21,5 @@ function SymfonyComponentValidatorConstraintsGreaterThan() {
         }
     }
 }
+
+window.SymfonyComponentValidatorConstraintsGreaterThan = SymfonyComponentValidatorConstraintsGreaterThan;

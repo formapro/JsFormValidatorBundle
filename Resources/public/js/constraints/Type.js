@@ -4,7 +4,7 @@
  * @constructor
  * @author dev.ymalcev@gmail.com
  */
-function SymfonyComponentValidatorConstraintsType() {
+export default function SymfonyComponentValidatorConstraintsType() {
     this.message = '';
     this.type = '';
 
@@ -83,3 +83,5 @@ function SymfonyComponentValidatorConstraintsType() {
         return errors;
     }
 }
+
+window.SymfonyComponentValidatorConstraintsType = SymfonyComponentValidatorConstraintsType;

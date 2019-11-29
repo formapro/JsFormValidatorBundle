@@ -2,7 +2,7 @@
 /**
  * Created by ymaltsev on 11/29/13.
  */
-function SymfonyComponentFormExtensionCoreDataTransformerChoicesToBooleanArrayTransformer() {
+export default function SymfonyComponentFormExtensionCoreDataTransformerChoicesToBooleanArrayTransformer() {
     this.choiceList = {};
 
     this.reverseTransform = function(value){
@@ -29,3 +29,5 @@ function SymfonyComponentFormExtensionCoreDataTransformerChoicesToBooleanArrayTr
         return result;
     }
 }
+
+window.SymfonyComponentFormExtensionCoreDataTransformerChoicesToBooleanArrayTransformer = SymfonyComponentFormExtensionCoreDataTransformerChoicesToBooleanArrayTransformer;

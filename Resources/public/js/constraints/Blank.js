@@ -4,7 +4,7 @@
  * @constructor
  * @author dev.ymalcev@gmail.com
  */
-function SymfonyComponentValidatorConstraintsBlank() {
+export default function SymfonyComponentValidatorConstraintsBlank() {
     this.message = '';
 
     this.validate = function (value) {
@@ -19,3 +19,4 @@ function SymfonyComponentValidatorConstraintsBlank() {
     }
 }
 
+window.SymfonyComponentValidatorConstraintsBlank = SymfonyComponentValidatorConstraintsBlank;

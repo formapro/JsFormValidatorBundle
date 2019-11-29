@@ -1,5 +1,5 @@
 //noinspection JSUnusedGlobalSymbols
-function SymfonyComponentFormExtensionCoreDataTransformerValueToDuplicatesTransformer() {
+export default function SymfonyComponentFormExtensionCoreDataTransformerValueToDuplicatesTransformer() {
     this.keys = [];
 
     /**
@@ -29,3 +29,5 @@ function SymfonyComponentFormExtensionCoreDataTransformerValueToDuplicatesTransf
         return initialValue;
     }
 }
+
+window.SymfonyComponentFormExtensionCoreDataTransformerValueToDuplicatesTransformer = SymfonyComponentFormExtensionCoreDataTransformerValueToDuplicatesTransformer;

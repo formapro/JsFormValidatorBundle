@@ -2,7 +2,7 @@
 /**
  * Created by ymaltsev on 11/28/13.
  */
-function SymfonyComponentFormExtensionCoreDataTransformerDateTimeToArrayTransformer() {
+export default function SymfonyComponentFormExtensionCoreDataTransformerDateTimeToArrayTransformer() {
     this.dateFormat = '{0}-{1}-{2}';
     this.timeFormat = '{0}:{1}:{2}';
 
@@ -40,3 +40,5 @@ function SymfonyComponentFormExtensionCoreDataTransformerDateTimeToArrayTransfor
         });
     }
 }
+
+window.SymfonyComponentFormExtensionCoreDataTransformerDateTimeToArrayTransformer = SymfonyComponentFormExtensionCoreDataTransformerDateTimeToArrayTransformer;

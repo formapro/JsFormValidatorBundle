@@ -4,7 +4,7 @@
  * @constructor
  * @author dev.ymalcev@gmail.com
  */
-function SymfonyComponentValidatorConstraintsUrl() {
+export default function SymfonyComponentValidatorConstraintsUrl() {
     this.message = '';
 
     this.validate = function(value, element) {
@@ -20,3 +20,5 @@ function SymfonyComponentValidatorConstraintsUrl() {
         return errors;
     }
 }
+
+window.SymfonyComponentValidatorConstraintsUrl = SymfonyComponentValidatorConstraintsUrl;

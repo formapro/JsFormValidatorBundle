@@ -4,7 +4,7 @@
  * @constructor
  * @author dev.ymalcev@gmail.com
  */
-function SymfonyComponentValidatorConstraintsIsNull() {
+export default function SymfonyComponentValidatorConstraintsIsNull() {
     this.message = '';
 
     this.validate = function(value) {
@@ -16,3 +16,6 @@ function SymfonyComponentValidatorConstraintsIsNull() {
         return errors;
     }
 }
+
+window.SymfonyComponentValidatorConstraintsIsNull = SymfonyComponentValidatorConstraintsIsNull;
+window.SymfonyComponentValidatorConstraintsNull = SymfonyComponentValidatorConstraintsIsNull;

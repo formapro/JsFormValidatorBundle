@@ -1,5 +1,5 @@
 //noinspection JSUnusedGlobalSymbols
-function SymfonyComponentValidatorConstraintsCallback () {
+export default function SymfonyComponentValidatorConstraintsCallback() {
     this.callback = null;
     this.methods  = [];
 
@@ -27,3 +27,5 @@ function SymfonyComponentValidatorConstraintsCallback () {
         return [];
     }
 }
+
+window.SymfonyComponentValidatorConstraintsCallback = SymfonyComponentValidatorConstraintsCallback;

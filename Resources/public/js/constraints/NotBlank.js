@@ -4,7 +4,7 @@
  * @constructor
  * @author dev.ymalcev@gmail.com
  */
-function SymfonyComponentValidatorConstraintsNotBlank() {
+export default function SymfonyComponentValidatorConstraintsNotBlank() {
     this.message = '';
 
     this.validate = function (value) {
@@ -18,3 +18,5 @@ function SymfonyComponentValidatorConstraintsNotBlank() {
         return errors;
     }
 }
+
+window.SymfonyComponentValidatorConstraintsNotBlank = SymfonyComponentValidatorConstraintsNotBlank;

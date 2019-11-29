@@ -2,7 +2,7 @@
 /**
  * Created by ymaltsev on 11/22/13.
  */
-function SymfonyComponentFormExtensionCoreDataTransformerDataTransformerChain(transformers) {
+export default function SymfonyComponentFormExtensionCoreDataTransformerDataTransformerChain(transformers) {
     this.transformers = transformers;
 
     this.reverseTransform = function(value, element) {
@@ -14,3 +14,5 @@ function SymfonyComponentFormExtensionCoreDataTransformerDataTransformerChain(tr
         return value;
     }
 }
+
+window.SymfonyComponentFormExtensionCoreDataTransformerDataTransformerChain = SymfonyComponentFormExtensionCoreDataTransformerDataTransformerChain;

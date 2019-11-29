@@ -4,7 +4,7 @@
  * @constructor
  * @author dev.ymalcev@gmail.com
  */
-function SymfonyComponentValidatorConstraintsLessThan() {
+export default function SymfonyComponentValidatorConstraintsLessThan() {
     this.message = '';
     this.value = null;
 
@@ -21,3 +21,5 @@ function SymfonyComponentValidatorConstraintsLessThan() {
         }
     }
 }
+
+window.SymfonyComponentValidatorConstraintsLessThan = SymfonyComponentValidatorConstraintsLessThan;

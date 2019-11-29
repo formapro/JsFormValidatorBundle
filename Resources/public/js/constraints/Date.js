@@ -4,7 +4,7 @@
  * @constructor
  * @author dev.ymalcev@gmail.com
  */
-function SymfonyComponentValidatorConstraintsDate() {
+export default function SymfonyComponentValidatorConstraintsDate() {
     this.message = '';
 
     this.validate = function (value) {
@@ -19,3 +19,5 @@ function SymfonyComponentValidatorConstraintsDate() {
         return errors;
     }
 }
+
+window.SymfonyComponentValidatorConstraintsDate = SymfonyComponentValidatorConstraintsDate;
