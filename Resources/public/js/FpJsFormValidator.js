@@ -1,7 +1,7 @@
 import './constraints';
 import './transformers';
 
-function FpJsFormElement() {
+export function FpJsFormElement() {
     this.id = '';
     this.name = '';
     this.type = '';
