@@ -1,55 +1,23 @@
-language: php
-
-php: [5.5,5.6,7.0]
-
+language: bash
 env:
-  - SF_VERSION='~3.1.0'
-  - SF_VERSION='~3.2.0'
+  global:
+    - TRAVIS_USER_ID=$(id -u)
+    - TRAVIS_GROUP_ID=$(id -g)
 
-before_script:
-  - if [ "$COVERAGE" != "true" ] && [ "$TRAVIS_PHP_VERSION" != "hhvm" ]; then phpenv config-rm xdebug.ini; fi
-  - export WEB_FIXTURES_HOST=http://localhost/index.php
+before_install:
+  - "sed -i \"s#www_data_uid: 1000#www_data_uid: $TRAVIS_USER_ID#\" ./docker-compose.yml"
+  - "sed -i \"s#www_data_gid: 1000#www_data_gid: $TRAVIS_GROUP_ID#\" ./docker-compose.yml"
 
-  - sh -e /etc/init.d/xvfb start
-  - export DISPLAY=:99.0
-  - sleep 4
+install:
 
-  - curl -sS https://getcomposer.org/installer | php
-  - php -d memory_limit=-1 composer.phar require "symfony/symfony:${SF_VERSION}"
-  - php -d memory_limit=-1 composer.phar install -n
-  - php -d memory_limit=-1 composer.phar info -i
+  - docker-compose pull --parallel webserver php-fpm
+  - docker-compose build --parallel webserver php-fpm
+  - docker-compose up -d webserver php-fpm
+  - docker-compose exec php-fpm composer install --no-interaction
+  - docker-compose exec php-fpm Tests/app/bin/console assets:install -v Tests/app || Tests/app/bin/console assets:install -v Tests/app
+  - docker-compose exec -w /application/Tests/app php-fpm npm i
+  - docker-compose exec -w /application/Tests/app php-fpm npm run build
+  - docker-compose exec php-fpm npm ci
 
-  - Tests/app/console assets:install -v Tests/app || Tests/app/console assets:install -v Tests/app
-  - Tests/app/console assetic:dump -v Tests/app
-
-  - sudo chmod -R 0777 Tests/app/cache Tests/app/logs
-  - sudo chmod 0777 Resources/public/js
-  # just show the current directory tree
-  - ls -R | grep ":$" | sed -e 's/:$//' -e 's/[^-][^\/]*\//--/g' -e 's/^/   /' -e 's/-/|/'
-
-  - sudo apt-get update > /dev/null
-  - sudo apt-get install -y --force-yes apache2 libapache2-mod-fastcgi > /dev/null
-  # enable php-fpm
-  - if [[ ${TRAVIS_PHP_VERSION:0:2} == "7." ]]; then sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.d/www.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.d/www.conf; fi
-  - sudo cp ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf.default ~/.phpenv/versions/$(phpenv version-name)/etc/php-fpm.conf
-  - sudo a2enmod rewrite actions fastcgi alias
-  - echo "cgi.fix_pathinfo = 1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/php.ini
-  - ~/.phpenv/versions/$(phpenv version-name)/sbin/php-fpm
-  # configure apache virtual hosts
-  - sudo cp -f Tests/app/Resources/travis-ci-apache /etc/apache2/sites-available/default
-  - sudo sed -e "s?%TRAVIS_BUILD_DIR%?$(pwd)/Tests/app?g" --in-place /etc/apache2/sites-available/default
-  - sudo /etc/init.d/apache2 restart || (sudo cat /var/log/apache2/error.log && exit 1)
-
-  - vendor/bin/selenium-server-standalone &> Tests/app/logs/selenium.log &
-  - sleep 4
-
-
-script: ./vendor/bin/phpunit -v --debug
-#after_script:
-#  - php vendor/bin/coveralls -v
-after_failure:
-  - cat Tests/app/logs/selenium.log
-  - cat Tests/app/logs/apache-access.log
-  - cat Tests/app/logs/apache-error.log
-  - cat Tests/app/logs/cgi.log
-  - firefox-bin -v
+script:
+  - docker-compose exec php-fpm npm run test
