@@ -16,8 +16,8 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('fp_js_form_validator');
+        $treeBuilder = new TreeBuilder('fp_js_form_validator');
+        $rootNode = $treeBuilder->getRootNode();
 
         /** @noinspection PhpUndefinedMethodInspection */
         $rootNode
