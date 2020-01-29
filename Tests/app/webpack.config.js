@@ -16,7 +16,7 @@ Encore
     // caching strategies. Use Encore.isProduction() to enable it only for production.
     .enableVersioning(false)
     .addEntry('app', './assets/js/app.js')
-    .addEntry('FpJsFormElement', './public/bundles/fpjsformvalidator/js/FpJsFormValidator.js')
+    .addEntry('FpJsFormElement', './bundles/fpjsformvalidator/js/FpJsFormValidator.js')
     .splitEntryChunks()
     .enableSingleRuntimeChunk()
     .enableIntegrityHashes(Encore.isProduction())
