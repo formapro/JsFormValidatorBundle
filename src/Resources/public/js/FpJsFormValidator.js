@@ -1051,3 +1051,5 @@ var FpJsFormValidator = new function () {
 
 window.FpJsBaseConstraint = FpJsBaseConstraint;
 window.FpJsFormValidator = FpJsFormValidator;
+
+import './jquery.fpjsformvalidator';
