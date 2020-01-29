@@ -1,0 +1,26 @@
+{
+  "entrypoints": {
+    "app": {
+      "js": [
+        "/build/runtime.js",
+        "/build/0.js",
+        "/build/app.js"
+      ]
+    },
+    "FpJsFormElement": {
+      "js": [
+        "/build/runtime.js",
+        "/build/0.js",
+        "/build/1.js",
+        "/build/FpJsFormElement.js"
+      ]
+    }
+  },
+  "integrity": {
+    "/build/runtime.js": "sha384-/Zh0hTCgqMfXwZfeMIiueZzsKiHkvtqEOzKpZAuznIbgqg1DQpUQAwwNlO/9ToVH",
+    "/build/0.js": "sha384-Dt6rncfcL40e91sPDLy/fZ8XgfH6ZZmLY1+ajXaPmGFGTb5XNtWS5jmf84NoZT/f",
+    "/build/app.js": "sha384-fQEb7QGzFfgo+GcGcKqEFPa59UBUOSBrfrKTor8qzIrWuV0oZLzBIobDr9C8EhtB",
+    "/build/1.js": "sha384-oRoMsm76UiYY1uI1ZCeAofAoPaB1M0RAxOL3cMNqiKyK2hRHZ8VXSTbvwdUJ2ml5",
+    "/build/FpJsFormElement.js": "sha384-yaH2oSTj3MAYBvBWQdIeMaAUhZU7wtLjXNaAkZeohM7W3aZSgBKPZUpJiKDXdavA"
+  }
+}

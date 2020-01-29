@@ -1,0 +1,70 @@
+language: php
+sudo: false
+
+cache:
+  yarn: true
+  directories:
+    - $HOME/.composer/cache/files
+    - ./bin/.phpunit
+
+env:
+  global:
+    - SYMFONY_PHPUNIT_DIR=./bin/.phpunit
+    - SYMFONY_DEPRECATIONS_HELPER=29
+    - ACTION="install"
+
+matrix:
+  fast_finish: true
+  include:
+    - php: 7.1.18
+    - php: 7.2
+    - php: 7.3
+    # 'php: nightly' is PHP 8.0
+    - php: 7.4snapshot
+    - php: 7.3
+      env: SYMFONY="4.4.*"
+           ACTION="update"
+    - php: 7.3
+      env: SYMFONY="5.0.*"
+           ACTION="update"
+  allow_failures:
+    - php: 7.4snapshot
+    - php: 7.3
+      env: SYMFONY="4.4.*"
+           ACTION="update"
+    - php: 7.3
+      env: SYMFONY="5.0.*"
+           ACTION="update"
+
+before_install:
+  - '[[ "$TRAVIS_PHP_VERSION" == "7.4snapshot" ]] || phpenv config-rm xdebug.ini'
+  - composer self-update
+  # Set memory to max (memory fail)
+  - '[[ "$ACTION" == "install" ]] || echo "memory_limit=-1" >> ~/.phpenv/versions/$(phpenv version-name)/etc/conf.d/travis.ini'
+  # Set stability to dev to allow 4.4dev and 5.0dev
+  - '[[ "$ACTION" == "install" ]] || composer config minimum-stability dev'
+  # Change version of symfony when need
+  - '[[ "$ACTION" == "install" ]] || composer config extra.symfony.require $SYMFONY'
+
+install:
+  - php -r "echo ini_get('memory_limit').PHP_EOL;"
+  # install or update
+  - composer $ACTION
+  - ./bin/phpunit install
+
+script:
+  - ./bin/phpunit
+  # this checks that the source code follows the Symfony Code Syntax rules
+  - '[[ "$TRAVIS_PHP_VERSION" == "7.4snapshot" ]] || ./vendor/bin/php-cs-fixer fix --diff --dry-run -v'
+  # this checks that the YAML config files contain no syntax errors
+  - ./bin/console lint:yaml config --parse-tags
+  # this checks that the Twig template files contain no syntax errors
+  - ./bin/console lint:twig templates --env=prod
+  # this checks that the XLIFF translations contain no syntax errors
+  - ./bin/console lint:xliff translations
+  # this checks that the application doesn't use dependencies with known security vulnerabilities
+  - ./bin/console security:check
+  # this checks that Doctrine's mapping configurations are valid
+  - ./bin/console doctrine:schema:validate --skip-sync -vvv --no-interaction
+  #  Fail CI if the repo is in a dirty state after building assets (only for current release ie install)
+  -  if [[ "$ACTION" == "install" ]]; then yarn install && yarn encore production && git add --all && git diff --staged --exit-code; fi
