@@ -69,9 +69,9 @@ Make sure that your security settings do not prevent these routes.
 
 After the previous steps the javascript validation will be enabled automatically for all your forms.
 
-1. [Disabling validation](Resources/doc/2_1.md)<a name="p_2_1"></a>
-2. [If your forms are placed in sub-requests](Resources/doc/2_2.md)<a name="p_2_2"></a>
-3. If you need to initialize JS validation for your forms separately, or by some event, in this case you need to follow [these steps](Resources/doc/2_3.md) instead of the [chapter 1.3](#p_1_3)
+1. [Disabling validation](src/Resources/doc/2_1.md)<a name="p_2_1"></a>
+2. [If your forms are placed in sub-requests](src/Resources/doc/2_2.md)<a name="p_2_2"></a>
+3. If you need to initialize JS validation for your forms separately, or by some event, in this case you need to follow [these steps](src/Resources/doc/2_3.md) instead of the [chapter 1.3](#p_1_3)
 
 ## 3 Customization<a name="p_3"></a>
 
@@ -81,18 +81,18 @@ This bundle finds related DOM elements for each element of a symfony form and at
 This object contains list of properties and methods which fully define the validation process for the related form element.
 And some of those properties and methods can be changed to customize the validation process.
 
-If you render forms with a some level of customization - read [this note](Resources/doc/3_0.md).
+If you render forms with a some level of customization - read [this note](src/Resources/doc/3_0.md).
 
-1. [Disable validation for a specified field](Resources/doc/3_1.md)
-2. [Error display](Resources/doc/3_2.md)
-3. [Get validation groups from a closure](Resources/doc/3_3.md)
-4. [Getters validation](Resources/doc/3_4.md)
-5. [The Callback constraint](Resources/doc/3_5.md)
-6. [The Choice constraint. How to get the choices list from a callback](Resources/doc/3_6.md)
-7. [Custom constraints](Resources/doc/3_7.md)
-8. [Custom data transformers](Resources/doc/3_8.md)
-9. [Checking the uniqueness of entities](Resources/doc/3_9.md)
-10. [Form submit by Javasrcipt](Resources/doc/3_10.md)
-11. [onValidate callback](Resources/doc/3_11.md)
+1. [Disable validation for a specified field](src/Resources/doc/3_1.md)
+2. [Error display](src/Resources/doc/3_2.md)
+3. [Get validation groups from a closure](src/Resources/doc/3_3.md)
+4. [Getters validation](src/Resources/doc/3_4.md)
+5. [The Callback constraint](src/Resources/doc/3_5.md)
+6. [The Choice constraint. How to get the choices list from a callback](src/Resources/doc/3_6.md)
+7. [Custom constraints](src/Resources/doc/3_7.md)
+8. [Custom data transformers](src/Resources/doc/3_8.md)
+9. [Checking the uniqueness of entities](src/Resources/doc/3_9.md)
+10. [Form submit by Javasrcipt](src/Resources/doc/3_10.md)
+11. [onValidate callback](src/Resources/doc/3_11.md)
 12. [Run validation on custom event](Resources/doc/3_12.md)
-13. [Collections validation](Resources/doc/3_13.md)
+13. [Collections validation](src/Resources/doc/3_13.md)
