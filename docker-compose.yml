@@ -3,7 +3,6 @@ services:
 
     webserver:
       image: nginx:alpine
-      container_name: jsfprmvalidatorbundle-webserver
       working_dir: /application
       volumes:
           - .:/application
@@ -13,7 +12,6 @@ services:
 
     php-fpm:
       build: phpdocker/php-fpm
-      container_name: jsfprmvalidatorbundle-php-fpm
       working_dir: /application
       volumes:
         - .:/application
