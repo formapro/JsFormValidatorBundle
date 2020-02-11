@@ -14,8 +14,8 @@ install:
   - docker-compose build --parallel webserver php-fpm
   - docker-compose up -d webserver php-fpm
   - docker-compose exec php-fpm composer install --no-interaction
-  - docker-compose exec php-fpm Tests/app/bin/console assets:install -v Tests/app || Tests/app/bin/console assets:install -v Tests/app
-  - docker-compose exec -w /application/Tests/app php-fpm npm i
+  - docker-compose exec php-fpm Tests/app/bin/console assets:install -v Tests/app
+  - docker-compose exec -w /application/Tests/app php-fpm npm ci
   - docker-compose exec -w /application/Tests/app php-fpm npm run build
   - docker-compose exec php-fpm npm ci
 
