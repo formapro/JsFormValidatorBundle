@@ -26,14 +26,17 @@ Or if you do not want to unexpected problems better to use exact version.
 $ composer require "fp/jsformvalidator-bundle":"v1.6.*"
 ```
 
-### 1.2 Enable javascript libraries<a name="p_1_3"></a>
+### 1.2 Enable javascript libraries
+
+There are two ways to initialize javascript's files for this library. 
+You can create a new entry in the webpack or import the main file into your javascript.
 
 #### 1.2.1 Add FpJsFormValidatorBundle to webpack.config.js
 ```diff
 Encore
     ...
-    .addEntry('search', './assets/js/search.js')
-+   .addEntry('FpJsFormElement', './vendor/fp/jsformvalidator-bundle/Fp/JsFormValidatorBundle/Resources/public/js/FpJsFormValidator.js')
+    .addEntry('app', './assets/js/app.js')
++   .addEntry('FpJsFormElement', './vendor/fp/jsformvalidator-bundle/Fp/JsFormValidatorBundle/Resources/public/js/FpJsFormValidatorWithJqueryInit.js')
     ...
     .configureBabel(null, {
         useBuiltIns: 'usage',
@@ -42,15 +45,24 @@ Encore
 ;
 ```
 
-#### 1.3.2 Include the javascripts to your template
+And include new entry in your template
+```diff
++   {{ encore_entry_script_tags('FpJsFormElement') }}
+    {{ encore_entry_script_tags('app') }}
+```
+
+#### 1.2.2 Import FpJsFormValidatorBundle in your main javascript
+```diff
+  import $ from 'jquery';
++  import 'path-to-bundles/fpjsformvalidator/js/FpJsFormValidator';
++  import 'path-to-bundles/fpjsformvalidator/js/jquery.fpjsformvalidator';
+``` 
+
+#### 1.2.3 Use inits in your template
 ```diff
 {% block javascripts %}
-    {{ encore_entry_script_tags('app') }}
-+   {{ encore_entry_script_tags('FpJsFormElement') }}
-
 +   {{ js_validator_config() }}
 +   {{ init_js_validation() }}
-
 {% endblock %}
 ```
 
