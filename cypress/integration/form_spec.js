@@ -60,21 +60,6 @@ context('JsFormValidatorBundle', () => {
             getErrors(fieldId).should('have.length', 0);
         });
 
-        it('test date time', () => {
-            it.skip('This test not work!!!');
-            /*
-            const fieldId = 'test_form_datetime';
-            cy.get('#' + fieldId).type('abc').should('have.value', 'abc');
-            submitForm();
-            getErrors(fieldId).should('have.length', 1);
-            cy.get('.form-error-test-form-datetime').contains('Please fill valid date');
-
-            cy.get('#' + fieldId).clear().type('2020-01-01 00:00:00').should('have.value', '2020-01-01 00:00:00');
-            submitForm();
-            getErrors(fieldId).should('have.length', 0);
-            */
-        });
-
         it('test email', () => {
             const fieldId = 'test_form_email';
             cy.get('#' + fieldId).type('abc').should('have.value', 'abc');

@@ -42,11 +42,11 @@ class TestForm extends AbstractType
                     new Constraints\Choice(['choices' => ['1', '2', '3'], 'message' => 'Please fill field correct value (1,2,3)']),
                 ],
             ])
-            /*->add('count', TextType::class, [
+            ->add('count', TextType::class, [
                 'constraints' => [
                     new Constraints\Count(['choices' => [1, 2, 3], 'message' => 'Please fill field correct value (1,2,3)']),
                 ],
-            ])*/
+            ])
             ->add('date', TextType::class, [
                 'constraints' => [
                     new Constraints\Date(['message' => 'Please fill valid date']),
