@@ -54,7 +54,7 @@ abstract class JsModelAbstract
                 $jsObject[] = "'$paramName':" . self::phpValueToJs($paramValue);
             }
 
-            return sprintf('{%1$s}', implode($jsObject, ','));
+            return sprintf('{%1$s}', implode(',', $jsObject));
         }
         // For a sequential array
         elseif (is_array($value)) {
@@ -63,7 +63,7 @@ abstract class JsModelAbstract
                 $jsArray[] = self::phpValueToJs($item);
             }
 
-            return sprintf('[%1$s]', implode($jsArray, ','));
+            return sprintf('[%1$s]', implode(',', $jsArray));
         }
         // For string
         elseif (is_string($value)) {
