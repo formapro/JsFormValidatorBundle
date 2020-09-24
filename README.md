@@ -15,6 +15,7 @@ If you have Symfony 2.8.* or 2.7.* - you need to use [Version 1.3.*](https://git
 
 If you have Symfony 2.6.* or less - you need to use [Version 1.2.*](https://github.com/formapro/JsFormValidatorBundle/tree/1.2)
 
+
 ## 1 Installation<a name="p_1"></a>
 
 ### 1.1 Download FpJsFormValidatorBundle using composer<a name="p_1_1"></a>
