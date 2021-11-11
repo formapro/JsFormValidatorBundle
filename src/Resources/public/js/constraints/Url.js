@@ -13,7 +13,9 @@ export default function SymfonyComponentValidatorConstraintsUrl() {
         var f = FpJsFormValidator;
 
         if (!f.isValueEmty(value) && !regexp.test(value)) {
-            element.domNode.value = 'http://' + value;
+            if (!element.domNode.value.startsWith('http://')) {
+                element.domNode.value = 'http://' + value;
+            }
             errors.push(this.message.replace('{{ value }}', FpJsBaseConstraint.formatValue('http://' + value)));
         }
 
