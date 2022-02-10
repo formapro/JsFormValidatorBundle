@@ -4,13 +4,15 @@ namespace Fp\JsFormValidatorBundle\Twig\Extension;
 
 use Fp\JsFormValidatorBundle\Factory\JsFormValidatorFactory;
 use Symfony\Component\Form\FormView;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
 /**
  * Class JsFormValidatorTwigExtension
  *
  * @package Fp\JsFormValidatorBundle\Twig\Extension
  */
-class JsFormValidatorTwigExtension extends \Twig_Extension
+class JsFormValidatorTwigExtension extends AbstractExtension
 {
     /**
      * @var JsFormValidatorFactory
@@ -42,10 +44,10 @@ class JsFormValidatorTwigExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            new \Twig_SimpleFunction('init_js_validation', array($this, 'getJsValidator'), array(
+            new TwigFunction('init_js_validation', array($this, 'getJsValidator'), array(
                 'is_safe' => array('html')
             )),
-            new \Twig_SimpleFunction('js_validator_config', array($this, 'getConfig'), array(
+            new TwigFunction('js_validator_config', array($this, 'getConfig'), array(
                 'is_safe' => array('html')
             )),
         );
