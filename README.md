@@ -1,5 +1,5 @@
 # FpJsFormValidatorBundle
-[![Build Status](https://travis-ci.org/formapro/JsFormValidatorBundle.svg?branch=master)](https://travis-ci.org/formapro/JsFormValidatorBundle)
+[![Build Status](https://travis-ci.com/formapro/JsFormValidatorBundle.svg?branch=master)](https://travis-ci.com/formapro/JsFormValidatorBundle)
 [![Total Downloads](https://poser.pugx.org/fp/jsformvalidator-bundle/downloads.png)](https://packagist.org/packages/fp/jsformvalidator-bundle)
 
 This module enables validation of the Symfony 4 or later forms on the JavaScript side.
