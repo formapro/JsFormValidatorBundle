@@ -32,7 +32,7 @@
         "symfony/console": "*",
         "symfony/dotenv": "*",
         "symfony/expression-language": "*",
-        "symfony/flex": "^1.1",
+        "symfony/flex": "^1.17",
         "symfony/framework-bundle": "*",
         "symfony/intl": "*",
         "symfony/security-bundle": "*",
