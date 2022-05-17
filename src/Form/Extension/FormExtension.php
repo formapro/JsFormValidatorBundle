@@ -58,7 +58,7 @@ class FormExtension extends AbstractTypeExtension
     /**
      * {@inheritDoc}
      */
-    public static function getExtendedTypes()
+    public static function getExtendedTypes(): iterable
     {
         yield FormType::class;
     }
