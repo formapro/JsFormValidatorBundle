@@ -21,10 +21,6 @@ by a newer `Tests/app` fixture. The maintained test commands now cover the PHP
 model/factory/controller core, JavaScript constraints, and a Cypress smoke test
 against the Symfony test application.
 
-The previous Travis CI setup has been replaced with GitHub Actions. The CI
-workflow runs the maintained PHP, JavaScript, and browser validation commands on
-pushes and pull requests.
-
 For older Symfony applications, use the historical branches:
 
 - Symfony 4: `1.6`
