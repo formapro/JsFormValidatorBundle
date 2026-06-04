@@ -11,8 +11,8 @@ test.each([
     ['http://stackoverflow.com/questions/', []],
     ['http://stackoverflow.com/questions/', []],
     ['http://google.cz/search?hl=en&sxsrf=ACY', []],
-    ['a', ['\"http://a\" is not valid url']], // !!!
-    ['http://a', ['\"http://http://a\" is not valid url']], // !!!
+    ['a', ['\"a\" is not valid url']],
+    ['http://a', ['\"http://a\" is not valid url']],
 ])(
     'SymfonyComponentValidatorConstraintsUrl',
     (value, expected) => {
