@@ -307,8 +307,7 @@ function FpJsCustomizeMethods() {
         FpJsFormValidator.each(this, function (item) {
             var prototype = FpJsFormValidator.preparePrototype(
                 FpJsFormValidator.cloneObject(item.jsFormValidator.prototype),
-                name,
-                item.jsFormValidator.id + '_' + name
+                name
             );
             item.jsFormValidator.children[name] = FpJsFormValidator.createElement(prototype);
             item.jsFormValidator.children[name].parent = item.jsFormValidator;
@@ -960,6 +959,8 @@ var FpJsFormValidator = new function () {
      * @param {String} id
      */
     this.preparePrototype = function (prototype, name, id) {
+        id = typeof id === 'undefined' ? name : id;
+
         prototype.name = prototype.name.replace(/__name__/g, name);
         prototype.id = prototype.id.replace(/__name__/g, id);
 
