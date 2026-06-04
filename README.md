@@ -192,6 +192,12 @@ Run the PHP test suite:
 composer test
 ```
 
+Run PHPStan static analysis:
+
+```bash
+composer phpstan
+```
+
 Run the JavaScript unit tests and Cypress browser smoke test:
 
 ```bash
@@ -205,5 +211,5 @@ composer validate --strict
 git diff --check
 ```
 
-The same maintained test contour is also run by GitHub Actions on pushes and
-pull requests.
+The same maintained test and static-analysis checks are also run by GitHub
+Actions on pushes and pull requests.

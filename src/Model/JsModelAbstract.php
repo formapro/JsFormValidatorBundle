@@ -49,7 +49,8 @@ abstract class JsModelAbstract
         // For an object or associative array
         elseif (is_object($value) || (is_array($value) && array_values($value) !== $value)) {
             $jsObject = array();
-            foreach ($value as $paramName => $paramValue) {
+            $properties = is_object($value) ? get_object_vars($value) : $value;
+            foreach ($properties as $paramName => $paramValue) {
                 $paramName = addcslashes($paramName, '\'\\');
                 $jsObject[] = "'$paramName':" . self::phpValueToJs($paramValue);
             }
@@ -77,7 +78,7 @@ abstract class JsModelAbstract
         }
         // For numbers
         elseif (is_numeric($value)) {
-            return $value;
+            return (string) $value;
         }
         // For null
         elseif (is_null($value)) {
@@ -95,7 +96,7 @@ abstract class JsModelAbstract
     public function toArray()
     {
         $result = array();
-        foreach ($this as $key => $value) {
+        foreach (get_object_vars($this) as $key => $value) {
             $result[$key] = $value;
         }
 

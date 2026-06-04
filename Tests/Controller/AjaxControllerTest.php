@@ -104,6 +104,10 @@ class AjaxControllerTest extends TestCase
     }
 }
 
+class InMemoryEntity
+{
+}
+
 class InMemoryRepository implements ObjectRepository
 {
     public function find(mixed $id): ?object
@@ -134,8 +138,11 @@ class InMemoryRepository implements ObjectRepository
         return null;
     }
 
+    /**
+     * @return class-string<object>
+     */
     public function getClassName(): string
     {
-        return 'InMemoryEntity';
+        return InMemoryEntity::class;
     }
 }
