@@ -1,7 +1,7 @@
 {
   "name": "jsformvalidatorbundle",
   "version": "1.0.0",
-  "description": "[![Build Status](https://travis-ci.org/formapro/JsFormValidatorBundle.svg?branch=master)](https://travis-ci.org/formapro/JsFormValidatorBundle) [![Total Downloads](https://poser.pugx.org/fp/jsformvalidator-bundle/downloads.png)](https://packagist.org/packages/fp/jsformvalidator-bundle)",
+  "description": "Client-side validation helpers generated from Symfony form validation metadata.",
   "scripts": {
     "test": "npm run test:unit && npm run test:e2e",
     "test:unit": "jest",
