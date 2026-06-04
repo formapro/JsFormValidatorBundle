@@ -7,6 +7,7 @@ use Doctrine\Persistence\ObjectRepository;
 use Fp\JsFormValidatorBundle\Controller\AjaxController;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * Class AjaxControllerTest
@@ -78,6 +79,16 @@ class AjaxControllerTest extends TestCase
         $this->expectException(\LogicException::class);
 
         $controller = new AjaxController();
+        $controller->checkUniqueEntityAction(new Request(array(), array()));
+    }
+
+    public function testUniqueEntityRequestDataIsRequired()
+    {
+        $this->expectException(BadRequestHttpException::class);
+
+        $repository = new InMemoryRepository();
+        $controller = new AjaxController($this->createRegistry($repository));
+
         $controller->checkUniqueEntityAction(new Request(array(), array()));
     }
 

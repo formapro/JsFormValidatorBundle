@@ -5,6 +5,7 @@ namespace Fp\JsFormValidatorBundle\Controller;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * These actions call from the client side to check some validations on the server side
@@ -41,7 +42,11 @@ class AjaxController
         }
 
         $data = $request->request->all();
-        $values = isset($data['data']) && is_array($data['data']) ? $data['data'] : array();
+        if (!array_key_exists('data', $data) || !is_array($data['data'])) {
+            throw new BadRequestHttpException('The "data" request field is required.');
+        }
+
+        $values = $data['data'];
         $ignoreNull = !empty($data['ignoreNull']);
 
         foreach ($values as $value) {
