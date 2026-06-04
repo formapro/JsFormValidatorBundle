@@ -79,8 +79,8 @@
 
     "scripts": {
         "coverage": [
-            "XDEBUG_MODE=coverage phpunit --coverage-clover build/logs/phpunit-clover.xml --coverage-text --only-summary-for-coverage-text",
-            "php tools/check-clover-coverage.php build/logs/phpunit-clover.xml 50 PHP"
+            "XDEBUG_MODE=coverage phpunit --coverage-cobertura build/coverage/phpunit/cobertura.xml --coverage-text --only-summary-for-coverage-text",
+            "php tools/check-coverage.php build/coverage/phpunit/cobertura.xml 50 PHP"
         ],
         "phpstan": [
             "APP_ENV=test APP_DEBUG=1 php Tests/app/bin/console cache:warmup --env=test",
