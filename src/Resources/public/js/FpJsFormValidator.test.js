@@ -189,3 +189,83 @@ describe('FpJsFormValidator error mapping', () => {
         expect(element.showErrors).not.toHaveBeenCalled();
     });
 });
+
+describe('FpJsFormValidator submit flow', () => {
+    afterEach(() => {
+        window.FpJsFormValidator.ajax.queue = 0;
+        window.FpJsFormValidator.ajax.callbacks = [];
+    });
+
+    const createElement = (valid, form) => ({
+        domNode: form || {},
+        errors: {},
+        children: {},
+        validateRecursively: jest.fn(),
+        onValidate: jest.fn(),
+        isValid: jest.fn(() => valid),
+        submitForm: jest.fn(),
+    });
+
+    const submit = (element, event) => {
+        window.FpJsFormValidator.customizeMethods.submitForm.apply(
+            [{ jsFormValidator: element }],
+            [event],
+        );
+    };
+
+    test('lets a valid native submit event continue so the original submitter is preserved', () => {
+        const event = { preventDefault: jest.fn() };
+        const element = createElement(true);
+
+        submit(element, event);
+
+        expect(element.validateRecursively).toHaveBeenCalled();
+        expect(element.onValidate).toHaveBeenCalledWith({}, event);
+        expect(event.preventDefault).not.toHaveBeenCalled();
+        expect(element.submitForm).not.toHaveBeenCalled();
+    });
+
+    test('prevents a native submit event when validation fails', () => {
+        const event = { preventDefault: jest.fn() };
+        const element = createElement(false);
+
+        submit(element, event);
+
+        expect(element.onValidate).toHaveBeenCalledWith({}, event);
+        expect(event.preventDefault).toHaveBeenCalled();
+        expect(element.submitForm).not.toHaveBeenCalled();
+    });
+
+    test('re-submits an async valid native event with the original submitter', () => {
+        const submitter = {};
+        const form = { requestSubmit: jest.fn() };
+        const event = { preventDefault: jest.fn(), submitter };
+        const element = createElement(true, form);
+        window.FpJsFormValidator.ajax.queue = 1;
+
+        submit(element, event);
+
+        expect(event.preventDefault).toHaveBeenCalledTimes(1);
+        expect(window.FpJsFormValidator.ajax.callbacks).toHaveLength(1);
+        expect(form.requestSubmit).not.toHaveBeenCalled();
+
+        window.FpJsFormValidator.ajax.queue = 0;
+        window.FpJsFormValidator.ajax.callbacks[0]();
+
+        expect(form.__fpJsFormValidatorSubmitting).toBe(true);
+        expect(form.requestSubmit).toHaveBeenCalledWith(submitter);
+        expect(element.submitForm).not.toHaveBeenCalled();
+    });
+
+    test('allows a guarded re-submitted event to continue without validating again', () => {
+        const form = { __fpJsFormValidatorSubmitting: true };
+        const event = { preventDefault: jest.fn() };
+        const element = createElement(true, form);
+
+        submit(element, event);
+
+        expect(form.__fpJsFormValidatorSubmitting).toBeUndefined();
+        expect(element.validateRecursively).not.toHaveBeenCalled();
+        expect(event.preventDefault).not.toHaveBeenCalled();
+    });
+});
