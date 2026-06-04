@@ -198,10 +198,22 @@ Run PHPStan static analysis:
 composer phpstan
 ```
 
+Run PHP coverage:
+
+```bash
+composer coverage
+```
+
 Run the JavaScript unit tests and Cypress browser smoke test:
 
 ```bash
 npm test
+```
+
+Run JavaScript coverage:
+
+```bash
+npm run test:coverage
 ```
 
 Useful local checks:

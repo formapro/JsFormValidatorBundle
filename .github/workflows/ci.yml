@@ -114,3 +114,45 @@ jobs:
 
       - name: Run PHPStan
         run: composer phpstan
+
+  coverage:
+    name: Coverage
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: xdebug
+          tools: composer:v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Composer dependencies
+        run: composer update --no-interaction --prefer-dist --no-progress
+
+      - name: Install Node.js dependencies
+        run: npm install
+
+      - name: Run PHP coverage
+        run: composer coverage
+
+      - name: Run JavaScript coverage
+        run: npm run test:coverage
+
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports
+          if-no-files-found: error
+          path: |
+            build/logs/phpunit-clover.xml
+            build/coverage/jest

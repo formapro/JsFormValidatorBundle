@@ -1,5 +1,7 @@
 .idea
 .phpunit.cache/
+build/
+coverage/
 vendor
 composer.lock
 
