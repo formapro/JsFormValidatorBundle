@@ -12,9 +12,9 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraint;
-use Symfony\Component\Validator\Mapping\ClassMetadata;
+use Symfony\Component\Validator\Mapping\ClassMetadataInterface;
 use Symfony\Component\Validator\Mapping\GetterMetadata;
-use Symfony\Component\Validator\Mapping\PropertyMetadata;
+use Symfony\Component\Validator\Mapping\MetadataInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
@@ -87,7 +87,7 @@ class JsFormValidatorFactory
      *
      * @param string $className
      *
-     * @return ClassMetadata
+     * @return MetadataInterface
      * @codeCoverageIgnore
      */
     protected function getMetadataFor($className)
@@ -170,7 +170,7 @@ class JsFormValidatorFactory
      *
      * @param FormInterface $form
      *
-     * @return array
+     * @return void
      */
     public function addToQueue(FormInterface $form)
     {
@@ -316,15 +316,16 @@ class JsFormValidatorFactory
         // If parent has metadata
         $parent = $form->getParent();
         if ($parent && null !== $parent->getConfig()->getDataClass()) {
-            $classMetadata = $metadata = $this->getMetadataFor($parent->getConfig()->getDataClass());
-            if ($classMetadata->hasPropertyMetadata($form->getName())) {
+            $classMetadata = $this->getMetadataFor($parent->getConfig()->getDataClass());
+            if ($classMetadata instanceof ClassMetadataInterface && $classMetadata->hasPropertyMetadata($form->getName())) {
                 $metadata = $classMetadata->getPropertyMetadata($form->getName());
-                /** @var PropertyMetadata $item */
                 foreach ($metadata as $item) {
+                    $constraints = $item instanceof GetterMetadata ? array() : $item->getConstraints();
+                    $getters = $item instanceof GetterMetadata ? array($item) : array();
                     $this->composeValidationData(
                         $parentData,
-                        $item->getConstraints(),
-                        $getters = !empty($item->getters) ? (array)$item->getters : array()
+                        $constraints,
+                        $getters
                     );
                 }
             }
@@ -335,7 +336,7 @@ class JsFormValidatorFactory
             $this->composeValidationData(
                 $ownData,
                 $metadata->getConstraints(),
-                $getters = !empty($metadata->getters) ? (array)$metadata->getters : array()
+                $this->getGetterMetadata($metadata)
             );
         }
         // If has constraints in a form element
@@ -362,6 +363,27 @@ class JsFormValidatorFactory
         }
 
         return $result;
+    }
+
+    /**
+     * @return GetterMetadata[]
+     */
+    protected function getGetterMetadata(MetadataInterface $metadata)
+    {
+        if (!$metadata instanceof ClassMetadataInterface) {
+            return array();
+        }
+
+        $getters = array();
+        foreach ($metadata->getConstrainedProperties() as $property) {
+            foreach ($metadata->getPropertyMetadata($property) as $item) {
+                if ($item instanceof GetterMetadata) {
+                    $getters[] = $item;
+                }
+            }
+        }
+
+        return $getters;
     }
 
     protected function mergeDataRecursive(array $array1, array $array2)
@@ -515,7 +537,7 @@ class JsFormValidatorFactory
         $reflection = new \ReflectionProperty($transformer, $paramName);
         $reflection->setAccessible(true);
 
-        if (method_exists($reflection, 'isInitialized') && !$reflection->isInitialized($transformer)) {
+        if (!$reflection->isInitialized($transformer)) {
             return null;
         }
 

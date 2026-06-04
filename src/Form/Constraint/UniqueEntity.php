@@ -31,16 +31,16 @@ class UniqueEntity extends BaseUniqueEntity
      */
     public function __construct(BaseUniqueEntity $base, $entityName, $entity = null)
     {
+        foreach (get_object_vars($base) as $prop => $value) {
+            $this->{$prop} = $value;
+        }
+
         $this->entityName = $entityName;
         if (is_object($entity)) {
             $this->entity = $entity;
             if (method_exists($entity, 'getId')) {
                 $this->entityId = $entity->getId();
             }
-        }
-
-        foreach ($base as $prop => $value) {
-            $this->{$prop} = $value;
         }
     }
 }

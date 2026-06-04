@@ -8,7 +8,8 @@ Local path: `/Volumes/SRC/JsFormValidatorBundle`
 - PR #173 revived the project and was merged into `formapro/master`.
 - PR #174 restored GitHub Actions CI and was merged into `formapro/master`.
 - PR #175 restored selected old PR fixes and was merged into `formapro/master`.
-- Replacement PRs #176, #177, and #178 are open, ready for review, and were last checked as `MERGEABLE / CLEAN` with green CI.
+- Replacement PRs #176, #177, and #178 were merged into `formapro/master`.
+- `1.7.0-beta1` was published from `formapro/master`.
 
 ## CI
 
@@ -18,16 +19,17 @@ Local path: `/Volumes/SRC/JsFormValidatorBundle`
 - The PHP job runs `composer update`, `composer validate --strict`, and `composer test`.
 - The JavaScript job runs on Node `22` with PHP `8.3`.
 - The JavaScript job installs Cypress system dependencies, then runs `composer update`, `npm install`, and `npm test`.
+- The PHPStan job runs on PHP `8.3`, installs dependencies with `composer update`, warms the Symfony test cache, and runs `composer phpstan`.
 - The old `.travis.yml` file was removed.
 - `README.md` was updated to use a GitHub Actions badge and test instructions instead of Travis CI references.
 - `package.json` no longer advertises the old Travis CI badge in the package description.
 
 ## Local Validation
 
-- `php /tmp/jsfv-composer.phar test` passes: `3 tests, 14 assertions`.
-- `npm test` passes: Jest `184 tests`; Cypress e2e `16 tests`.
+- `php /tmp/jsfv-composer.phar test` passes: `5 tests, 18 assertions`.
+- `php /tmp/jsfv-composer.phar phpstan` runs PHPStan with `phpstan.neon`.
+- `npm test` passes: Jest `197 tests`; Cypress e2e `16 tests`.
 - The local `composer` shim is broken with `Could not open input file: /Users/ton/bin/composer`, so use `/tmp/jsfv-composer.phar` locally if needed.
-- The working tree was clean after the latest validation.
 
 ## GitHub Checks Note
 

@@ -1,0 +1,13 @@
+includes:
+    - vendor/phpstan/phpstan-symfony/extension.neon
+    - vendor/phpstan/phpstan-symfony/rules.neon
+
+parameters:
+    level: 5
+    paths:
+        - src
+        - Tests/Controller
+        - Tests/Unit
+        - Tests/app/src
+    symfony:
+        containerXmlPath: Tests/app/var/cache/test/App_KernelTestDebugContainer.xml
