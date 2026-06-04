@@ -336,25 +336,47 @@ function FpJsCustomizeMethods() {
         //noinspection JSCheckFunctionSignatures
         FpJsFormValidator.each(this, function (item) {
             var element = item.jsFormValidator;
-            if (event) {
-                event.preventDefault();
+
+            if (event && element.domNode && element.domNode.__fpJsFormValidatorSubmitting) {
+                delete element.domNode.__fpJsFormValidatorSubmitting;
+                return;
             }
+
             element.validateRecursively();
-            if (FpJsFormValidator.ajax.queue) {
+            var hasAjaxQueue = FpJsFormValidator.ajax.queue > 0;
+            var submitCallback = function () {
+                element.onValidate.apply(element.domNode, [FpJsFormValidator.getAllErrors(element, {}), event]);
+                if (!element.isValid()) {
+                    if (event) {
+                        event.preventDefault();
+                    }
+
+                    return;
+                }
+
+                if (!event) {
+                    element.submitForm.apply(item, [item]);
+                } else if (hasAjaxQueue) {
+                    if (element.domNode && typeof element.domNode.requestSubmit === 'function') {
+                        element.domNode.__fpJsFormValidatorSubmitting = true;
+                        if (event.submitter) {
+                            element.domNode.requestSubmit(event.submitter);
+                        } else {
+                            element.domNode.requestSubmit();
+                        }
+                    } else {
+                        element.submitForm.apply(item, [item]);
+                    }
+                }
+            };
+
+            if (hasAjaxQueue) {
                 if (event) {
                     event.preventDefault();
                 }
-                FpJsFormValidator.ajax.callbacks.push(function () {
-                    element.onValidate.apply(element.domNode, [FpJsFormValidator.getAllErrors(element, {}), event]);
-                    if (element.isValid()) {
-                        element.submitForm.apply(item, [item]);
-                    }
-                });
+                FpJsFormValidator.ajax.callbacks.push(submitCallback);
             } else {
-                element.onValidate.apply(element.domNode, [FpJsFormValidator.getAllErrors(element, {}), event]);
-                if (element.isValid()) {
-                    element.submitForm.apply(item, [item]);
-                }
+                submitCallback();
             }
         });
     };
