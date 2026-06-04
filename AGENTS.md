@@ -3,19 +3,18 @@
 Repository: `formapro/JsFormValidatorBundle`
 Local path: `/Volumes/SRC/JsFormValidatorBundle`
 
-## Current Work
+## Current Repository State
 
-- PR #173, which revived the project, has already been merged into `formapro/master`.
-- The current branch is `codex/add-github-actions-ci`.
-- The current pull request is #174: `https://github.com/formapro/JsFormValidatorBundle/pull/174`.
-- PR #174 is open, ready for review, and was last checked as `MERGEABLE / CLEAN`.
-- Commit `93b6e6d Add GitHub Actions CI` includes `Co-authored-by: Codex <codex@openai.com>`.
+- PR #173 revived the project and was merged into `formapro/master`.
+- PR #174 restored GitHub Actions CI and was merged into `formapro/master`.
+- PR #175 restored selected old PR fixes and was merged into `formapro/master`.
+- Replacement PRs #176, #177, and #178 are open, ready for review, and were last checked as `MERGEABLE / CLEAN` with green CI.
 
-## CI Changes In PR #174
+## CI
 
 - Added `.github/workflows/ci.yml`.
 - The workflow runs on `push` and `pull_request`.
-- The PHP job runs on PHP `8.1`, `8.2`, and `8.3`.
+- The PHP job runs on PHP `8.1`, `8.2`, `8.3`, `8.4`, and `8.5`.
 - The PHP job runs `composer update`, `composer validate --strict`, and `composer test`.
 - The JavaScript job runs on Node `22` with PHP `8.3`.
 - The JavaScript job installs Cypress system dependencies, then runs `composer update`, `npm install`, and `npm test`.
