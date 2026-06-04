@@ -20,6 +20,8 @@ Local path: `/Volumes/SRC/JsFormValidatorBundle`
 - The JavaScript job runs on Node `22` with PHP `8.3`.
 - The JavaScript job installs Cypress system dependencies, then runs `composer update`, `npm install`, and `npm test`.
 - The PHPStan job runs on PHP `8.3`, installs dependencies with `composer update`, warms the Symfony test cache, and runs `composer phpstan`.
+- The Coverage job runs on PHP `8.3` with Xdebug and Node `22`, then runs `composer coverage` and `npm run test:coverage`.
+- Coverage thresholds currently enforced by `tools/check-clover-coverage.php`: PHP line coverage at least `50%`, JavaScript line coverage at least `60%`.
 - The old `.travis.yml` file was removed.
 - `README.md` was updated to use a GitHub Actions badge and test instructions instead of Travis CI references.
 - `package.json` no longer advertises the old Travis CI badge in the package description.
@@ -28,7 +30,9 @@ Local path: `/Volumes/SRC/JsFormValidatorBundle`
 
 - `php /tmp/jsfv-composer.phar test` passes: `5 tests, 18 assertions`.
 - `php /tmp/jsfv-composer.phar phpstan` runs PHPStan with `phpstan.neon`.
+- `php /tmp/jsfv-composer.phar coverage` generates PHP Clover coverage and checks the `50%` line threshold.
 - `npm test` passes: Jest `197 tests`; Cypress e2e `16 tests`.
+- `npm run test:coverage` generates Jest coverage and checks the `60%` line threshold.
 - The local `composer` shim is broken with `Could not open input file: /Users/ton/bin/composer`, so use `/tmp/jsfv-composer.phar` locally if needed.
 
 ## GitHub Checks Note
