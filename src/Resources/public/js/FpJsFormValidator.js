@@ -1,6 +1,35 @@
 import './constraints';
 import './transformers';
 
+export function FpJsFormError(message) {
+    this.message = message;
+    this.atPath = null;
+
+    this.getTarget = function(rootElement) {
+        if (!this.atPath) {
+            return rootElement;
+        }
+
+        var path = String(this.atPath).split('.');
+        var targetElement = rootElement;
+
+        for (var index = 0; index < path.length; index++) {
+            var pathSegment = path[index];
+            if (!pathSegment) {
+                continue;
+            }
+
+            if (!targetElement.children || !targetElement.children[pathSegment]) {
+                return rootElement;
+            }
+
+            targetElement = targetElement.children[pathSegment];
+        }
+
+        return targetElement || rootElement;
+    };
+}
+
 export function FpJsFormElement() {
     this.id = '';
     this.name = '';
@@ -22,28 +51,46 @@ export function FpJsFormElement() {
     };
 
     this.validate = function () {
+        var self = this;
+        var sourceId = 'form-error-' + String(this.id).replace(/_/g, '-');
+        self.clearErrorsRecursively(sourceId);
+
         if (this.disabled) {
             return true;
         }
 
-        var self = this;
-        var sourceId = 'form-error-' + String(this.id).replace(/_/g, '-');
-        self.errors[sourceId] = FpJsFormValidator.validateElement(self);
+        var validationErrors = FpJsFormValidator.validateElement(self);
+        var invalidTargets = [];
+        for (var index = 0; index < validationErrors.length; index++) {
+            var validationError = validationErrors[index];
+            var errorTarget = validationError.getTarget
+                ? validationError.getTarget(self)
+                : self;
+            if (!errorTarget) {
+                errorTarget = self;
+            }
 
-        var errorPath = FpJsFormValidator.getErrorPathElement(self);
-        var domNode = errorPath.domNode;
-        if (!domNode) {
-            for (var childName in errorPath.children) {
-                var childDomNode = errorPath.children[childName].domNode;
-                if (childDomNode) {
-                    domNode = childDomNode;
-                    break;
-                }
+            if (-1 === invalidTargets.indexOf(errorTarget)) {
+                invalidTargets.push(errorTarget);
+            }
+
+            if (!errorTarget.errors[sourceId]) {
+                errorTarget.errors[sourceId] = [];
+            }
+
+            errorTarget.errors[sourceId].push(validationError.message);
+        }
+
+        for (var i = 0; i < invalidTargets.length; i++) {
+            var target = invalidTargets[i];
+            var errorPath = FpJsFormValidator.getErrorPathElement(target);
+            var domNode = FpJsFormValidator.findErrorDomNode(errorPath);
+            if (domNode) {
+                errorPath.showErrors.apply(domNode, [target.errors[sourceId], sourceId]);
             }
         }
-        errorPath.showErrors.apply(domNode, [self.errors[sourceId], sourceId]);
 
-        return self.errors[sourceId].length == 0;
+        return validationErrors.length === 0;
     };
 
     this.validateRecursively = function () {
@@ -68,6 +115,27 @@ export function FpJsFormElement() {
         }
 
         return true;
+    };
+
+    this.clearErrors = function(sourceId) {
+        if (!sourceId) {
+            for (sourceId in this.errors) {
+                this.clearErrors(sourceId);
+            }
+        } else {
+            this.errors[sourceId] = [];
+            var domNode = FpJsFormValidator.findErrorDomNode(this);
+            if (domNode) {
+                this.showErrors.apply(domNode, [this.errors[sourceId], sourceId]);
+            }
+        }
+    };
+
+    this.clearErrorsRecursively = function (sourceId) {
+        this.clearErrors(sourceId);
+        for (var childName in this.children) {
+            this.children[childName].clearErrorsRecursively(sourceId);
+        }
     };
 
     this.showErrors = function (errors, sourceId) {
@@ -551,6 +619,12 @@ var FpJsFormValidator = new function () {
             }
         }
 
+        for (var index = 0; index < errors.length; index++) {
+            if (typeof errors[index] === 'string') {
+                errors[index] = new FpJsFormError(errors[index]);
+            }
+        }
+
         return errors;
     };
 
@@ -843,6 +917,21 @@ var FpJsFormValidator = new function () {
         }
     };
 
+    this.findErrorDomNode = function (element) {
+        if (element.domNode) {
+            return element.domNode;
+        }
+
+        for (var childName in element.children) {
+            var childDomNode = this.findErrorDomNode(element.children[childName]);
+            if (childDomNode) {
+                return childDomNode;
+            }
+        }
+
+        return null;
+    };
+
     /**
      * Applies customizing for the specified elements
      *
@@ -1051,5 +1140,6 @@ var FpJsFormValidator = new function () {
 }();
 
 window.FpJsBaseConstraint = FpJsBaseConstraint;
+window.FpJsFormError = FpJsFormError;
 window.FpJsFormValidator = FpJsFormValidator;
 window.FpJsFormElement = FpJsFormElement;
