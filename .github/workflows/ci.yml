@@ -1,0 +1,92 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  php:
+    name: PHP ${{ matrix.php-version }}
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+
+    strategy:
+      fail-fast: false
+      matrix:
+        php-version:
+          - '8.1'
+          - '8.2'
+          - '8.3'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php-version }}
+          coverage: none
+          tools: composer:v2
+
+      - name: Install Composer dependencies
+        run: composer update --no-interaction --prefer-dist --no-progress
+
+      - name: Validate Composer metadata
+        run: composer validate --strict
+
+      - name: Run PHP tests
+        run: composer test
+
+  javascript:
+    name: JavaScript and browser tests
+    runs-on: ubuntu-22.04
+    timeout-minutes: 20
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+          tools: composer:v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Cypress system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libasound2 \
+            libgconf-2-4 \
+            libgbm-dev \
+            libgtk-3-0 \
+            libgtk2.0-0 \
+            libnotify-dev \
+            libnss3 \
+            libxss1 \
+            libxtst6 \
+            xauth \
+            xvfb
+
+      - name: Install Composer dependencies
+        run: composer update --no-interaction --prefer-dist --no-progress
+
+      - name: Install Node.js dependencies
+        run: npm install
+
+      - name: Run JavaScript unit and browser tests
+        run: npm test

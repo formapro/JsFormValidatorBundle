@@ -1,5 +1,6 @@
 # FpJsFormValidatorBundle
 
+[![CI](https://github.com/formapro/JsFormValidatorBundle/actions/workflows/ci.yml/badge.svg)](https://github.com/formapro/JsFormValidatorBundle/actions/workflows/ci.yml)
 [![Total Downloads](https://poser.pugx.org/fp/jsformvalidator-bundle/downloads.png)](https://packagist.org/packages/fp/jsformvalidator-bundle)
 
 FpJsFormValidatorBundle converts Symfony form validation metadata into JavaScript
@@ -20,9 +21,9 @@ by a newer `Tests/app` fixture. The maintained test commands now cover the PHP
 model/factory/controller core, JavaScript constraints, and a Cypress smoke test
 against the Symfony test application.
 
-The previous Travis CI badge has been removed because this branch does not have
-a maintained Travis build. Use the local validation commands below until a new
-hosted CI workflow is added.
+The previous Travis CI setup has been replaced with GitHub Actions. The CI
+workflow runs the maintained PHP, JavaScript, and browser validation commands on
+pushes and pull requests.
 
 For older Symfony applications, use the historical branches:
 
@@ -207,3 +208,6 @@ Useful local checks:
 composer validate --strict
 git diff --check
 ```
+
+The same maintained test contour is also run by GitHub Actions on pushes and
+pull requests.
