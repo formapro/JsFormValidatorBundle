@@ -1,6 +1,5 @@
 # FpJsFormValidatorBundle
 
-[![Build Status](https://travis-ci.com/formapro/JsFormValidatorBundle.svg?branch=master)](https://app.travis-ci.com/formapro/JsFormValidatorBundle)
 [![Total Downloads](https://poser.pugx.org/fp/jsformvalidator-bundle/downloads.png)](https://packagist.org/packages/fp/jsformvalidator-bundle)
 
 FpJsFormValidatorBundle converts Symfony form validation metadata into JavaScript
@@ -17,8 +16,13 @@ This branch has been revived for a modern PHP/Symfony baseline:
 - PSR-4 autoloading from `src/`
 
 The old Symfony 2/3 + Assetic + Selenium test application was replaced upstream
-by a newer `Tests/app` fixture. The maintained default PHP test command covers
-the PHP model/factory/controller core and a modern Symfony Form smoke test.
+by a newer `Tests/app` fixture. The maintained test commands now cover the PHP
+model/factory/controller core, JavaScript constraints, and a Cypress smoke test
+against the Symfony test application.
+
+The previous Travis CI badge has been removed because this branch does not have
+a maintained Travis build. Use the local validation commands below until a new
+hosted CI workflow is added.
 
 For older Symfony applications, use the historical branches:
 
@@ -185,10 +189,16 @@ Install dependencies:
 composer update
 ```
 
-Run the maintained PHP test suite:
+Run the PHP test suite:
 
 ```bash
 composer test
+```
+
+Run the JavaScript unit tests and Cypress browser smoke test:
+
+```bash
+npm test
 ```
 
 Useful local checks:
