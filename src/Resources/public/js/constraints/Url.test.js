@@ -5,7 +5,6 @@ const constraintsUrl = new SymfonyComponentValidatorConstraintsUrl();
 constraintsUrl.message = '{{ value }} is not valid url';
 
 const element = new FpJsFormElement();
-element.domNode = {};
 
 test.each([
     ['http://www.google.com', []],
@@ -17,6 +16,7 @@ test.each([
 ])(
     'SymfonyComponentValidatorConstraintsUrl',
     (value, expected) => {
+        element.domNode = { value };
         expect(constraintsUrl.validate(value, element)).toStrictEqual(expected);
     },
 );

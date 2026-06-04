@@ -6,13 +6,11 @@ use App\Form\TestForm;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 
 class DefaultController extends AbstractController
 {
-    /**
-     * @Route("/", name="default_index")
-     */
+    #[Route('/', name: 'default_index')]
     public function index(Request $request): Response
     {
         $testForm = $this->createForm(TestForm::class);

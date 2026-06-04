@@ -7,6 +7,7 @@
 export default function SymfonyComponentValidatorConstraintsRange() {
     this.maxMessage = '';
     this.minMessage = '';
+    this.notInRangeMessage = '';
     this.invalidMessage = '';
     this.max = null;
     this.min = null;
@@ -23,6 +24,16 @@ export default function SymfonyComponentValidatorConstraintsRange() {
                 this.invalidMessage
                     .replace('{{ value }}', FpJsBaseConstraint.formatValue(value))
             );
+        }
+        if (this.notInRangeMessage && !isNaN(this.min) && !isNaN(this.max) && (value < this.min || value > this.max)) {
+            errors.push(
+                this.notInRangeMessage
+                    .replace('{{ value }}', FpJsBaseConstraint.formatValue(value))
+                    .replace('{{ min }}', FpJsBaseConstraint.formatValue(this.min))
+                    .replace('{{ max }}', FpJsBaseConstraint.formatValue(this.max))
+            );
+
+            return errors;
         }
         if (!isNaN(this.max) && value > this.max) {
             errors.push(

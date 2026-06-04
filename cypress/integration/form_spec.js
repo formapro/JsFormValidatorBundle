@@ -10,7 +10,7 @@ const getErrors = (id) => getParent(id).children();
 
 context('JsFormValidatorBundle', () => {
     beforeEach(() => {
-        cy.visit('http://webserver/')
+        cy.visit('/')
     });
 
     describe('test js validation', () => {
@@ -185,12 +185,12 @@ context('JsFormValidatorBundle', () => {
             cy.get('#' + fieldId).type('100').should('have.value', '100');
             submitForm();
             getErrors(fieldId).should('have.length', 1);
-            cy.get('.form-error-test-form-range').contains('You must be at least 120');
+            cy.get('.form-error-test-form-range').contains('You must be between 120 and 180');
 
             cy.get('#' + fieldId).clear().type('200').should('have.value', '200');
             submitForm();
             getErrors(fieldId).should('have.length', 1);
-            cy.get('.form-error-test-form-range').contains('You cannot be taller than 180');
+            cy.get('.form-error-test-form-range').contains('You must be between 120 and 180');
 
             cy.get('#' + fieldId).clear().type('150').should('have.value', '150');
             submitForm();
