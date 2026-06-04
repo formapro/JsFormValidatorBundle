@@ -28,5 +28,10 @@
             <argument>%fp_js_form_validator.config%</argument>
             <argument>%validator.translation_domain%</argument>
         </service>
+
+        <service id="Fp\JsFormValidatorBundle\Controller\AjaxController" public="true">
+            <argument type="service" id="doctrine" on-invalid="null" />
+            <tag name="controller.service_arguments" />
+        </service>
     </services>
 </container>

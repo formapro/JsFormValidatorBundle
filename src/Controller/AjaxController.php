@@ -2,7 +2,7 @@
 
 namespace Fp\JsFormValidatorBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -12,8 +12,21 @@ use Symfony\Component\HttpFoundation\Request;
  *
  * @package Fp\JsFormValidatorBundle\Controller
  */
-class AjaxController extends Controller
+class AjaxController
 {
+    /**
+     * @var ManagerRegistry|null
+     */
+    private $doctrine;
+
+    /**
+     * @param ManagerRegistry|null $doctrine
+     */
+    public function __construct(ManagerRegistry $doctrine = null)
+    {
+        $this->doctrine = $doctrine;
+    }
+
     /**
      * This is simplified analog for the UniqueEntity validator
      *
@@ -23,21 +36,27 @@ class AjaxController extends Controller
      */
     public function checkUniqueEntityAction(Request $request)
     {
+        if (!$this->doctrine) {
+            throw new \LogicException('Doctrine is required to use the UniqueEntity JavaScript validator endpoint.');
+        }
+
         $data = $request->request->all();
-        foreach ($data['data'] as $value) {
+        $values = isset($data['data']) && is_array($data['data']) ? $data['data'] : array();
+        $ignoreNull = !empty($data['ignoreNull']);
+
+        foreach ($values as $value) {
             // If field(s) has an empty value and it should be ignored
-            if ((bool) $data['ignoreNull'] && ('' === $value || is_null($value))) {
+            if ($ignoreNull && ('' === $value || is_null($value))) {
                 // Just return a positive result
                 return new JsonResponse(true);
             }
         }
 
-        $entity = $this
-            ->get('doctrine')
+        $entity = $this->doctrine
             ->getRepository($data['entityName'])
-            ->{$data['repositoryMethod']}($data['data'])
+            ->{$data['repositoryMethod']}($values)
         ;
 
         return new JsonResponse(empty($entity));
     }
-} 
+}
