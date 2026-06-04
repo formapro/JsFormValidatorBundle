@@ -4,7 +4,9 @@ namespace Fp\JsFormValidatorBundle\Tests\Unit;
 
 use Fp\JsFormValidatorBundle\Factory\JsFormValidatorFactory;
 use Fp\JsFormValidatorBundle\Form\Extension\FormExtension;
+use Fp\JsFormValidatorBundle\Form\Constraint\UniqueEntity as JsUniqueEntity;
 use PHPUnit\Framework\TestCase;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity as SymfonyUniqueEntity;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
@@ -63,6 +65,45 @@ class JsFormValidatorFactoryTest extends TestCase
             $config->routing['check_unique_entity']
         );
     }
+
+    public function testUniqueEntityConstraintIncludesBoundEntityId()
+    {
+        $validator = Validation::createValidator();
+        $router = $this->createMock(UrlGeneratorInterface::class);
+        $factory = new JsFormValidatorFactory(
+            $validator,
+            new IdentityTranslator(),
+            $router,
+            array('js_validation' => true),
+            'validators'
+        );
+
+        $formFactory = Forms::createFormFactoryBuilder()
+            ->addExtension(new ValidatorExtension($validator))
+            ->addTypeExtension(new FormExtension($factory))
+            ->getFormFactory()
+        ;
+
+        $form = $formFactory
+            ->createBuilder(
+                FormType::class,
+                new UniqueEntityUser(15, 'john@example.com'),
+                array(
+                    'data_class' => UniqueEntityUser::class,
+                    'constraints' => array(new SymfonyUniqueEntity(fields: array('email'))),
+                )
+            )
+            ->add('email', TextType::class)
+            ->getForm()
+        ;
+
+        $model = $factory->createJsModel($form);
+        $constraints = $model->data['form']['constraints'][JsUniqueEntity::class];
+
+        $this->assertCount(1, $constraints);
+        $this->assertSame(15, $constraints[0]->entityId);
+        $this->assertSame(UniqueEntityUser::class, $constraints[0]->entityName);
+    }
 }
 
 class IdentityTranslator implements TranslatorInterface
@@ -79,5 +120,23 @@ class IdentityTranslator implements TranslatorInterface
     public function getLocale(): string
     {
         return 'en';
+    }
+}
+
+class UniqueEntityUser
+{
+    public $email;
+
+    private $id;
+
+    public function __construct($id, $email)
+    {
+        $this->id = $id;
+        $this->email = $email;
+    }
+
+    public function getId()
+    {
+        return $this->id;
     }
 }

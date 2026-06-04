@@ -15,15 +15,32 @@ class UniqueEntity extends BaseUniqueEntity
     public $entityName = null;
 
     /**
+     * @var int|string|null
+     */
+    public $entityId = null;
+
+    /**
+     * @var mixed
+     */
+    protected $entity = null;
+
+    /**
      * @param BaseUniqueEntity $base
      * @param string           $entityName
+     * @param mixed            $entity
      */
-    public function __construct(BaseUniqueEntity $base, $entityName)
+    public function __construct(BaseUniqueEntity $base, $entityName, $entity = null)
     {
         $this->entityName = $entityName;
+        if (is_object($entity)) {
+            $this->entity = $entity;
+            if (method_exists($entity, 'getId')) {
+                $this->entityId = $entity->getId();
+            }
+        }
 
         foreach ($base as $prop => $value) {
             $this->{$prop} = $value;
         }
     }
-} 
+}
