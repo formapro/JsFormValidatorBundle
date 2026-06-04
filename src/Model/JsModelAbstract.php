@@ -101,4 +101,4 @@ abstract class JsModelAbstract
 
         return $result;
     }
-} 
+}

@@ -1,7 +1,7 @@
 {
     "name": "fp/jsformvalidator-bundle",
     "type": "symfony-bundle",
-    "description": "Javascript validation for sf[2|3|4] forms.",
+    "description": "JavaScript validation for Symfony forms.",
     "keywords": ["Symfony", "Form", "Javascript", "Validation"],
     "homepage": "https://github.com/formapro/JsFormValidatorBundle",
     "license": "MIT",
@@ -18,35 +18,30 @@
     ],
 
     "require": {
-        "php": ">=5.5.9",
-        "symfony/form": "^2.7|^3.0|^4.0",
-        "symfony/validator": "^2.7|^3.0|^4.0"
+        "php": "^8.1",
+        "doctrine/persistence": "^2.5 || ^3.0 || ^4.0",
+        "symfony/config": "^5.4 || ^6.4 || ^7.0",
+        "symfony/dependency-injection": "^5.4 || ^6.4 || ^7.0",
+        "symfony/doctrine-bridge": "^5.4 || ^6.4 || ^7.0",
+        "symfony/form": "^5.4 || ^6.4 || ^7.0",
+        "symfony/http-foundation": "^5.4 || ^6.4 || ^7.0",
+        "symfony/http-kernel": "^5.4 || ^6.4 || ^7.0",
+        "symfony/routing": "^5.4 || ^6.4 || ^7.0",
+        "symfony/translation-contracts": "^2.5 || ^3.0",
+        "symfony/validator": "^5.4 || ^6.4 || ^7.0",
+        "twig/twig": "^3.0"
     },
+
     "require-dev": {
-        "php": "^7.1.3",
-        "ext-pdo_sqlite": "*",
-        "erusev/parsedown": "^1.6",
-        "sensio/framework-extra-bundle": "^5.1",
-        "sensiolabs/security-checker": "^5.0",
-        "symfony/asset": "*",
-        "symfony/console": "*",
-        "symfony/dotenv": "*",
-        "symfony/expression-language": "*",
-        "symfony/flex": "^1.17",
-        "symfony/framework-bundle": "*",
-        "symfony/intl": "*",
-        "symfony/security-bundle": "*",
-        "symfony/translation": "*",
-        "symfony/twig-bundle": "*",
-        "symfony/webpack-encore-bundle": "^1.4",
-        "symfony/yaml": "*",
-        "tgalopin/html-sanitizer-bundle": "^1.1",
-        "twig/extensions": "^1.5",
-        "twig/twig": "^2.6"
+        "phpunit/phpunit": "^10.5 || ^11.5",
+        "symfony/phpunit-bridge": "^6.4 || ^7.0"
     },
 
     "suggest": {
-        "symfony/symfony": "For using as a Symfony Bundle and for using a default ajax validation"
+        "doctrine/orm": "For the UniqueEntity validation",
+        "doctrine/doctrine-bundle": "For the UniqueEntity validation",
+        "symfony/framework-bundle": "For registering the bundle in a Symfony application",
+        "symfony/twig-bundle": "For using the Twig helper functions"
     },
 
     "autoload": {
@@ -56,24 +51,22 @@
     },
     "autoload-dev": {
         "psr-4": {
+            "Fp\\JsFormValidatorBundle\\Tests\\": "Tests/",
             "App\\": "Tests/app/src"
         }
     },
 
     "extra": {
         "branch-alias": {
-            "dev-master": "1.5-dev"
+            "dev-master": "2.0-dev"
         },
         "symfony": {
             "allow-contrib": true,
-            "require": "4.0.*"
+            "require": "6.4.*"
         }
     },
+
     "scripts": {
-        "auto-scripts": {
-            "cache:clear": "symfony-cmd",
-            "assets:install %PUBLIC_DIR%": "symfony-cmd",
-            "security-checker security:check": "script"
-        }
+        "test": "phpunit"
     }
 }

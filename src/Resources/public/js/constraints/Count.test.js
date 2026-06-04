@@ -21,4 +21,3 @@ test.each([
         expect(constraintsCount.validate(value)).toStrictEqual(expected);
     },
 );
-

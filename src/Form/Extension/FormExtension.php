@@ -32,7 +32,7 @@ class FormExtension extends AbstractTypeExtension
      * @param FormBuilderInterface $builder
      * @param array                $options
      */
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addEventSubscriber(new SubscriberToQueue($this->factory));
     }
@@ -40,9 +40,17 @@ class FormExtension extends AbstractTypeExtension
     /**
      * @param OptionsResolver $resolver
      */
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(array('js_validation' => true));
+    }
+
+    /**
+     * @return iterable<class-string>
+     */
+    public static function getExtendedTypes(): iterable
+    {
+        return array(FormType::class);
     }
 
     /**
@@ -53,13 +61,5 @@ class FormExtension extends AbstractTypeExtension
     public function getExtendedType()
     {
         return FormType::class;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public static function getExtendedTypes()
-    {
-        yield FormType::class;
     }
 }

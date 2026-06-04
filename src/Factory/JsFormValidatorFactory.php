@@ -9,9 +9,8 @@ use Symfony\Component\Form\ChoiceList\ChoiceListInterface;
 use Symfony\Component\Form\DataTransformerInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Translation\TranslatorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Mapping\ClassMetadata;
 use Symfony\Component\Validator\Mapping\GetterMetadata;
@@ -48,12 +47,12 @@ class JsFormValidatorFactory
     protected $config = array();
 
     /**
-     * @var Form[]
+     * @var FormInterface[]
      */
     protected $queue = array();
 
     /**
-     * @var Form
+     * @var FormInterface|null
      */
     protected $currentElement = null;
 
@@ -140,7 +139,7 @@ class JsFormValidatorFactory
 
     public function createJsConfigModel()
     {
-        $result = array();
+        $result = array('routing' => array());
         if (!empty($this->config['routing'])) {
             foreach ($this->config['routing'] as $param => $value) {
                 try {
@@ -159,7 +158,7 @@ class JsFormValidatorFactory
     /**
      * Returns the current queue
      *
-     * @return \Symfony\Component\Form\Form[]
+     * @return FormInterface[]
      */
     public function getQueue()
     {
@@ -169,11 +168,11 @@ class JsFormValidatorFactory
     /**
      * Add a new form to processing queue
      *
-     * @param \Symfony\Component\Form\Form $form
+     * @param FormInterface $form
      *
      * @return array
      */
-    public function addToQueue(Form $form)
+    public function addToQueue(FormInterface $form)
     {
         $this->queue[$form->getName()] = $form;
     }
@@ -181,11 +180,11 @@ class JsFormValidatorFactory
     /**
      * Check if form is already in queue
      *
-     * @param Form $form
+     * @param FormInterface $form
      *
      * @return bool
      */
-    public function inQueue(Form $form)
+    public function inQueue(FormInterface $form)
     {
         return isset($this->queue[$form->getName()]);
     }
@@ -227,11 +226,11 @@ class JsFormValidatorFactory
     /**
      * The main function that creates nested model
      *
-     * @param Form $form
+     * @param FormInterface $form
      *
      * @return null|JsFormElement
      */
-    public function createJsModel(Form $form)
+    public function createJsModel(FormInterface $form)
     {
         $this->currentElement = $form;
 
@@ -269,11 +268,11 @@ class JsFormValidatorFactory
     /**
      * Create the JsFormElement for all the children of specified element
      *
-     * @param null|Form $form
+     * @param FormInterface $form
      *
      * @return array
      */
-    protected function processChildren($form)
+    protected function processChildren(FormInterface $form)
     {
         $result = array();
         // If this field has children - process them
@@ -293,13 +292,12 @@ class JsFormValidatorFactory
      * Generate an Id for the element by merging the current element name
      * with all the parents names
      *
-     * @param Form $form
+     * @param FormInterface $form
      *
      * @return string
      */
-    protected function getElementId(Form $form)
+    protected function getElementId(FormInterface $form)
     {
-        /** @var Form $parent */
         $parent = $form->getParent();
         if (null !== $parent) {
             return $this->getElementId($parent) . '_' . $form->getName();
@@ -309,11 +307,11 @@ class JsFormValidatorFactory
     }
 
     /**
-     * @param Form $form
+     * @param FormInterface $form
      *
      * @return array
      */
-    protected function getValidationData(Form $form)
+    protected function getValidationData(FormInterface $form)
     {
         // If parent has metadata
         $parent = $form->getParent();
@@ -414,11 +412,11 @@ class JsFormValidatorFactory
     /**
      * Get validation groups for the specified form
      *
-     * @param Form|FormInterface $form
+     * @param FormInterface $form
      *
      * @return array|string
      */
-    protected function getValidationGroups(Form $form)
+    protected function getValidationGroups(FormInterface $form)
     {
         $result = array('Default');
         $groups = $form->getConfig()->getOption('validation_groups');
@@ -448,7 +446,8 @@ class JsFormValidatorFactory
      */
     protected function isProcessableElement($element)
     {
-        return ($element instanceof Form) && (!is_a($element->getConfig()->getType(), HiddenType::class, true));
+        return ($element instanceof FormInterface)
+            && !($element->getConfig()->getType()->getInnerType() instanceof HiddenType);
     }
 
     /**
@@ -515,6 +514,11 @@ class JsFormValidatorFactory
     {
         $reflection = new \ReflectionProperty($transformer, $paramName);
         $reflection->setAccessible(true);
+
+        if (method_exists($reflection, 'isInitialized') && !$reflection->isInitialized($transformer)) {
+            return null;
+        }
+
         $value  = $reflection->getValue($transformer);
         $result = null;
 

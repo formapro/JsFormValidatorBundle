@@ -20,4 +20,3 @@ test.each([
         expect(constraintsRange.validate(value)).toStrictEqual(expected);
     },
 );
-

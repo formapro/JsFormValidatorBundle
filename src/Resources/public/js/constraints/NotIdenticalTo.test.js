@@ -20,4 +20,3 @@ test.each([
         expect(constraintsNotIdenticalTo.validate(value)).toStrictEqual(expected);
     },
 );
-

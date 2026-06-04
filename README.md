@@ -1,112 +1,199 @@
 # FpJsFormValidatorBundle
+
 [![Build Status](https://travis-ci.com/formapro/JsFormValidatorBundle.svg?branch=master)](https://app.travis-ci.com/formapro/JsFormValidatorBundle)
 [![Total Downloads](https://poser.pugx.org/fp/jsformvalidator-bundle/downloads.png)](https://packagist.org/packages/fp/jsformvalidator-bundle)
 
-This module enables validation of the Symfony 4 or later forms on the JavaScript side.
-It converts form type constraints into JavaScript validation rules.
+FpJsFormValidatorBundle converts Symfony form validation metadata into JavaScript
+validation rules and attaches client-side validators to rendered forms.
 
-If you have Symfony 4.* - you need to use [Version 1.6.x-dev](https://github.com/formapro/JsFormValidatorBundle/tree/1.6)
+## Status
 
-If you have Symfony 3.1.* - you need to use [Version 1.5.*](https://github.com/formapro/JsFormValidatorBundle/tree/1.5)
+This branch has been revived for a modern PHP/Symfony baseline:
 
-If you have Symfony 3.0.* - you need to use [Version 1.4.*](https://github.com/formapro/JsFormValidatorBundle/tree/1.4)
+- PHP 8.1+
+- Symfony 5.4, 6.4, or 7.x components
+- Twig 3
+- PHPUnit 10/11
+- PSR-4 autoloading from `src/`
 
-If you have Symfony 2.8.* or 2.7.* - you need to use [Version 1.3.*](https://github.com/formapro/JsFormValidatorBundle/tree/1.3)
+The old Symfony 2/3 + Assetic + Selenium test application was replaced upstream
+by a newer `Tests/app` fixture. The maintained default PHP test command covers
+the PHP model/factory/controller core and a modern Symfony Form smoke test.
 
-If you have Symfony 2.6.* or less - you need to use [Version 1.2.*](https://github.com/formapro/JsFormValidatorBundle/tree/1.2)
+For older Symfony applications, use the historical branches:
 
-## 1 Installation<a name="p_1"></a>
+- Symfony 4: `1.6`
+- Symfony 3.1: `1.5`
+- Symfony 3.0: `1.4`
+- Symfony 2.8 or 2.7: `1.3`
+- Symfony 2.6 or older: `1.2`
 
-### 1.1 Download FpJsFormValidatorBundle using composer<a name="p_1_1"></a>
+## Installation
 
-Run in terminal:
+Install the bundle with Composer:
+
 ```bash
-$ composer require "fp/jsformvalidator-bundle":"dev-master"
+composer require fp/jsformvalidator-bundle
 ```
-Or if you do not want to unexpected problems better to use exact version.
+
+If you are testing this revived branch before a tagged release, require the
+development branch explicitly:
+
 ```bash
-$ composer require "fp/jsformvalidator-bundle":"v1.6.*"
+composer require fp/jsformvalidator-bundle:"dev-master"
 ```
 
-### 1.2 Enable javascript libraries
+Register the bundle in `config/bundles.php`:
 
-There are two ways to initialize javascript's files for this library. 
-You can create a new entry in the webpack or import the main file into your javascript.
+```php
+<?php
 
-#### 1.2.1 Add FpJsFormValidatorBundle to webpack.config.js
+return [
+    // ...
+    Fp\JsFormValidatorBundle\FpJsFormValidatorBundle::class => ['all' => true],
+];
+```
+
+## Configuration
+
+Validation is enabled for every form by default. You can disable it globally:
+
+```yaml
+# config/packages/fp_js_form_validator.yaml
+fp_js_form_validator:
+    js_validation: false
+```
+
+Per-form and per-field disabling is documented in
+[Disabling validation](src/Resources/doc/2_1.md).
+
+## UniqueEntity Route
+
+If you use Symfony's Doctrine `UniqueEntity` constraint, import the bundle route:
+
+```yaml
+# config/routes/fp_js_form_validator.yaml
+fp_js_form_validator:
+    resource: '@FpJsFormValidatorBundle/Resources/config/routing.xml'
+    prefix: /fp_js_form_validator
+```
+
+Make sure your security configuration allows requests to this route.
+
+## JavaScript Assets
+
+There are two common ways to load the JavaScript files.
+
+### Add an Encore Entry
+
 ```diff
 Encore
-    ...
+    // ...
     .addEntry('app', './assets/js/app.js')
-+   .addEntry('FpJsFormElement', './vendor/fp/jsformvalidator-bundle/Fp/JsFormValidatorBundle/Resources/public/js/FpJsFormValidatorWithJqueryInit.js')
-    ...
-    .configureBabel(null, {
-        useBuiltIns: 'usage',
-        corejs: 3,
-    })
++   .addEntry(
++       'FpJsFormValidator',
++       './vendor/fp/jsformvalidator-bundle/src/Resources/public/js/FpJsFormValidatorWithJqueryInit.js'
++   )
+    // ...
 ;
 ```
 
-And include new entry in your template
-```diff
-+   {{ encore_entry_script_tags('FpJsFormElement') }}
-    {{ encore_entry_script_tags('app') }}
+Then include the entry in your template:
+
+```twig
+{{ encore_entry_script_tags('FpJsFormValidator') }}
+{{ encore_entry_script_tags('app') }}
 ```
 
-#### 1.2.2 Import FpJsFormValidatorBundle in your main javascript
-```diff
-  import $ from 'jquery';
-+  import 'path-to-bundles/fpjsformvalidator/js/FpJsFormValidator';
-+  import 'path-to-bundles/fpjsformvalidator/js/jquery.fpjsformvalidator';
-``` 
+### Import From Your Main JavaScript
 
-#### 1.2.3 Use inits in your template
 ```diff
-{% block javascripts %}
-+   {{ js_validator_config() }}
-+   {{ init_js_validation() }}
-{% endblock %}
+ import $ from 'jquery';
++import '../vendor/fp/jsformvalidator-bundle/src/Resources/public/js/FpJsFormValidator';
++import '../vendor/fp/jsformvalidator-bundle/src/Resources/public/js/jquery.fpjsformvalidator';
 ```
 
-### 1.4 Add routes<a name="p_1_4"></a>
+Adjust the import path to your application structure.
 
-If you use the UniqueEntity constraint, then you have to include the next part to your routing config: app/config/routing.yml
-```yaml
-# ...
-fp_js_form_validator:
-    resource: "@FpJsFormValidatorBundle/Resources/config/routing.xml"
-    prefix: /fp_js_form_validator
+### Render Bundle Config And Form Models
+
+After the scripts are loaded, render the generated config and queued form models:
+
+```twig
+{{ js_validator_config() }}
+{{ init_js_validation() }}
 ```
-Make sure that your security settings do not prevent these routes.
 
-## 2 Usage<a name="p_2"></a>
+If you need manual initialization for a specific form or event, see
+[manual initialization](src/Resources/doc/2_3.md).
 
-After the previous steps the javascript validation will be enabled automatically for all your forms.
+## Usage
 
-1. [Disabling validation](src/Resources/doc/2_1.md)<a name="p_2_1"></a>
-2. [If your forms are placed in sub-requests](src/Resources/doc/2_2.md)<a name="p_2_2"></a>
-3. If you need to initialize JS validation for your forms separately, or by some event, in this case you need to follow [these steps](src/Resources/doc/2_3.md) instead of the [chapter 1.3](#p_1_3)
+After the bundle is registered, the form extension adds every enabled root form
+to an internal queue. Calling `init_js_validation()` renders JavaScript models
+for the queued forms:
 
-## 3 Customization<a name="p_3"></a>
+```twig
+{{ form_start(form) }}
+    {{ form_widget(form) }}
+{{ form_end(form) }}
 
-### Preface
+{{ init_js_validation(form) }}
+```
 
-This bundle finds related DOM elements for each element of a symfony form and attach to it a special object-validator.
-This object contains list of properties and methods which fully define the validation process for the related form element.
-And some of those properties and methods can be changed to customize the validation process.
+You can pass `false` as the second argument to avoid automatic initialization on
+page load:
 
-If you render forms with a some level of customization - read [this note](src/Resources/doc/3_0.md).
+```twig
+{{ init_js_validation(form, false) }}
+```
+
+## Documentation
+
+1. [Disabling validation](src/Resources/doc/2_1.md)
+2. [Forms in sub-requests](src/Resources/doc/2_2.md)
+3. [Manual initialization](src/Resources/doc/2_3.md)
+
+### Customization
+
+This bundle finds related DOM elements for each Symfony form element and
+attaches an object validator to them. The validator contains the properties and
+methods that define the validation process for that form element.
+
+If your form rendering is customized, start with
+[custom rendering notes](src/Resources/doc/3_0.md).
 
 1. [Disable validation for a specified field](src/Resources/doc/3_1.md)
 2. [Error display](src/Resources/doc/3_2.md)
 3. [Get validation groups from a closure](src/Resources/doc/3_3.md)
 4. [Getters validation](src/Resources/doc/3_4.md)
 5. [The Callback constraint](src/Resources/doc/3_5.md)
-6. [The Choice constraint. How to get the choices list from a callback](src/Resources/doc/3_6.md)
+6. [The Choice constraint callback](src/Resources/doc/3_6.md)
 7. [Custom constraints](src/Resources/doc/3_7.md)
 8. [Custom data transformers](src/Resources/doc/3_8.md)
-9. [Checking the uniqueness of entities](src/Resources/doc/3_9.md)
-10. [Form submit by Javasrcipt](src/Resources/doc/3_10.md)
+9. [Checking entity uniqueness](src/Resources/doc/3_9.md)
+10. [Form submit by JavaScript](src/Resources/doc/3_10.md)
 11. [onValidate callback](src/Resources/doc/3_11.md)
-12. [Run validation on custom event](Resources/doc/3_12.md)
+12. [Run validation on custom event](src/Resources/doc/3_12.md)
 13. [Collections validation](src/Resources/doc/3_13.md)
+
+## Development
+
+Install dependencies:
+
+```bash
+composer update
+```
+
+Run the maintained PHP test suite:
+
+```bash
+composer test
+```
+
+Useful local checks:
+
+```bash
+composer validate --strict
+git diff --check
+```

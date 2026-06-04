@@ -3,7 +3,6 @@ namespace Fp\JsFormValidatorBundle\Form\Subscriber;
 
 use Fp\JsFormValidatorBundle\Factory\JsFormValidatorFactory;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
@@ -31,7 +30,7 @@ class SubscriberToQueue implements EventSubscriberInterface
     /**
      * @return array
      */
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return array(FormEvents::POST_SET_DATA => array('onFormSetData', -10));
     }
@@ -39,9 +38,8 @@ class SubscriberToQueue implements EventSubscriberInterface
     /**
      * @param FormEvent $event
      */
-    public function onFormSetData(FormEvent $event)
+    public function onFormSetData(FormEvent $event): void
     {
-        /** @var Form $form */
         $form         = $event->getForm();
         $globalSwitch = $this->factory->getConfig('js_validation');
         $localSwitch  = $form->getConfig()->getOption('js_validation');
@@ -56,11 +54,9 @@ class SubscriberToQueue implements EventSubscriberInterface
     }
 
     /**
-     * @param Form|FormInterface $element
-     *
-     * @return \Symfony\Component\Form\Form
+     * @return FormInterface
      */
-    protected function getParent($element)
+    protected function getParent(FormInterface $element)
     {
         if (!$element->getParent()) {
             return $element;
@@ -68,4 +64,4 @@ class SubscriberToQueue implements EventSubscriberInterface
             return $this->getParent($element->getParent());
         }
     }
-} 
+}
