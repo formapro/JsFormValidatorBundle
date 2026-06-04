@@ -29,4 +29,4 @@ framework:
     ide: ~
     validation:
         email_validation_mode: 'html5'
-        enable_annotations: true
+        enable_attributes: true

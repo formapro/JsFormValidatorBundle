@@ -5,7 +5,10 @@
   "scripts": {
     "test": "npm run test:unit && npm run test:e2e",
     "test:unit": "jest",
-    "test:e2e": "cypress run"
+    "test:e2e": "npm run test:e2e:build && start-server-and-test test:e2e:serve http://127.0.0.1:8000 test:e2e:run",
+    "test:e2e:build": "php Tests/app/bin/console assets:install Tests/app/public --env=test && npm --prefix Tests/app install && npm --prefix Tests/app run build",
+    "test:e2e:serve": "APP_ENV=test APP_DEBUG=1 php -S 127.0.0.1:8000 -t Tests/app/public Tests/app/public/index.php",
+    "test:e2e:run": "cypress run --config baseUrl=http://127.0.0.1:8000"
   },
   "license": "ISC",
   "devDependencies": {
@@ -13,6 +16,13 @@
     "@babel/preset-env": "^7.8.3",
     "babel-jest": "^25.1.0",
     "cypress": "^3.8.3",
-    "jest": "^25.1.0"
+    "jest": "^25.1.0",
+    "start-server-and-test": "^2.0.13"
+  },
+  "jest": {
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/Tests/app/public/"
+    ]
   }
 }

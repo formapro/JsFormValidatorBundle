@@ -103,9 +103,9 @@ class JsFormValidatorFactory
      * @return string
      * @codeCoverageIgnore
      */
-    protected function translateMessage($message, array $parameters = array())
+    protected function translateMessage($message, ?array $parameters = null)
     {
-        return $this->translator->trans($message, $parameters, $this->transDomain);
+        return $this->translator->trans($message, $parameters ?? array(), $this->transDomain);
     }
 
     /**

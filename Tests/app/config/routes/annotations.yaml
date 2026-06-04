@@ -1,6 +1,6 @@
 controllers:
-    resource: '../src/Controller/'
-    type: annotation
+    resource: '../../src/Controller/'
+    type: attribute
     prefix: /
     requirements:
         _locale: '%app_locales%'
