@@ -223,5 +223,6 @@ composer validate --strict
 git diff --check
 ```
 
-The same maintained test and static-analysis checks are also run by GitHub
-Actions on pushes and pull requests.
+The same maintained test, static-analysis, and coverage checks are also run by
+GitHub Actions on pushes and pull requests. Coverage runs generate Cobertura
+reports and upload them to GitHub Code Quality when workflow permissions allow.
