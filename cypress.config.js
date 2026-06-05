@@ -5,6 +5,6 @@ module.exports = defineConfig({
     e2e: {
         baseUrl: 'http://webserver',
         specPattern: 'cypress/integration/**/*.js',
-        supportFile: 'cypress/support/index.js',
+        supportFile: false,
     },
 });
