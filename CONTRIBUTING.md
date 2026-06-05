@@ -36,7 +36,7 @@ If Cypress reports that its binary is missing, install it into the local cache:
 npx cypress install
 ```
 
-Without Nix, install a supported PHP runtime, Composer, Node.js 22, npm, and the
+Without Nix, install PHP 8.4 or newer, Composer, Node.js 22, npm, and the
 Cypress system dependencies locally before running the same commands.
 
 ## Checks

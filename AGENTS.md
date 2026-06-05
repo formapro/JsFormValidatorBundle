@@ -15,12 +15,12 @@ Local path: `/Volumes/SRC/JsFormValidatorBundle`
 
 - Added `.github/workflows/ci.yml`.
 - The workflow runs on `push` and `pull_request`.
-- The PHP job runs on PHP `8.1`, `8.2`, `8.3`, `8.4`, and `8.5`.
+- The PHP job runs on PHP `8.4` and `8.5`.
 - The PHP job runs `composer update`, `composer validate --strict`, and `composer test`.
-- The JavaScript job runs on Node `22` with PHP `8.3`.
+- The JavaScript job runs on Node `22` with PHP `8.5`.
 - The JavaScript job installs Cypress system dependencies, then runs `composer update`, `npm install`, and `npm test`.
-- The PHPStan job runs on PHP `8.3`, installs dependencies with `composer update`, warms the Symfony test cache, and runs `composer phpstan`.
-- The Coverage job runs on PHP `8.3` with Xdebug and Node `22`, then runs `composer coverage` and `npm run test:coverage`.
+- The PHPStan job runs on PHP `8.5`, installs dependencies with `composer update`, warms the Symfony test cache, and runs `composer phpstan`.
+- The Coverage job runs on PHP `8.5` with Xdebug and Node `22`, then runs `composer coverage` and `npm run test:coverage`.
 - Coverage generates Cobertura XML, uploads it with `actions/upload-code-coverage@v1` when GitHub permissions allow, and keeps raw reports as workflow artifacts.
 - Coverage thresholds are enforced by `tools/check-coverage.php`: PHP line coverage at least `50%`, JavaScript line coverage at least `60%`.
 - The old `.travis.yml` file was removed.
