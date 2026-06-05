@@ -5,7 +5,7 @@
   "scripts": {
     "test": "npm run test:unit && npm run test:e2e",
     "test:unit": "jest",
-    "test:coverage": "jest --coverage --coverageReporters=text-summary --coverageReporters=cobertura --coverageReporters=lcov --coverageDirectory=build/coverage/jest && php tools/check-coverage.php build/coverage/jest/cobertura-coverage.xml 60 JavaScript",
+    "test:coverage": "jest --coverage --coverageReporters=text-summary --coverageReporters=cobertura --coverageReporters=lcov --coverageDirectory=build/coverage/jest && php tools/check-coverage.php build/coverage/jest/cobertura-coverage.xml 80 JavaScript",
     "test:e2e": "npm run test:e2e:build && start-server-and-test test:e2e:serve http://127.0.0.1:8000 test:e2e:run",
     "test:e2e:build": "php Tests/app/bin/console assets:install Tests/app/public --env=test && npm --prefix Tests/app install && npm --prefix Tests/app run build",
     "test:e2e:serve": "APP_ENV=test APP_DEBUG=1 php -S 127.0.0.1:8000 -t Tests/app/public Tests/app/public/index.php",

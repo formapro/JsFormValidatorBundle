@@ -269,3 +269,309 @@ describe('FpJsFormValidator submit flow', () => {
         expect(event.preventDefault).not.toHaveBeenCalled();
     });
 });
+
+describe('FpJsFormValidator runtime helpers', () => {
+    afterEach(() => {
+        document.body.innerHTML = '';
+        window.FpJsFormValidator.forms = {};
+        window.FpJsFormValidator.constraintsCounter = 0;
+        window.FpJsFormValidator.ajax.queue = 0;
+        window.FpJsFormValidator.ajax.callbacks = [];
+        delete window.AppConstraint;
+        delete global.$;
+    });
+
+    test('formats constraint messages and values', () => {
+        expect(window.FpJsBaseConstraint.prepareMessage(
+            'One item|{{ count }} items',
+            { '{{ count }}': 3 },
+            3,
+        )).toBe('3 items');
+        expect(window.FpJsBaseConstraint.prepareMessage(
+            'One item|{{ count }} items',
+            { '{{ count }}': 1 },
+            1,
+        )).toBe('One item');
+
+        const date = new Date(2026, 5, 5, 9, 4, 3);
+        date.format = jest.fn(() => '2026-06-05 09:04:03');
+        expect(window.FpJsBaseConstraint.formatValue(date)).toBe('2026-06-05 09:04:03');
+        expect(date.format).toHaveBeenCalledWith('Y-m-d H:i:s');
+        expect(window.FpJsBaseConstraint.formatValue({})).toBe('object');
+        expect(window.FpJsBaseConstraint.formatValue([])).toBe('array');
+        expect(window.FpJsBaseConstraint.formatValue('name')).toBe('"name"');
+        expect(window.FpJsBaseConstraint.formatValue(null)).toBe('null');
+        expect(window.FpJsBaseConstraint.formatValue(true)).toBe('true');
+        expect(window.FpJsBaseConstraint.formatValue(15)).toBe('15');
+    });
+
+    test('creates elements with DOM nodes, constraints, getters, and transformers', () => {
+        document.body.innerHTML = '<input id="email" name="profile[email]" value="yes">';
+        window.AppConstraint = function () {
+            this.onCreate = function () {
+                this.created = true;
+            };
+            this.validate = function () {
+                return [];
+            };
+        };
+
+        const element = window.FpJsFormValidator.createElement({
+            id: 'email',
+            name: 'profile[email]',
+            type: '',
+            invalidMessage: '',
+            bubbling: false,
+            disabled: false,
+            transformers: [{
+                name: 'Symfony\\Component\\Form\\Extension\\Core\\DataTransformer\\BooleanToStringTransformer',
+                trueValue: 'yes',
+            }],
+            data: {
+                form: {
+                    groups: ['Default'],
+                    constraints: {
+                        'App\\Constraint': [{ message: 'Invalid.' }],
+                    },
+                    getters: {
+                        customValue: {
+                            'App\\Constraint': [{ groups: ['Default'] }],
+                        },
+                    },
+                },
+            },
+            children: {},
+        });
+
+        expect(element.domNode).toBe(document.getElementById('email'));
+        expect(element.domNode.jsFormValidator).toBe(element);
+        expect(element.data.form.constraints).toHaveLength(1);
+        expect(element.data.form.constraints[0].message).toBe('Invalid.');
+        expect(element.data.form.constraints[0].created).toBe(true);
+        expect(element.data.form.constraints[0].uniqueId).toBe(0);
+        expect(element.data.form.getters.customValue).toHaveLength(1);
+        expect(element.transformers).toHaveLength(1);
+        expect(window.FpJsFormValidator.getElementValue(element)).toBe(true);
+    });
+
+    test('validates constraints, callback getters, and dynamic validation groups', () => {
+        const parent = new window.FpJsFormElement();
+        parent.id = 'profile';
+        parent.groups = jest.fn(() => ['Custom']);
+
+        const element = new window.FpJsFormElement();
+        element.id = 'profile_name';
+        element.parent = parent;
+        element.domNode = document.createElement('input');
+        element.domNode.value = 'value';
+        element.callbacks.customValue = jest.fn(() => 'callback-value');
+
+        const fieldConstraint = {
+            groups: ['Custom'],
+            validate: jest.fn(() => ['Field error.']),
+        };
+        const getterConstraint = {
+            groups: ['Custom'],
+            validate: jest.fn(() => ['Getter error.']),
+        };
+        element.data = {
+            form: {
+                groups: 'profile',
+                constraints: [fieldConstraint],
+                getters: {
+                    customValue: [getterConstraint],
+                },
+            },
+        };
+
+        const errors = window.FpJsFormValidator.validateElement(element);
+
+        expect(parent.groups).toHaveBeenCalled();
+        expect(fieldConstraint.validate).toHaveBeenCalledWith('value', element);
+        expect(getterConstraint.validate).toHaveBeenCalledWith('callback-value', element);
+        expect(errors.map((error) => error.message)).toEqual(['Field error.', 'Getter error.']);
+        expect(window.FpJsFormValidator.checkValidationGroups(['Other'], fieldConstraint)).toBe(false);
+    });
+
+    test('checks embedded validity rules and valid constraints', () => {
+        const validConstraint = new window.SymfonyComponentValidatorConstraintsValid();
+        const element = new window.FpJsFormElement();
+        element.data.form = { constraints: [validConstraint] };
+
+        expect(window.FpJsFormValidator.getElementValidConstraint(element)).toBe(validConstraint);
+        expect(window.FpJsFormValidator.shouldValidEmbedded(element)).toBe(true);
+
+        const collectionChild = new window.FpJsFormElement();
+        collectionChild.parent = {
+            type: 'Symfony\\Component\\Form\\Extension\\Core\\Type\\CollectionType',
+        };
+
+        expect(window.FpJsFormValidator.shouldValidEmbedded(collectionChild)).toBe(true);
+        expect(window.FpJsFormValidator.shouldValidEmbedded(new window.FpJsFormElement())).toBe(false);
+    });
+
+    test('extracts values from checkbox, select, collection, and mapped children', () => {
+        const checkbox = new window.FpJsFormElement();
+        checkbox.type = 'Symfony\\Component\\Form\\Extension\\Core\\Type\\CheckboxType';
+        checkbox.domNode = { checked: true };
+
+        const selectNode = document.createElement('select');
+        selectNode.multiple = true;
+        selectNode.innerHTML = '<option value="a" selected>A</option><option value="b">B</option><option value="c" selected>C</option>';
+        const select = new window.FpJsFormElement();
+        select.type = '';
+        select.domNode = selectNode;
+
+        const child = new window.FpJsFormElement();
+        child.name = 'child';
+        child.domNode = { value: 'child-value', tagName: 'input' };
+        const collection = new window.FpJsFormElement();
+        collection.type = 'Symfony\\Component\\Form\\Extension\\Core\\Type\\CollectionType';
+        collection.children = { first: child };
+
+        const mapped = new window.FpJsFormElement();
+        mapped.children = { child };
+        mapped.transformers = [{
+            reverseTransform: jest.fn((value) => value.child),
+        }];
+
+        expect(window.FpJsFormValidator.getElementValue(checkbox)).toBe(true);
+        expect(window.FpJsFormValidator.getElementValue(select)).toEqual(['c', 'a']);
+        expect(window.FpJsFormValidator.getElementValue(collection)).toEqual({ first: 'child-value' });
+        expect(window.FpJsFormValidator.getElementValue(mapped)).toBe('child-value');
+    });
+
+    test('finds DOM nodes and forms through ids, names, and descendants', () => {
+        document.body.innerHTML = '<form id="profile"><div><input name="profile[email]" value="a@b.test"></div></form>';
+        const named = window.FpJsFormValidator.findDomElement({
+            id: 'missing',
+            name: 'profile[email]',
+        });
+        const formElement = new window.FpJsFormElement();
+        formElement.id = 'profile';
+        formElement.domNode = document.getElementById('profile');
+        const child = new window.FpJsFormElement();
+        child.domNode = named;
+        formElement.children.email = child;
+
+        expect(named).toBe(document.getElementsByName('profile[email]')[0]);
+        expect(window.FpJsFormValidator.findFormElement(formElement)).toBe(formElement.domNode);
+        expect(window.FpJsFormValidator.findFormElement({ domNode: null, children: { email: child } })).toBe(formElement.domNode);
+        expect(window.FpJsFormValidator.findParentForm(named)).toBe(formElement.domNode);
+        expect(window.FpJsFormValidator.findParentForm(document.createTextNode('orphan'))).toBeNull();
+        expect(window.FpJsFormValidator.findRealChildElement({ domNode: null, children: { email: child } })).toBe(named);
+    });
+
+    test('renders, clears, and bubbles errors through DOM helpers', () => {
+        document.body.innerHTML = '<form id="profile"><input id="profile_email"></form>';
+        const input = document.getElementById('profile_email');
+        const element = new window.FpJsFormElement();
+        element.id = 'profile_email';
+        element.domNode = input;
+
+        element.showErrors.apply(input, [['First error.', 'Second error.'], 'source-one']);
+        expect(input.previousSibling.className).toBe('form-errors');
+        expect(input.previousSibling.childNodes).toHaveLength(2);
+
+        element.showErrors.apply(input, [['Replacement error.'], 'source-one']);
+        expect(input.previousSibling.childNodes).toHaveLength(1);
+        expect(input.previousSibling.textContent).toBe('Replacement error.');
+
+        element.errors['source-one'] = ['Replacement error.'];
+        element.clearErrors('source-one');
+        expect(element.errors['source-one']).toEqual([]);
+
+        const root = new window.FpJsFormElement();
+        const child = new window.FpJsFormElement();
+        child.parent = root;
+        child.bubbling = true;
+        root.children.child = child;
+
+        expect(window.FpJsFormValidator.getErrorPathElement(child)).toBe(root);
+        expect(window.FpJsFormValidator.getRootElement(child)).toBe(root);
+        expect(window.FpJsFormValidator.findErrorDomNode(root)).toBeNull();
+    });
+
+    test('collects nested errors and utility lengths', () => {
+        const root = new window.FpJsFormElement();
+        root.id = 'root';
+        root.errors = { rootSource: ['Root error.'] };
+        const child = new window.FpJsFormElement();
+        child.id = 'child';
+        child.errors = { childSource: [] };
+        root.children.child = child;
+
+        expect(window.FpJsFormValidator.getAllErrors(root, null)).toEqual({
+            root: { rootSource: ['Root error.'] },
+        });
+        expect(window.FpJsFormValidator.cloneObject({ nested: { value: 1 }, list: [1, 2] })).toEqual({
+            nested: { value: 1 },
+            list: [1, 2],
+        });
+        expect(window.FpJsFormValidator.isValueEmty(undefined)).toBe(true);
+        expect(window.FpJsFormValidator.isValueEmty('')).toBe(true);
+        expect(window.FpJsFormValidator.isValueEmty('x')).toBe(false);
+        expect(window.FpJsFormValidator.isValueArray([])).toBe(true);
+        expect(window.FpJsFormValidator.isValueObject({})).toBe(true);
+        expect(window.FpJsFormValidator.getValueLength({ a: 1, b: 2 })).toBe(2);
+        expect(window.FpJsFormValidator.getValueLength(12)).toBeUndefined();
+    });
+
+    test('customizes elements and reports unknown methods', () => {
+        const domNode = document.createElement('input');
+        const element = new window.FpJsFormElement();
+        element.validate = jest.fn(() => true);
+        element.validateRecursively = jest.fn(() => true);
+        domNode.jsFormValidator = element;
+
+        window.FpJsFormValidator.customize(domNode, {
+            customEvents: function () {
+                this.customEventsAttached = true;
+            },
+            onValidate: 'callback',
+        });
+
+        expect(domNode.customEventsAttached).toBe(true);
+        expect(element.onValidate).toBe('callback');
+        expect(window.FpJsFormValidator.customize(domNode)).toEqual([element]);
+        expect(window.FpJsFormValidator.customize(domNode, 'validate', { recursive: true, findUniqueConstraint: false })).toBe(true);
+        expect(element.validateRecursively).toHaveBeenCalled();
+
+        global.$ = { error: jest.fn() };
+        expect(window.FpJsFormValidator.customize(domNode, 'missingMethod')).toBe(window.FpJsFormValidator);
+        expect(global.$.error).toHaveBeenCalledWith('Method missingMethod does not exist');
+    });
+
+    test('serializes and completes ajax requests', () => {
+        const ajax = window.FpJsFormValidator.ajax;
+        const request = {
+            open: jest.fn(),
+            setRequestHeader: jest.fn(),
+            send: jest.fn(),
+            readyState: 0,
+            status: 0,
+            responseText: '',
+        };
+        ajax.createRequest = jest.fn(() => request);
+        const callback = jest.fn();
+        const queueCallback = jest.fn();
+        ajax.callbacks = [queueCallback];
+
+        expect(ajax.serializeData({ profile: { email: 'a@b.test' }, page: 2 }, null)).toBe('profile%5Bemail%5D=a%40b.test&page=2');
+
+        ajax.sendRequest('/check', { id: 15 }, callback);
+        expect(request.open).toHaveBeenCalledWith('POST', '/check', true);
+        expect(request.setRequestHeader).toHaveBeenCalledWith('Content-Type', 'application/x-www-form-urlencoded');
+        expect(request.send).toHaveBeenCalledWith('id=15');
+        expect(ajax.queue).toBe(1);
+
+        request.readyState = 4;
+        request.status = 200;
+        request.responseText = 'true';
+        request.onreadystatechange();
+
+        expect(callback).toHaveBeenCalledWith('true');
+        expect(ajax.queue).toBe(0);
+        expect(queueCallback).toHaveBeenCalled();
+    });
+});
