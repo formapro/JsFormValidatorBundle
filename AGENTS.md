@@ -15,7 +15,7 @@ Local path: `/Volumes/SRC/JsFormValidatorBundle`
 
 - Added `.github/workflows/ci.yml`.
 - The workflow runs on `push` and `pull_request`.
-- The PHP job runs on PHP `8.4` and `8.5`.
+- The PHP job runs on PHP `8.4`, `8.5`, and `8.6` nightly.
 - The PHP job runs `composer update`, `composer validate --strict`, and `composer test`.
 - The JavaScript job runs on Node `22` with PHP `8.5`.
 - The JavaScript job installs Cypress system dependencies, then runs `composer update`, `npm install`, and `npm test`.
