@@ -11,7 +11,7 @@ class JsFormValidatorTwigExtensionTest extends TestCase
 {
     public function testRegistersTwigFunctions()
     {
-        $extension = new JsFormValidatorTwigExtension($this->createMock(JsFormValidatorFactory::class));
+        $extension = new JsFormValidatorTwigExtension($this->createStub(JsFormValidatorFactory::class));
 
         $functions = $extension->getFunctions();
 

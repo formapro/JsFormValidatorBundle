@@ -29,6 +29,7 @@ class JsFormValidatorFactoryTest extends TestCase
         $validator = Validation::createValidator();
         $router = $this->createMock(UrlGeneratorInterface::class);
         $router
+            ->expects($this->once())
             ->method('generate')
             ->with('fp_js_form_validator.check_unique_entity')
             ->willReturn('/fp_js_form_validator/check_unique_entity')
@@ -75,7 +76,7 @@ class JsFormValidatorFactoryTest extends TestCase
     public function testUniqueEntityConstraintIncludesBoundEntityId()
     {
         $validator = Validation::createValidator();
-        $router = $this->createMock(UrlGeneratorInterface::class);
+        $router = $this->createStub(UrlGeneratorInterface::class);
         $factory = new JsFormValidatorFactory(
             $validator,
             new IdentityTranslator(),
@@ -113,7 +114,7 @@ class JsFormValidatorFactoryTest extends TestCase
 
     public function testConfigModelKeepsMissingRoutesAsNull()
     {
-        $router = $this->createMock(UrlGeneratorInterface::class);
+        $router = $this->createStub(UrlGeneratorInterface::class);
         $router
             ->method('generate')
             ->willReturnCallback(static function ($route) {
@@ -312,7 +313,7 @@ class JsFormValidatorFactoryTest extends TestCase
         $factory = new TestableJsFormValidatorFactory(
             Validation::createValidator(),
             new IdentityTranslator(),
-            $this->createMock(UrlGeneratorInterface::class),
+            $this->createStub(UrlGeneratorInterface::class),
             array('js_validation' => true),
             'validators'
         );
@@ -356,7 +357,7 @@ class JsFormValidatorFactoryTest extends TestCase
         array $config = array('js_validation' => true)
     ) {
         if (!$router) {
-            $router = $this->createMock(UrlGeneratorInterface::class);
+            $router = $this->createStub(UrlGeneratorInterface::class);
             $router
                 ->method('generate')
                 ->willReturn('/generated-route')

@@ -94,7 +94,7 @@ class AjaxControllerTest extends TestCase
 
     private function createRegistry(ObjectRepository $repository)
     {
-        $registry = $this->createMock(ManagerRegistry::class);
+        $registry = $this->createStub(ManagerRegistry::class);
         $registry
             ->method('getRepository')
             ->willReturn($repository)
