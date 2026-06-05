@@ -1,10 +1,10 @@
 {
   "devDependencies": {
-    "core-js": "^3.0.0",
+    "core-js": "^3.49.0",
     "@symfony/webpack-encore": "^0.28.0"
   },
   "dependencies": {
-    "jquery": "^3.3.1"
+    "jquery": "^4.0.0"
   },
   "license": "UNLICENSED",
   "private": true,
