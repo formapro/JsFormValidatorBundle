@@ -535,7 +535,6 @@ class JsFormValidatorFactory
     protected function getTransformerParam(DataTransformerInterface $transformer, $paramName)
     {
         $reflection = new \ReflectionProperty($transformer, $paramName);
-        $reflection->setAccessible(true);
 
         if (!$reflection->isInitialized($transformer)) {
             return null;
