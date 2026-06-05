@@ -18,7 +18,7 @@
     "babel-jest": "^25.1.0",
     "cypress": "^3.8.3",
     "jest": "^25.1.0",
-    "start-server-and-test": "^2.0.13"
+    "start-server-and-test": "^3.0.8"
   },
   "jest": {
     "testPathIgnorePatterns": [
