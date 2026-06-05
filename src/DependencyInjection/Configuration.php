@@ -29,7 +29,6 @@ class Configuration implements ConfigurationInterface
                     ->addDefaultsIfNotSet()
                     ->children()
                         ->scalarNode('check_unique_entity')
-                            ->isRequired()
                             ->cannotBeEmpty()
                             ->defaultValue('fp_js_form_validator.check_unique_entity')
                         ->end()

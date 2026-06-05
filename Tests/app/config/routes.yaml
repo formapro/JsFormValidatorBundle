@@ -4,5 +4,5 @@
 # See https://symfony.com/doc/current/cookbook/templating/render_without_controller.html
 
 fp_js_form_validator:
-    resource: "@FpJsFormValidatorBundle/Resources/config/routing.xml"
+    resource: "@FpJsFormValidatorBundle/Resources/config/routing.yaml"
     prefix: /fp_js_form_validator

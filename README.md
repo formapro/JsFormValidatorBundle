@@ -10,9 +10,8 @@ validation rules and attaches client-side validators to rendered forms.
 
 This branch has been revived for the current PHP/Symfony baseline:
 
-- PHP 8.1+ runtime support; CI currently verifies PHP 8.1, 8.2, 8.3,
-  8.4, and 8.5
-- Symfony 5.4 LTS, 6.4 LTS, and 7.x components as declared in `composer.json`
+- PHP 8.4+ runtime support; CI currently verifies PHP 8.4 and 8.5
+- Symfony 8.x components as declared in `composer.json`
 - Twig 3
 - PHPUnit 10/11
 - PHPStan static analysis
@@ -26,6 +25,7 @@ against the Symfony test application.
 
 For older Symfony applications, use the historical branches:
 
+- Symfony 5.4, 6.4, or 7.x: `1.7`
 - Symfony 4: `1.6`
 - Symfony 3.1: `1.5`
 - Symfony 3.0: `1.4`
@@ -78,7 +78,7 @@ If you use Symfony's Doctrine `UniqueEntity` constraint, import the bundle route
 ```yaml
 # config/routes/fp_js_form_validator.yaml
 fp_js_form_validator:
-    resource: '@FpJsFormValidatorBundle/Resources/config/routing.xml'
+    resource: '@FpJsFormValidatorBundle/Resources/config/routing.yaml'
     prefix: /fp_js_form_validator
 ```
 
@@ -214,7 +214,7 @@ nix develop -c composer test
 nix develop -c npm test
 ```
 
-Without Nix, install a supported PHP runtime, Composer, Node.js 22, npm, and the
+Without Nix, install PHP 8.4 or newer, Composer, Node.js 22, npm, and the
 Cypress system dependencies locally before running the same commands.
 
 Install or refresh Composer dependencies:
