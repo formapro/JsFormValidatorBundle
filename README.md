@@ -217,6 +217,14 @@ nix develop -c npm test
 Without Nix, install PHP 8.4 or newer, Composer, Node.js 22, npm, and the
 Cypress system dependencies locally before running the same commands.
 
+To install vendors via Docker instead of host PHP/Composer:
+
+```bash
+docker compose build php-fpm
+docker compose run --rm --no-deps -u "$(id -u):$(id -g)" php-fpm composer update
+docker compose run --rm --no-deps -u "$(id -u):$(id -g)" php-fpm npm install
+```
+
 Install or refresh Composer dependencies:
 
 ```bash
@@ -264,6 +272,6 @@ The same maintained test, static-analysis, and coverage checks are also run by
 GitHub Actions on pushes and pull requests. Coverage runs generate Cobertura
 reports and upload them to GitHub Code Quality when workflow permissions allow.
 
-The legacy `docker-compose.yml` and `phpdocker/` files target the old PHP 7.2
-and Node 10 development stack. They are kept for historical reference and are
-not the maintained environment for current development or CI parity.
+The Docker stack uses PHP 8.5, Composer 2, and Node.js 22. It is maintained for
+dependency installation and ad hoc local commands; Nix remains the preferred
+environment for exact local parity with the documented checks.

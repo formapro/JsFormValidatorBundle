@@ -39,6 +39,21 @@ npx cypress install
 Without Nix, install PHP 8.4 or newer, Composer, Node.js 22, npm, and the
 Cypress system dependencies locally before running the same commands.
 
+## Install Vendors Via Docker
+
+The Docker development image is kept as an alternative way to install project
+vendors without using host PHP or Composer:
+
+```bash
+docker compose build php-fpm
+docker compose run --rm --no-deps -u "$(id -u):$(id -g)" php-fpm composer update
+docker compose run --rm --no-deps -u "$(id -u):$(id -g)" php-fpm npm install
+```
+
+The image uses PHP 8.5, Composer 2, Node.js 22, and the PHP extensions needed by
+the Symfony 8 test fixture. It also stores Composer, npm, and Cypress caches
+under `.cache/`.
+
 ## Checks
 
 Run the same checks that GitHub Actions runs on pushes and pull requests:
@@ -72,9 +87,8 @@ Do not commit generated dependencies or build output such as `vendor/`,
 `node_modules/`, `Tests/app/node_modules/`, `build/`, coverage reports, Cypress
 videos, or local cache directories.
 
-## Legacy Docker Files
+## Docker Notes
 
-The historical `docker-compose.yml` and `phpdocker/` files still target PHP 7.2
-and Node 10. They are not the maintained development environment for the revived
-branch. Use Nix or a locally installed modern PHP/Node toolchain for current
-development.
+The Docker stack is maintained for dependency installation and ad hoc local
+commands. Nix remains the preferred environment for exact local parity with the
+documented checks.

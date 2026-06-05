@@ -1,4 +1,3 @@
-version: "3.6"
 services:
 
     webserver:
@@ -13,6 +12,12 @@ services:
     php-fpm:
       build: phpdocker/php-fpm
       working_dir: /application
+      environment:
+        COMPOSER_HOME: /application/.cache/composer
+        COMPOSER_ALLOW_SUPERUSER: "1"
+        COMPOSER_ROOT_VERSION: 2.0-dev
+        NPM_CONFIG_CACHE: /application/.cache/npm
+        CYPRESS_CACHE_FOLDER: /application/.cache/Cypress
       volumes:
         - .:/application
-        - ./phpdocker/php-fpm/php-ini-overrides.ini:/etc/php/7.2/fpm/conf.d/99-overrides.ini
+        - ./phpdocker/php-fpm/php-ini-overrides.ini:/usr/local/etc/php/conf.d/99-overrides.ini

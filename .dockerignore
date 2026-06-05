@@ -1,0 +1,15 @@
+.cache/
+.direnv/
+.git/
+.phpunit.cache/
+Tests/app/node_modules/
+Tests/app/public/build/
+Tests/app/public/bundles/
+Tests/app/var/
+build/
+composer.lock
+cypress/screenshots/
+cypress/videos/
+node_modules/
+package-lock.json
+vendor/

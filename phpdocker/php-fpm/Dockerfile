@@ -1,19 +1,37 @@
-FROM phpdockerio/php72-fpm:latest
+FROM php:8.5-fpm-bookworm
 WORKDIR "/application"
 
-# Install selected extensions and other stuff
-RUN apt-get update \
-    && apt-get -y --no-install-recommends install  php7.2-mysql php7.2-sqlite3 \
-    && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Install git
-RUN apt-get update \
-    && apt-get -y install git \
-    && apt-get clean; rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/doc/*
-
-# Install NodeJS
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash
-RUN apt-get update && apt-get install -y nodejs && apt-get clean
-
-# Cypress dependencies
-RUN apt-get -y install libgtk2.0-0 libgtk-3-0 libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends \
+        ca-certificates \
+        curl \
+        git \
+        gnupg \
+        libasound2 \
+        libgbm1 \
+        libgtk-3-0 \
+        libgtk2.0-0 \
+        libicu-dev \
+        libnotify-dev \
+        libnss3 \
+        libsqlite3-dev \
+        libxss1 \
+        libxtst6 \
+        libzip-dev \
+        unzip \
+        xauth \
+        xvfb \
+        zip; \
+    docker-php-ext-install -j"$(nproc)" intl pdo_mysql pdo_sqlite zip; \
+    mkdir -p /etc/apt/keyrings; \
+    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key \
+        | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg; \
+    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_22.x nodistro main" \
+        > /etc/apt/sources.list.d/nodesource.list; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends nodejs; \
+    apt-get clean; \
+    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
