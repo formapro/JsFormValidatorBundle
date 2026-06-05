@@ -16,7 +16,7 @@
     "@babel/core": "^7.29.7",
     "@babel/preset-env": "^7.29.7",
     "babel-jest": "^25.1.0",
-    "cypress": "^3.8.3",
+    "cypress": "^15.16.0",
     "jest": "^25.1.0",
     "start-server-and-test": "^3.0.8"
   },
