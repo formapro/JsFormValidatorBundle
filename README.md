@@ -14,7 +14,7 @@ This branch has been revived for the current PHP/Symfony baseline:
   8.6 nightly
 - Symfony 8.x components as declared in `composer.json`
 - Twig 3
-- PHPUnit 10/11
+- PHPUnit 13
 - PHPStan static analysis
 - PHP and JavaScript coverage thresholds
 - PSR-4 autoloading from `src/`
