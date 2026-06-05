@@ -8,12 +8,15 @@ validation rules and attaches client-side validators to rendered forms.
 
 ## Status
 
-This branch has been revived for a modern PHP/Symfony baseline:
+This branch has been revived for the current PHP/Symfony baseline:
 
-- PHP 8.1+
-- Symfony 5.4, 6.4, or 7.x components
+- PHP 8.1+ runtime support; CI currently verifies PHP 8.1, 8.2, 8.3,
+  8.4, and 8.5
+- Symfony 5.4 LTS, 6.4 LTS, and 7.x components as declared in `composer.json`
 - Twig 3
 - PHPUnit 10/11
+- PHPStan static analysis
+- PHP and JavaScript coverage thresholds
 - PSR-4 autoloading from `src/`
 
 The old Symfony 2/3 + Assetic + Selenium test application was replaced upstream
