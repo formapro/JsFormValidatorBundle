@@ -1,49 +1,80 @@
-Contributing
-============
+# Contributing
 
-## Setup the development environment for this bundle (Linux/Ubuntu)
+## Development Environment
 
-1) Clone the bundle
+Prefer the Nix development shell from the repository root:
+
 ```bash
-cd /path/to/your/projects
+nix develop
+```
+
+The shell provides PHP 8.5, Xdebug coverage support, Composer, Node.js 22, npm,
+zip/unzip, and the Linux runtime libraries needed by Cypress. It also keeps
+Composer, npm, and Cypress caches under `.cache/`.
+
+If flakes are not enabled globally, run commands with:
+
+```bash
+nix --extra-experimental-features "nix-command flakes" develop
+```
+
+The `.envrc` file uses `use flake`; run `direnv allow` once if you use direnv.
+
+## Setup
+
+```bash
 git clone https://github.com/formapro/JsFormValidatorBundle.git
-```
-2) Install vendors via docker
-```bash
 cd JsFormValidatorBundle
-docker-compose up -d
-docker exec -it PHP-CONTAINER-NAME bash
-composer install --dev
+nix develop
+composer update
+npm install
 ```
-4) Create var folder and set permissions
+
+If Cypress reports that its binary is missing, install it into the local cache:
+
 ```bash
-mkdir Tests/app/var
-sudo chmod -R 0777 Tests/app/var
+npx cypress install
 ```
-3) Install assests
+
+Without Nix, install a supported PHP runtime, Composer, Node.js 22, npm, and the
+Cypress system dependencies locally before running the same commands.
+
+## Checks
+
+Run the same checks that GitHub Actions runs on pushes and pull requests:
+
 ```bash
-npm i
-
-cd Tests/app/
-./bin/console assets:install Tests/app/public
-npm run build
+composer validate --strict
+composer test
+composer phpstan
+composer coverage
+npm test
+npm run test:coverage
+git diff --check
 ```
-4) Run tests
+
+For one-off commands without entering the shell:
+
 ```bash
-npm run test
+nix develop -c composer test
+nix develop -c npm test
 ```
 
-## Tests
+## Test Layout
 
-Basically the bundle covered by unit jest's test and e2e cypress test.
-The main test case is placed in ```Tests/Functional/MainFunctionalTest.php```
-Unit tests are placed in main resource folder with suffix ```.test.js```
-e2e test is placed in cypress folder in project root ```cypress/integration/form_spec.js```
+- PHP unit and controller tests live under `Tests/Unit` and `Tests/Controller`.
+- JavaScript unit tests live beside the source files under
+  `src/Resources/public/js` and use the `.test.js` suffix.
+- Browser smoke tests live under `cypress/` and run against `Tests/app`.
+- `Tests/app` is a Symfony fixture application used by the e2e tests.
 
-The main idea of unit tests is covered constrain logic.
-The main idea of e2e test is visit route with example form with all symfony constraint and find used error messages.
+Do not commit generated dependencies or build output such as `vendor/`,
+`node_modules/`, `Tests/app/node_modules/`, `build/`, coverage reports, Cypress
+videos, or local cache directories.
 
-## Javascripts
+## Legacy Docker Files
 
-All the javascripts placed in the ```Resources/pulic/js``` folder
-All of them are merged and included by assets command to the dev/test environments.
+The historical `docker-compose.yml` and `phpdocker/` files still target PHP 7.2
+and Node 10. They are not the maintained development environment for the revived
+branch. Use Nix or a locally installed modern PHP/Node toolchain for current
+development.
