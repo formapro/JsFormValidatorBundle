@@ -1,4 +1,6 @@
 .idea
+.cache/
+.direnv/
 .phpunit.cache/
 build/
 coverage/

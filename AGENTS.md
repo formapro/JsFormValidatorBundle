@@ -36,6 +36,22 @@ Local path: `/Volumes/SRC/JsFormValidatorBundle`
 - `npm run test:coverage` generates Jest coverage and checks the `60%` line threshold.
 - The local `composer` shim is broken with `Could not open input file: /Users/ton/bin/composer`, so use `/tmp/jsfv-composer.phar` locally if needed.
 
+## Nix Development Environment
+
+- Prefer `nix develop` from the repository root when Nix is available.
+- The Nix shell provides the latest PHP available in pinned nixpkgs with Xdebug coverage support, Composer, Node.js 22, npm, zip/unzip, and Linux Cypress runtime libraries. It currently resolves to PHP 8.5.
+- Run one-off commands with `nix develop -c <command>`, for example:
+  - `nix develop -c composer validate --strict`
+  - `nix develop -c composer test`
+  - `nix develop -c composer phpstan`
+  - `nix develop -c composer coverage`
+  - `nix develop -c npm test`
+  - `nix develop -c npm run test:coverage`
+- On a fresh checkout, run `nix develop -c npm install` first; if Cypress reports a missing binary, run `nix develop -c npx cypress install`.
+- If flakes are not enabled globally, prefix commands with `nix --extra-experimental-features "nix-command flakes"`.
+- `.envrc` uses `use flake`; run `direnv allow` once if using direnv.
+- Inside the Nix shell, use `composer` directly. Outside the Nix shell, keep using `/tmp/jsfv-composer.phar` if the local Composer shim is still broken.
+
 ## GitHub Checks Note
 
 - `gh pr checks 174 --repo formapro/JsFormValidatorBundle --watch=false` reported `no checks reported`.

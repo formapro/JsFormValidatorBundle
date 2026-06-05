@@ -22,6 +22,8 @@
   },
   "jest": {
     "testPathIgnorePatterns": [
+      "/.cache/",
+      "/.git/",
       "/node_modules/",
       "/Tests/app/public/"
     ]

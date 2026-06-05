@@ -23,7 +23,7 @@ class AjaxController
     /**
      * @param ManagerRegistry|null $doctrine
      */
-    public function __construct(ManagerRegistry $doctrine = null)
+    public function __construct(?ManagerRegistry $doctrine = null)
     {
         $this->doctrine = $doctrine;
     }
