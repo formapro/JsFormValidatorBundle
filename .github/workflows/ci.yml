@@ -155,7 +155,7 @@ jobs:
         if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
         uses: actions/upload-code-coverage@v1
         with:
-          report: build/coverage/phpunit/cobertura.xml
+          file: build/coverage/phpunit/cobertura.xml
           language: PHP
           label: code-coverage/phpunit
 
@@ -163,7 +163,7 @@ jobs:
         if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
         uses: actions/upload-code-coverage@v1
         with:
-          report: build/coverage/jest/cobertura-coverage.xml
+          file: build/coverage/jest/cobertura-coverage.xml
           language: JavaScript
           label: code-coverage/jest
 
