@@ -10,7 +10,8 @@ validation rules and attaches client-side validators to rendered forms.
 
 This branch has been revived for the current PHP/Symfony baseline:
 
-- PHP 8.4+ runtime support; CI currently verifies PHP 8.4 and 8.5
+- PHP 8.4+ runtime support; CI currently verifies PHP 8.4, 8.5, and
+  8.6 nightly
 - Symfony 8.x components as declared in `composer.json`
 - Twig 3
 - PHPUnit 10/11
