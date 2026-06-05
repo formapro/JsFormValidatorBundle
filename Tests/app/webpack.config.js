@@ -10,7 +10,6 @@ Encore
     .setOutputPath('public/build/')
     .setPublicPath('/build')
     .cleanupOutputBeforeBuild()
-    .autoProvidejQuery()
     // when versioning is enabled, each filename will include a hash that changes
     // whenever the contents of that file change. This allows you to use aggressive
     // caching strategies. Use Encore.isProduction() to enable it only for production.
