@@ -180,7 +180,41 @@ If your form rendering is customized, start with
 
 ## Development
 
-Install dependencies:
+The recommended development environment is the Nix shell:
+
+```bash
+nix develop
+```
+
+It provides the latest PHP available in the pinned nixpkgs input, currently
+PHP 8.5, with Xdebug coverage support, Composer, Node.js 22, npm, zip/unzip,
+and Cypress runtime libraries. If flakes are not enabled globally, prefix Nix
+commands with `nix --extra-experimental-features "nix-command flakes"`.
+
+For a fresh checkout:
+
+```bash
+composer update
+npm install
+```
+
+If Cypress reports a missing binary, install it into the local cache:
+
+```bash
+npx cypress install
+```
+
+You can also run commands without entering the shell:
+
+```bash
+nix develop -c composer test
+nix develop -c npm test
+```
+
+Without Nix, install a supported PHP runtime, Composer, Node.js 22, npm, and the
+Cypress system dependencies locally before running the same commands.
+
+Install or refresh Composer dependencies:
 
 ```bash
 composer update
@@ -226,3 +260,7 @@ git diff --check
 The same maintained test, static-analysis, and coverage checks are also run by
 GitHub Actions on pushes and pull requests. Coverage runs generate Cobertura
 reports and upload them to GitHub Code Quality when workflow permissions allow.
+
+The legacy `docker-compose.yml` and `phpdocker/` files target the old PHP 7.2
+and Node 10 development stack. They are kept for historical reference and are
+not the maintained environment for current development or CI parity.

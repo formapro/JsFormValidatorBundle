@@ -1,7 +1,8 @@
-Contributing
-============
+# Contributing To The Test Application
 
-The Symfony Demo application is an open source project. Contributions made by
-the community are welcome. Send us your ideas, code reviews, pull requests and
-feature requests to help us improve this project. All contributions must follow
-the [usual Symfony contribution requirements](https://symfony.com/doc/current/contributing/index.html).
+`Tests/app` is maintained as part of the root bundle test suite. Use the root
+`CONTRIBUTING.md` workflow for setup, checks, and pull requests.
+
+Keep changes focused on behavior needed by the bundle tests. Generated assets,
+local dependencies, caches, and build output from this fixture should not be
+committed.
