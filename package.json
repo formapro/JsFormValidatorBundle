@@ -13,8 +13,8 @@
   },
   "license": "ISC",
   "devDependencies": {
-    "@babel/core": "^7.29.7",
-    "@babel/preset-env": "^7.29.7",
+    "@babel/core": "^8.0.1",
+    "@babel/preset-env": "^8.0.2",
     "babel-jest": "^30.4.1",
     "cypress": "^15.17.0",
     "jest": "^30.4.2",
