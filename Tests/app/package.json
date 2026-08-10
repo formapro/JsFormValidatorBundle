@@ -1,6 +1,6 @@
 {
   "devDependencies": {
-    "core-js": "^3.49.0",
+    "core-js": "^3.50.0",
     "@symfony/webpack-encore": "^6.0.0"
   },
   "dependencies": {
