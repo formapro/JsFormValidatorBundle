@@ -209,5 +209,17 @@ context('JsFormValidatorBundle', () => {
             getErrors(fieldId).should('have.length', 0);
         });
 
+        it('test luhn', () => {
+            const fieldId = 'test_form_luhn';
+            cy.get('#' + fieldId).type('1234567890').should('have.value', '1234567890');
+            submitForm();
+            getErrors(fieldId).should('have.length', 1);
+            cy.get('.form-error-test-form-luhn').contains('Please fill valid card number');
+
+            cy.get('#' + fieldId).clear().type('79927398713').should('have.value', '79927398713');
+            submitForm();
+            getErrors(fieldId).should('have.length', 0);
+        });
+
     });
 });
