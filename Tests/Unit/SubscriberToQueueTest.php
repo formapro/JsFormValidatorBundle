@@ -77,4 +77,26 @@ class SubscriberToQueueTest extends TestCase
 
         $this->assertFalse($factory->inQueue($form));
     }
+
+    public function testChildFieldOptInAddsEntireFormToQueue()
+    {
+        // Global disabled, but a child field explicitly opts in
+        $factory = $this->createFactory(null, null, array('js_validation' => false));
+        $formFactory = $this->createFormFactory($factory);
+        $subscriber = new SubscriberToQueue($factory);
+
+        $form = $formFactory
+            ->createNamedBuilder('test_form', FormType::class)
+            ->add('email', FormType::class, array('js_validation' => true))
+            ->getForm()
+        ;
+
+        // Trigger subscriber on the child field that opts in
+        $child = $form->get('email');
+        $subscriber->onFormSetData(new FormEvent($child, null));
+
+        // The entire parent form should be in the queue
+        $this->assertTrue($factory->inQueue($form));
+        $this->assertArrayHasKey('test_form', $factory->getQueue());
+    }
 }
