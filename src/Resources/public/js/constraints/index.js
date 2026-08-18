@@ -16,6 +16,7 @@ import './IsTrue.js';
 import './Length.js';
 import './LessThan.js';
 import './LessThanOrEqual.js';
+import './Luhn.js';
 import './NotBlank.js';
 import './NotEqualTo.js';
 import './NotIdenticalTo.js';

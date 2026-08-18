@@ -118,6 +118,11 @@ class TestForm extends AbstractType
                     new Constraints\Url(message: 'Please fill valid url'),
                 ],
             ])
+            ->add('luhn', TextType::class, [
+                'constraints' => [
+                    new Constraints\Luhn(message: 'Please fill valid card number'),
+                ],
+            ])
 
             ->add('save', SubmitType::class)
         ;
