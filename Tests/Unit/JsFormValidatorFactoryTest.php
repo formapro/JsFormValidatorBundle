@@ -20,10 +20,10 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Validation;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class JsFormValidatorFactoryTest extends TestCase
 {
+    use FactoryTestTrait;
     public function testCreatesModelFromModernSymfonyForm()
     {
         $validator = Validation::createValidator();
@@ -351,55 +351,6 @@ class JsFormValidatorFactoryTest extends TestCase
         );
     }
 
-    private function createFactory(
-        ?ValidatorInterface $validator = null,
-        ?UrlGeneratorInterface $router = null,
-        array $config = array('js_validation' => true)
-    ) {
-        if (!$router) {
-            $router = $this->createStub(UrlGeneratorInterface::class);
-            $router
-                ->method('generate')
-                ->willReturn('/generated-route')
-            ;
-        }
-
-        return new JsFormValidatorFactory(
-            $validator ?: Validation::createValidator(),
-            new IdentityTranslator(),
-            $router,
-            $config,
-            'validators'
-        );
-    }
-
-    private function createFormFactory(JsFormValidatorFactory $factory, ?ValidatorInterface $validator = null)
-    {
-        $validator = $validator ?: Validation::createValidator();
-
-        return Forms::createFormFactoryBuilder()
-            ->addExtension(new ValidatorExtension($validator))
-            ->addTypeExtension(new FormExtension($factory))
-            ->getFormFactory()
-        ;
-    }
-}
-
-class IdentityTranslator implements TranslatorInterface
-{
-    public function trans(
-        string $id,
-        array $parameters = array(),
-        ?string $domain = null,
-        ?string $locale = null
-    ): string {
-        return strtr($id, $parameters);
-    }
-
-    public function getLocale(): string
-    {
-        return 'en';
-    }
 }
 
 class UniqueEntityUser
