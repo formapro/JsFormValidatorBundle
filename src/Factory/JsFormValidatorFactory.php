@@ -235,7 +235,8 @@ class JsFormValidatorFactory
         $this->currentElement = $form;
 
         $conf = $form->getConfig();
-        // If field is disabled or has no any validations
+        // If field is explicitly disabled, skip it
+        // null means "inherit" which is treated as enabled (same as true)
         if (false === $conf->getOption('js_validation')) {
             return null;
         }
