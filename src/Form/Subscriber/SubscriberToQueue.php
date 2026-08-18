@@ -44,11 +44,14 @@ class SubscriberToQueue implements EventSubscriberInterface
         $globalSwitch = $this->factory->getConfig('js_validation');
         $localSwitch  = $form->getConfig()->getOption('js_validation');
 
-        // Add only parent forms which are not disabled
-        if ($globalSwitch && $localSwitch) {
+        // If local option is null (not explicitly set), inherit from global
+        $enabled = null === $localSwitch ? $globalSwitch : $localSwitch;
+
+        // Add only parent forms which are enabled
+        if ($enabled) {
             $parent = $this->getParent($form);
             if (!$this->factory->inQueue($parent)) {
-                $this->factory->addToQueue($this->getParent($form));
+                $this->factory->addToQueue($parent);
             }
         }
     }
