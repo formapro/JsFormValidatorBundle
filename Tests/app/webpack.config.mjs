@@ -4,7 +4,7 @@
 //
 // Read https://symfony.com/doc/current/frontend.html to learn more about how
 // to manage CSS and JavaScript files in Symfony applications.
-var Encore = require('@symfony/webpack-encore');
+import Encore from '@symfony/webpack-encore';
 
 Encore
     .setOutputPath('public/build/')
@@ -19,10 +19,17 @@ Encore
     .splitEntryChunks()
     .enableSingleRuntimeChunk()
     .enableIntegrityHashes(Encore.isProduction())
-    .configureBabel(null, {
-        useBuiltIns: 'usage',
-        corejs: 3,
+    // Babel 8 removed the "useBuiltIns"/"corejs" options from @babel/preset-env,
+    // so core-js polyfills are now injected by babel-plugin-polyfill-corejs3.
+    .configureBabel((babelConfig) => {
+        babelConfig.plugins.push([
+            'babel-plugin-polyfill-corejs3',
+            {
+                method: 'usage-global',
+                version: '3.50',
+            },
+        ]);
     })
 ;
 
-module.exports = Encore.getWebpackConfig();
+export default await Encore.getWebpackConfig();
