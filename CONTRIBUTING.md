@@ -8,7 +8,7 @@ Prefer the Nix development shell from the repository root:
 nix develop
 ```
 
-The shell provides PHP 8.5, Xdebug coverage support, Composer, Node.js 22, npm,
+The shell provides PHP 8.5, Xdebug coverage support, Composer, Node.js 24, npm,
 zip/unzip, and the Linux runtime libraries needed by Cypress. It also keeps
 Composer, npm, and Cypress caches under `.cache/`.
 
@@ -36,7 +36,7 @@ If Cypress reports that its binary is missing, install it into the local cache:
 npx cypress install
 ```
 
-Without Nix, install PHP 8.4 or newer, Composer, Node.js 22, npm, and the
+Without Nix, install PHP 8.4 or newer, Composer, Node.js 24, npm, and the
 Cypress system dependencies locally before running the same commands.
 
 ## Install Vendors Via Docker
@@ -50,7 +50,7 @@ docker compose run --rm --no-deps -u "$(id -u):$(id -g)" php-fpm composer update
 docker compose run --rm --no-deps -u "$(id -u):$(id -g)" php-fpm npm install
 ```
 
-The image uses PHP 8.5, Composer 2, Node.js 22, and the PHP extensions needed by
+The image uses PHP 8.5, Composer 2, Node.js 24, and the PHP extensions needed by
 the Symfony 8 test fixture. It also stores Composer, npm, and Cypress caches
 under `.cache/`.
 

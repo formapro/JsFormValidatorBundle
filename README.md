@@ -191,7 +191,7 @@ nix develop
 ```
 
 It provides the latest PHP available in the pinned nixpkgs input, currently
-PHP 8.5, with Xdebug coverage support, Composer, Node.js 22, npm, zip/unzip,
+PHP 8.5, with Xdebug coverage support, Composer, Node.js 24, npm, zip/unzip,
 and Cypress runtime libraries. If flakes are not enabled globally, prefix Nix
 commands with `nix --extra-experimental-features "nix-command flakes"`.
 
@@ -215,7 +215,7 @@ nix develop -c composer test
 nix develop -c npm test
 ```
 
-Without Nix, install PHP 8.4 or newer, Composer, Node.js 22, npm, and the
+Without Nix, install PHP 8.4 or newer, Composer, Node.js 24, npm, and the
 Cypress system dependencies locally before running the same commands.
 
 To install vendors via Docker instead of host PHP/Composer:
@@ -273,6 +273,6 @@ The same maintained test, static-analysis, and coverage checks are also run by
 GitHub Actions on pushes and pull requests. Coverage runs generate Cobertura
 reports and upload them to GitHub Code Quality when workflow permissions allow.
 
-The Docker stack uses PHP 8.5, Composer 2, and Node.js 22. It is maintained for
+The Docker stack uses PHP 8.5, Composer 2, and Node.js 24. It is maintained for
 dependency installation and ad hoc local commands; Nix remains the preferred
 environment for exact local parity with the documented checks.

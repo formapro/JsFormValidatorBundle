@@ -39,8 +39,8 @@ Local path: `/Volumes/SRC/JsFormValidatorBundle`
 ## Nix Development Environment
 
 - Prefer `nix develop` from the repository root when Nix is available.
-- The Nix shell provides the latest PHP available in pinned nixpkgs with Xdebug coverage support, Composer, Node.js 22, npm, zip/unzip, and Linux Cypress runtime libraries. It currently resolves to PHP 8.5.
-- The Docker `php-fpm` development image is maintained for vendor installation and ad hoc commands. It uses PHP 8.5, Composer 2, Node.js 22, and the PHP extensions required by the Symfony 8 fixture.
+- The Nix shell provides the latest PHP available in pinned nixpkgs with Xdebug coverage support, Composer, Node.js 24, npm, zip/unzip, and Linux Cypress runtime libraries. It currently resolves to PHP 8.5.
+- The Docker `php-fpm` development image is maintained for vendor installation and ad hoc commands. It uses PHP 8.5, Composer 2, Node.js 24, and the PHP extensions required by the Symfony 8 fixture.
 - Run one-off commands with `nix develop -c <command>`, for example:
   - `nix develop -c composer validate --strict`
   - `nix develop -c composer test`

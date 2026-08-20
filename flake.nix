@@ -56,7 +56,7 @@
             packages = with pkgs; [
               composer
               git
-              nodejs_22
+              nodejs_24
               php
               unzip
               zip
