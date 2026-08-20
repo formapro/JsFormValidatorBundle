@@ -8,7 +8,7 @@ The `php-fpm` image provides:
 
 * PHP 8.5 FPM
 * Composer 2
-* Node.js 22 and npm
+* Node.js 24 and npm
 * PHP extensions used by the Symfony 8 fixture: `intl`, `pdo_mysql`,
   `pdo_sqlite`, and `zip`
 * Linux libraries needed by the Cypress binary
