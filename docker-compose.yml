@@ -15,7 +15,7 @@ services:
       environment:
         COMPOSER_HOME: /application/.cache/composer
         COMPOSER_ALLOW_SUPERUSER: "1"
-        COMPOSER_ROOT_VERSION: 2.0-dev
+        COMPOSER_ROOT_VERSION: 1.8-dev
         NPM_CONFIG_CACHE: /application/.cache/npm
         CYPRESS_CACHE_FOLDER: /application/.cache/Cypress
       volumes:

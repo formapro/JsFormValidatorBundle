@@ -6,6 +6,23 @@
 FpJsFormValidatorBundle converts Symfony form validation metadata into JavaScript
 validation rules and attaches client-side validators to rendered forms.
 
+## Development Moves To Svaroh/JsFormValidatorBundle
+
+Active development continues at
+[Svaroh/JsFormValidatorBundle](https://github.com/Svaroh/JsFormValidatorBundle),
+maintained by Svaroh, under the new Composer package
+`svaroh/jsformvalidator-bundle`. That is a new package with its own version
+history starting at `1.0`, not a `2.0` of this one, and it renames the project's
+identifiers from `Fp`/`fp` to `Svaroh`/`svaroh`, so switching over requires
+changes in your application.
+
+**1.x stays here.** This repository remains the home of the 1.x line and of the
+`fp/jsformvalidator-bundle` package, and `1.8.0` stays available. With
+development moved to Svaroh, 1.x receives no further fixes from the maintainers.
+Pull requests against 1.x are still welcome here and will be merged.
+
+Existing 1.x installations keep working and need no changes.
+
 ## Status
 
 This branch has been revived for the current PHP/Symfony baseline:
